@@ -1,0 +1,223 @@
+specs/001-synwire/checklists/deepagents-parity.md
+  785459977889d27f 153,155-163,204,231,238
+  2db5242fc8cebe03 3,7,9,13-14,18-22,27-31,35-42,46-50,54-58,63-65,69-70,74-75,79-82,86-89,94,97-99,103-104,108-109,113-114,116,118-125,129-134,138-142,144,148,167,169,183-186,192,220-224,229,233,237,239,241,247,251
+specs/001-synwire/tasks.md
+  2db5242fc8cebe03 37-43,45,730-840,842-961
+specs/001-synwire/checklists/oracle-agent-spec-parity.md
+  785459977889d27f 131
+  2db5242fc8cebe03 43,45
+specs/001-synwire/analysis/architecture-review.md
+  0c8294b333fc3809 1-343
+specs/001-synwire/checklists/adk-a2a-parity.md
+  2db5242fc8cebe03 51,153
+  785459977889d27f 145,154,158,181
+specs/001-synwire/checklists/instructor-mirascope-parity.md
+  2db5242fc8cebe03 39,41,113
+specs/001-synwire/analysis/pydantic-ai-comparison.md
+  2db5242fc8cebe03 136
+specs/001-synwire/spec.md
+  2db5242fc8cebe03 408,410,416,426,430,433,439,441,456,470,484,498,554,567,1279,1325,1330,1389,1417,1419,1434,1548,1574,1602,1607,1637,1820,1901,2172,2410,2412,2417-2418,2477,2483,2488,2493,2880,2995,3047,3183,3401,3409,4072-4390,4472,4727,4736-4738,4740,4925-4966,4991,4994,4998,5001,5008-5009,5013,5015,5018,5028,5135,5166,5179,5182,5275,5280,5284,5291,5297,5303,5306,5309,5314,5331,5337,5519
+  785459977889d27f 619-622,2162-2163,2322-2336,4731-4733,5036-5038
+specs/001-synwire/contracts/traits.md
+  2db5242fc8cebe03 1849,1884,1906,1941,1957
+specs/001-synwire/plan.md
+  2db5242fc8cebe03 25,42,49,355-357,364,494-495,502,504-513,550,557-561,603,637-639,652,656,660,666-671,685-687,691-697,718-719,722,724-727,730-732,752,771,832,834,838-845,847-849,865,875,880,884-887,889-896,904-907,913,917-922,929,933,938,944-945,948-951,977-1276
+specs/001-synwire/contracts/harbor.md
+  2db5242fc8cebe03 3,53,100
+specs/001-synwire/contracts/ag-ui.md
+  2db5242fc8cebe03 8
+specs/001-synwire/checklists/mcp-adapters-parity.md
+  785459977889d27f 164
+  2db5242fc8cebe03 111,160,165
+specs/001-synwire/checklists/testing.md
+  2db5242fc8cebe03 1-127
+.specify/memory/constitution.md
+  bcac8ba4853c984e 4,6-13,15-17,40,43,57-58,60,75,77-79,81-87,95-150,160-165,175,178-180,190,193-195,211,225
+specs/001-synwire/data-model.md
+  785459977889d27f 2070,2072,2074-2075,2078-2084
+  2db5242fc8cebe03 1053,1766,2032,2038,2098,3903
+specs/001-synwire/contracts/sandboxes.md
+  2db5242fc8cebe03 3-4,34,145
+specs/001-synwire/contracts/deepagents.md
+  2db5242fc8cebe03 1,3,21-22,30,36,44,50,57,62,153,217,220,265,319,350,353,356,359,362,408,434,438,467,634,641,656
+specs/001-synwire/checklists/documentation.md
+  2db5242fc8cebe03 1-140
+specs/001-synwire/checklists/ag-ui-parity.md
+  2db5242fc8cebe03 88
+specs/001-synwire/contracts/agent-spec.md
+  2db5242fc8cebe03 5
+specs/001-synwire/checklists/langgraph-parity.md
+  2db5242fc8cebe03 17,110,143,145,148
+specs/001-synwire/checklists/agents-usability-parity.md
+  2db5242fc8cebe03 31,159,170
+README.md
+  468522c1e71c9989 1,3,5,9,13,16,18,25,30-33,40,55-56,71,74-75
+specs/001-synwire/contracts/prebuilt.md
+  2db5242fc8cebe03 1
+specs/001-synwire/contracts/a2a.md
+  785459977889d27f 709-710,712-763
+  2db5242fc8cebe03 711
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.9",
+  "base_commit_sha": "aa9c555bea9b3a8ae677f5d578c91198b115a579",
+  "prompts": {
+    "0c8294b333fc3809": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2df8a86-f302-4d46-adfd-815eda580672",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 343,
+      "total_deletions": 0,
+      "accepted_lines": 343,
+      "overriden_lines": 0
+    },
+    "0e312ca7a8b3eb46": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6cdd8300-fcb6-4959-874e-50f8800b73a8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 7038,
+      "total_deletions": 350,
+      "accepted_lines": 6786,
+      "overriden_lines": 0
+    },
+    "2a3803d01b6b03c6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "952b46b7-91ec-43e7-8560-0ff352507e89",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 636,
+      "total_deletions": 1186,
+      "accepted_lines": 612,
+      "overriden_lines": 0
+    },
+    "2c352ab633ff0260": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "de45714f-2f83-42a0-826c-07aa5c1b9b00",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 2537,
+      "total_deletions": 185,
+      "accepted_lines": 2396,
+      "overriden_lines": 0
+    },
+    "2db5242fc8cebe03": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2e35d04f-316a-4265-b3b9-c58717a0dce5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 1818,
+      "total_deletions": 661,
+      "accepted_lines": 1519,
+      "overriden_lines": 0
+    },
+    "468522c1e71c9989": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b4a3278c-740a-4085-8a33-dd3b4a2b20eb",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 30,
+      "total_deletions": 34,
+      "accepted_lines": 18,
+      "overriden_lines": 0
+    },
+    "785459977889d27f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4737a3d9-5446-4e91-a2b3-5ede527495af",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 125,
+      "total_deletions": 133,
+      "accepted_lines": 111,
+      "overriden_lines": 0
+    },
+    "a53bcb2d30f4c5cf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2e77e0e8-d87a-4b32-b01e-798d0b360b14",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 1657,
+      "total_deletions": 109,
+      "accepted_lines": 1239,
+      "overriden_lines": 0
+    },
+    "bcac8ba4853c984e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6b1c41bc-a41d-47bf-8d59-8ad2eb57ec4f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 122,
+      "total_deletions": 64,
+      "accepted_lines": 103,
+      "overriden_lines": 0
+    },
+    "edc1b7570f42b7ae": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a5018119-9e99-4375-8bab-ba51c0d16dd7",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 3700,
+      "total_deletions": 272,
+      "accepted_lines": 3165,
+      "overriden_lines": 0
+    },
+    "f8a5d316eb489fc4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b155202a-52d1-473c-aeb0-8a504a5f3aea",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 3842,
+      "total_deletions": 234,
+      "accepted_lines": 3610,
+      "overriden_lines": 0
+    },
+    "fc5a689a85fb68c0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7b77d832-1e35-4ae9-8277-3b8efd5afd69",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 645,
+      "total_deletions": 70,
+      "accepted_lines": 585,
+      "overriden_lines": 0
+    }
+  }
+}
