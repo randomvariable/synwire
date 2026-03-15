@@ -1,0 +1,23 @@
+[package]
+name = "synwire-test-utils"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Test utilities, fake models, and proptest strategies for Synwire"
+publish = false
+
+[lints]
+workspace = true
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
+synwire-checkpoint = { path = "../synwire-checkpoint", version = "0.1.0" }
+synwire-orchestrator = { path = "../synwire-orchestrator", version = "0.1.0" }
+proptest = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tokio-test = { workspace = true }
+mockall = { workspace = true }

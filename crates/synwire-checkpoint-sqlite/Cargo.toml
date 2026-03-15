@@ -1,0 +1,27 @@
+[package]
+name = "synwire-checkpoint-sqlite"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "SQLite checkpoint backend for Synwire"
+
+[lints]
+workspace = true
+
+[dependencies]
+synwire-checkpoint = { path = "../synwire-checkpoint", version = "0.1.0" }
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
+rusqlite = { workspace = true }
+r2d2 = { workspace = true }
+r2d2_sqlite = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
+tempfile = "3"

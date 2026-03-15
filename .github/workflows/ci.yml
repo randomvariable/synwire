@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, "001-*"]
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  # Tier 1 — runs on every PR and push
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - uses: davidB/rust-cargo-make@v1
+      - run: cargo make fmt
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - uses: davidB/rust-cargo-make@v1
+      - run: cargo make clippy
+
+  test:
+    name: Test (Tier 1)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+      - uses: davidB/rust-cargo-make@v1
+      - name: Run tests with nextest
+        run: cargo make test
+      - name: Run doctests
+        run: cargo make doctest
+      - name: Upload JUnit XML
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: junit-results
+          path: target/nextest/ci/junit.xml
+
+  doc:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: davidB/rust-cargo-make@v1
+      - run: cargo make doc
+
+  mdbook:
+    name: mdBook
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install mdBook
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -sSL https://github.com/rust-lang/mdBook/releases/download/v0.4.40/mdbook-v0.4.40-x86_64-unknown-linux-gnu.tar.gz | tar -xz -C "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - uses: davidB/rust-cargo-make@v1
+      - name: Build mdBook
+        run: cargo make mdbook
+      - name: Install lychee
+        run: |
+          curl -sSL https://github.com/lycheeverse/lychee/releases/download/v0.15.1/lychee-v0.15.1-x86_64-unknown-linux-gnu.tar.gz | tar -xz -C "$HOME/.local/bin"
+      - name: Check links
+        run: lychee --no-progress --exclude-path docs/book/print.html --exclude 'github\.com/randomvariable/synwire' 'docs/book/**/*.html'
+
+  # Tier 2 — runs on merge to main and branch pushes
+  geiger:
+    name: Cargo Geiger (Tier 2)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: davidB/rust-cargo-make@v1
+      - name: Run cargo-geiger
+        run: cargo make geiger || true
+
+  test-partitioned:
+    name: Test Partitioned (Tier 2)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    strategy:
+      matrix:
+        partition: [1, 2]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+      - name: Run partitioned tests
+        run: >
+          cargo nextest run --workspace --all-features
+          --partition count:${{ matrix.partition }}/2

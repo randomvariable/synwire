@@ -1,0 +1,104 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+jobs:
+  publish:
+    name: Publish crates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+
+      # Publish in dependency order, with delay between crates for index propagation
+      - name: Publish synwire-core
+        run: cargo publish -p synwire-core --no-verify
+
+      - name: Wait for index
+        run: sleep 30
+
+      - name: Publish synwire-derive
+        run: cargo publish -p synwire-derive --no-verify
+
+      - name: Publish synwire-checkpoint
+        run: cargo publish -p synwire-checkpoint --no-verify
+
+      - name: Wait for index
+        run: sleep 30
+
+      - name: Publish synwire-checkpoint-sqlite
+        run: cargo publish -p synwire-checkpoint-sqlite --no-verify
+
+      - name: Publish synwire-orchestrator
+        run: cargo publish -p synwire-orchestrator --no-verify
+
+      - name: Publish synwire-llm-openai
+        run: cargo publish -p synwire-llm-openai --no-verify
+
+      - name: Publish synwire-llm-ollama
+        run: cargo publish -p synwire-llm-ollama --no-verify
+
+      - name: Wait for index
+        run: sleep 30
+
+      - name: Publish synwire
+        run: cargo publish -p synwire --no-verify
+
+  github-release:
+    name: GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "^${TAG}$" | tail -1)
+          if [ "$PREV_TAG" = "$TAG" ] || [ -z "$PREV_TAG" ]; then
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" HEAD)
+          else
+            CHANGELOG=$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${TAG}")
+          fi
+          {
+            echo "changelog<<EOF"
+            echo "$CHANGELOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body: |
+            ## What's Changed
+
+            ${{ steps.changelog.outputs.changelog }}
+
+            ## Crates
+
+            | Crate | Version |
+            |-------|---------|
+            | [synwire](https://crates.io/crates/synwire) | ${{ github.ref_name }} |
+            | [synwire-core](https://crates.io/crates/synwire-core) | ${{ github.ref_name }} |
+            | [synwire-orchestrator](https://crates.io/crates/synwire-orchestrator) | ${{ github.ref_name }} |
+            | [synwire-derive](https://crates.io/crates/synwire-derive) | ${{ github.ref_name }} |
+            | [synwire-checkpoint](https://crates.io/crates/synwire-checkpoint) | ${{ github.ref_name }} |
+            | [synwire-checkpoint-sqlite](https://crates.io/crates/synwire-checkpoint-sqlite) | ${{ github.ref_name }} |
+            | [synwire-llm-openai](https://crates.io/crates/synwire-llm-openai) | ${{ github.ref_name }} |
+            | [synwire-llm-ollama](https://crates.io/crates/synwire-llm-ollama) | ${{ github.ref_name }} |
+          generate_release_notes: true

@@ -1,0 +1,43 @@
+[package]
+name = "synwire-llm-openai"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "OpenAI provider for Synwire"
+
+[lints]
+workspace = true
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0", features = ["http"] }
+reqwest = { workspace = true }
+reqwest-middleware = { workspace = true }
+reqwest-retry = { workspace = true }
+eventsource-stream = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+futures-core = { workspace = true }
+futures-util = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
+mockall = { workspace = true }
+
+[[example]]
+name = "simple_chat"
+required-features = []
+
+[[example]]
+name = "prompt_chain"
+required-features = []
+
+[[example]]
+name = "streaming"
+required-features = []

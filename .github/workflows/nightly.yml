@@ -1,0 +1,50 @@
+name: Nightly
+
+on:
+  schedule:
+    # Run at 03:00 UTC every day
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
+  # Extended proptest cases for nightly
+  PROPTEST_CASES: "1024"
+
+jobs:
+  # Tier 3 — nightly extended testing
+  extended-proptest:
+    name: Extended Property Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: nextest
+      - uses: davidB/rust-cargo-make@v1
+      - name: Run extended property tests
+        run: cargo make prop-tests
+
+  audit:
+    name: Cargo Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: davidB/rust-cargo-make@v1
+      - name: Run audit
+        run: cargo make audit
+
+  msrv:
+    name: MSRV Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: dtolnay/rust-toolchain@1.85
+      - uses: Swatinem/rust-cache@v2
+      - uses: davidB/rust-cargo-make@v1
+      - name: Check MSRV
+        run: cargo make msrv-check

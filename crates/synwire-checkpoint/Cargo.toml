@@ -1,0 +1,27 @@
+[package]
+name = "synwire-checkpoint"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "Checkpoint traits and in-memory implementation for Synwire"
+
+[lints]
+workspace = true
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+tokio = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }
+proptest = { workspace = true }
+synwire-test-utils = { path = "../synwire-test-utils", version = "0.1.0" }
