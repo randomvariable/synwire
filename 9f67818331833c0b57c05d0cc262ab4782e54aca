@@ -1,0 +1,443 @@
+crates/synwire-core/tests/prop_synwire_error_display.rs
+  dcf2fa05a19b48bc 1-17,19-40
+crates/synwire-core/src/vectorstores/in_memory.rs
+  dcf2fa05a19b48bc 1-5,7-167,169-258
+tilt/pull-model.sh
+  dcf2fa05a19b48bc 1-10
+crates/synwire/tests/e2e_rag.rs
+  dcf2fa05a19b48bc 1-22
+crates/synwire-test-utils/src/strategies/prompts.rs
+  dcf2fa05a19b48bc 1-46
+Cargo.toml
+  dcf2fa05a19b48bc 1-77
+crates/synwire-checkpoint/src/serde/json_plus.rs
+  dcf2fa05a19b48bc 1-89
+crates/synwire-core/src/runnables/core.rs
+  dcf2fa05a19b48bc 1-91
+crates/synwire-test-utils/src/strategies/channels.rs
+  dcf2fa05a19b48bc 1-29
+docs/book.toml
+  dcf2fa05a19b48bc 1-18,20-21
+crates/synwire-core/src/error/kind.rs
+  dcf2fa05a19b48bc 1-32
+crates/synwire-llm-openai/tests/integration_chat.rs
+  dcf2fa05a19b48bc 1-114
+.github/workflows/nightly.yml
+  dcf2fa05a19b48bc 1-24,26,28-34,36,38-45,47
+crates/synwire/src/text_splitters/recursive.rs
+  dcf2fa05a19b48bc 1-111,113-213
+crates/synwire-core/src/documents/types.rs
+  dcf2fa05a19b48bc 1-86
+tilt/k8s/ollama.yaml
+  dcf2fa05a19b48bc 1-39
+crates/synwire-test-utils/src/strategies/messages.rs
+  dcf2fa05a19b48bc 1-193
+crates/synwire/src/chat_history/traits.rs
+  dcf2fa05a19b48bc 1-2,4-20
+.config/nextest.toml
+  dcf2fa05a19b48bc 1-47
+crates/synwire-core/src/messages/traits.rs
+  dcf2fa05a19b48bc 1-118
+crates/synwire-core/tests/prop_document_construction.rs
+  dcf2fa05a19b48bc 1-30
+crates/synwire-core/src/runnables/lambda.rs
+  dcf2fa05a19b48bc 1-4,6-11,13-36,38-97
+crates/synwire-llm-openai/src/chat.rs
+  dcf2fa05a19b48bc 1-126,128-161,163-196,198,200,202,206-207,209,220,222-223,225-366
+crates/synwire-core/src/output_parsers/mod.rs
+  dcf2fa05a19b48bc 1-19
+crates/synwire-core/src/error/mod.rs
+  dcf2fa05a19b48bc 1-114,116-123,125-128
+crates/synwire-core/src/tools/mod.rs
+  dcf2fa05a19b48bc 1-9
+crates/synwire/src/prompts/few_shot.rs
+  dcf2fa05a19b48bc 1-5,7-172,174-289,291-296,298-303
+docs/src/explanation/pregel.md
+  dcf2fa05a19b48bc 1-66
+crates/synwire/src/lib.rs
+  dcf2fa05a19b48bc 1-26
+crates/synwire/src/chat_history/in_memory.rs
+  dcf2fa05a19b48bc 1-4,6-108
+crates/synwire-core/src/runnables/retry.rs
+  dcf2fa05a19b48bc 1-45,47-110,112-126,128-199
+crates/synwire-core/src/messages/filter.rs
+  dcf2fa05a19b48bc 1-188,190-209
+crates/synwire-core/tests/prop_tool_schema_validation.rs
+  dcf2fa05a19b48bc 1-32
+crates/synwire-core/tests/prop_vector_store_search_count.rs
+  dcf2fa05a19b48bc 1-74
+crates/synwire-core/src/language_models/registry.rs
+  dcf2fa05a19b48bc 1-231
+crates/synwire-llm-ollama/src/error.rs
+  dcf2fa05a19b48bc 1-125
+crates/synwire/Cargo.toml
+  dcf2fa05a19b48bc 1-31
+crates/synwire/src/chat_history/mod.rs
+  dcf2fa05a19b48bc 1-9
+crates/synwire/src/output_parsers/enum_parser.rs
+  dcf2fa05a19b48bc 1-105
+crates/synwire-core/src/error/parse.rs
+  dcf2fa05a19b48bc 1-25
+crates/synwire-core/src/runnables/chain.rs
+  dcf2fa05a19b48bc 1-2,4-210
+crates/synwire-core/src/retrievers/traits.rs
+  dcf2fa05a19b48bc 1-2,4-7,9-113,115-233
+crates/synwire-core/src/output_parsers/structured.rs
+  dcf2fa05a19b48bc 1-160
+docs/src/reference/glossary.md
+  dcf2fa05a19b48bc 1-75
+crates/synwire-checkpoint/src/serde/mod.rs
+  dcf2fa05a19b48bc 1-4
+crates/synwire-core/src/observability/event_bus.rs
+  dcf2fa05a19b48bc 1-3,5-304
+docs/src/how-to/custom-provider.md
+  dcf2fa05a19b48bc 1-138
+crates/synwire-core/src/language_models/batch.rs
+  dcf2fa05a19b48bc 1-5,7-62,64-138
+crates/synwire/src/output_parsers/list.rs
+  dcf2fa05a19b48bc 1-85
+docs/src/how-to/custom-channel.md
+  dcf2fa05a19b48bc 1-75
+docs/src/how-to/credentials.md
+  dcf2fa05a19b48bc 1-77
+crates/synwire-core/src/credentials/traits.rs
+  dcf2fa05a19b48bc 1-2,4-30
+crates/synwire/src/text_splitters/character.rs
+  dcf2fa05a19b48bc 1-48,50-95,97-166
+crates/synwire-core/src/documents/mod.rs
+  dcf2fa05a19b48bc 1-4
+docs/src/explanation/architecture.md
+  dcf2fa05a19b48bc 1-94
+crates/synwire-core/src/observability/attribute_mapper.rs
+  dcf2fa05a19b48bc 1-109
+crates/synwire/tests/e2e_graph.rs
+  dcf2fa05a19b48bc 1-26
+crates/synwire-test-utils/src/strategies/documents.rs
+  dcf2fa05a19b48bc 1-39
+.github/workflows/ci.yml
+  dcf2fa05a19b48bc 1-21,24-33,36-44,46,48,50-63,66-76,78,80-83,85-94,96,98-112,114
+docs/src/how-to/add-checkpointing.md
+  dcf2fa05a19b48bc 1-59
+crates/synwire-core/tests/prop_embedding_dimension_invariant.rs
+  dcf2fa05a19b48bc 1-48
+crates/synwire-core/src/output_parsers/string.rs
+  dcf2fa05a19b48bc 1-63
+crates/synwire-checkpoint-conformance/src/lib.rs
+  dcf2fa05a19b48bc 1-9
+crates/synwire-core/src/agents/mod.rs
+  dcf2fa05a19b48bc 1-5
+docs/src/explanation/crate-organisation.md
+  dcf2fa05a19b48bc 1-88
+crates/synwire-llm-openai/src/lib.rs
+  dcf2fa05a19b48bc 1-24
+crates/synwire-core/src/output_parsers/output_mode.rs
+  dcf2fa05a19b48bc 1-110
+crates/synwire-core/src/output_parsers/traits.rs
+  dcf2fa05a19b48bc 1-44
+crates/synwire-core/src/callbacks/tests.rs
+  dcf2fa05a19b48bc 1-4,6-59,61-67,69-75,77-191
+crates/synwire-core/src/vectorstores/traits.rs
+  dcf2fa05a19b48bc 1-2,4-48
+docs/src/how-to/retry-fallback.md
+  dcf2fa05a19b48bc 1-88
+crates/synwire-core/src/error/tool.rs
+  dcf2fa05a19b48bc 1-48
+crates/synwire-core/src/embeddings/fake.rs
+  dcf2fa05a19b48bc 1-3,5-119
+docs/src/SUMMARY.md
+  dcf2fa05a19b48bc 1-47
+crates/synwire-core/src/observability/span_kind.rs
+  dcf2fa05a19b48bc 1-78
+docs/src/how-to/graph-interrupts.md
+  dcf2fa05a19b48bc 1-70
+crates/synwire-core/src/retrievers/mod.rs
+  dcf2fa05a19b48bc 1-9
+crates/synwire-core/src/vectorstores/mmr.rs
+  dcf2fa05a19b48bc 1-186
+crates/synwire-core/src/language_models/fake.rs
+  dcf2fa05a19b48bc 1-2,5-11,13-245,247-382,385-402
+crates/synwire/tests/e2e_chat.rs
+  dcf2fa05a19b48bc 1-24
+crates/synwire-checkpoint/src/store/mod.rs
+  dcf2fa05a19b48bc 1-4
+crates/synwire-core/src/embeddings/traits.rs
+  dcf2fa05a19b48bc 1-3,5-33
+crates/synwire-core/src/tools/structured.rs
+  dcf2fa05a19b48bc 1-4,6-11,13-86,88-246,248-281
+.github/workflows/coverage.yml
+  dcf2fa05a19b48bc 1-22,24,26-30
+docs/src/explanation/channels.md
+  dcf2fa05a19b48bc 1-59
+crates/synwire-checkpoint/src/base.rs
+  dcf2fa05a19b48bc 1-5,7-42
+crates/synwire-core/examples/otel_tracing.rs
+  dcf2fa05a19b48bc 1-82
+docs/src/reference/offline-usage.md
+  dcf2fa05a19b48bc 1-80
+docs/src/getting-started/graph-agent.md
+  dcf2fa05a19b48bc 1-142
+docs/src/getting-started/tools-agent.md
+  dcf2fa05a19b48bc 1-131
+crates/synwire-core/src/prompts/chat.rs
+  dcf2fa05a19b48bc 1-86,88,90-185,187-197,199-242
+crates/synwire/src/output_parsers/combining.rs
+  dcf2fa05a19b48bc 1-104
+docs/src/getting-started/first-chat.md
+  dcf2fa05a19b48bc 1-124
+crates/synwire-core/Cargo.toml
+  dcf2fa05a19b48bc 1-58
+crates/synwire-llm-ollama/tests/integration_chat.rs
+  dcf2fa05a19b48bc 1-108
+crates/synwire-checkpoint/src/types.rs
+  dcf2fa05a19b48bc 1-119
+crates/synwire-test-utils/src/strategies/mod.rs
+  dcf2fa05a19b48bc 1-14
+crates/synwire-test-utils/src/strategies/graphs.rs
+  dcf2fa05a19b48bc 1-18,20-81
+crates/synwire-core/src/observability/mod.rs
+  dcf2fa05a19b48bc 1-16,18-21,23-31,33-52
+tilt/Tiltfile
+  dcf2fa05a19b48bc 1-24
+crates/synwire-llm-openai/src/base.rs
+  dcf2fa05a19b48bc 1-3,5-179,181-423
+crates/synwire-llm-openai/examples/simple_chat.rs
+  dcf2fa05a19b48bc 1-41
+crates/synwire-core/src/tools/types.rs
+  dcf2fa05a19b48bc 1-66
+crates/synwire-core/benches/span_overhead.rs
+  dcf2fa05a19b48bc 1-10,12-76
+docs/src/contributing/setup.md
+  dcf2fa05a19b48bc 1-75
+crates/synwire-checkpoint-sqlite/src/schema.rs
+  dcf2fa05a19b48bc 1-14
+crates/synwire-checkpoint-sqlite/src/lib.rs
+  dcf2fa05a19b48bc 1-13
+crates/synwire-llm-openai/Cargo.toml
+  dcf2fa05a19b48bc 1-40
+docs/src/reference/error-guide.md
+  dcf2fa05a19b48bc 1-83
+crates/synwire-core/src/security/mod.rs
+  dcf2fa05a19b48bc 1-5
+crates/synwire-core/src/prompts/types.rs
+  dcf2fa05a19b48bc 1-42
+crates/synwire-core/src/credentials/secret.rs
+  dcf2fa05a19b48bc 1-122
+crates/synwire-llm-ollama/src/lib.rs
+  dcf2fa05a19b48bc 1-28
+docs/src/reference/feature-flags.md
+  dcf2fa05a19b48bc 1-63
+crates/synwire-core/src/tools/traits.rs
+  dcf2fa05a19b48bc 1-2,4-132
+docs/src/contributing/style-guide.md
+  dcf2fa05a19b48bc 1-122
+docs/src/getting-started/rag.md
+  dcf2fa05a19b48bc 1-117
+crates/synwire-core/src/observability/otel_attributes.rs
+  dcf2fa05a19b48bc 1-44
+crates/synwire-core/src/runnables/as_tool.rs
+  dcf2fa05a19b48bc 1-2,4-66
+crates/synwire-checkpoint/src/store/base.rs
+  dcf2fa05a19b48bc 1-44,46-70
+crates/synwire-llm-ollama/src/chat.rs
+  dcf2fa05a19b48bc 1-7,9-96,98-178,180-372,374-461,464-716
+crates/synwire-core/src/agents/types.rs
+  dcf2fa05a19b48bc 1-40
+crates/synwire-llm-openai/src/embeddings.rs
+  dcf2fa05a19b48bc 1-5,7-162,164,166-177,179,181-247
+LICENSE-MIT
+  dcf2fa05a19b48bc 1-21
+crates/synwire/src/cache/mod.rs
+  dcf2fa05a19b48bc 1-5
+crates/synwire-core/src/prelude.rs
+  dcf2fa05a19b48bc 1-2,5-17,19-30,33-42,44
+LICENSE-APACHE
+  dcf2fa05a19b48bc 1-199
+crates/synwire-core/src/runnables/config.rs
+  dcf2fa05a19b48bc 1-40
+crates/synwire-core/tests/prop_message_serde_roundtrip.rs
+  dcf2fa05a19b48bc 1-23
+proptest.toml
+  dcf2fa05a19b48bc 1-3
+crates/synwire-checkpoint/tests/prop_checkpoint_backwards_compat.rs
+  dcf2fa05a19b48bc 1-46
+crates/synwire-core/tests/prop_prompt_template_substitution.rs
+  dcf2fa05a19b48bc 1-54
+crates/synwire-test-utils/Cargo.toml
+  dcf2fa05a19b48bc 1-22
+crates/synwire-core/src/credentials/env.rs
+  dcf2fa05a19b48bc 1-2,4,6-76
+crates/synwire-core/src/messages/utils.rs
+  dcf2fa05a19b48bc 1-193,195-249
+crates/synwire-core/src/observability/tracing_bridge.rs
+  dcf2fa05a19b48bc 1-3,5-208
+crates/synwire-test-utils/src/strategies/checkpoints.rs
+  dcf2fa05a19b48bc 1-5,7-48,50-55,57-60,62-64,66-92
+crates/synwire-core/src/credentials/static_creds.rs
+  dcf2fa05a19b48bc 1-2,4,6-56
+crates/synwire-core/src/runnables/events.rs
+  dcf2fa05a19b48bc 1-138
+crates/synwire-core/src/language_models/traits.rs
+  dcf2fa05a19b48bc 1-2,5-101
+crates/synwire-core/src/credentials/mod.rs
+  dcf2fa05a19b48bc 1-12
+crates/synwire/src/output_parsers/mod.rs
+  dcf2fa05a19b48bc 1-15
+crates/synwire-core/src/messages/types.rs
+  dcf2fa05a19b48bc 1-460,462-463,465-469
+crates/synwire/src/cache/embeddings.rs
+  dcf2fa05a19b48bc 1-5,7-76,78-143
+crates/synwire-core/src/runnables/branch.rs
+  dcf2fa05a19b48bc 1-4,6-116
+crates/synwire-core/src/loaders/traits.rs
+  dcf2fa05a19b48bc 1-2,4-14
+crates/synwire-core/src/observability/otel_metrics.rs
+  dcf2fa05a19b48bc 1-24
+crates/synwire-checkpoint/src/memory.rs
+  dcf2fa05a19b48bc 1-195
+crates/synwire/src/output_parsers/retry.rs
+  dcf2fa05a19b48bc 1-105,107-144
+docs/src/getting-started/derive-macros.md
+  dcf2fa05a19b48bc 1-112
+crates/synwire-checkpoint-sqlite/Cargo.toml
+  dcf2fa05a19b48bc 1-24
+crates/synwire-core/src/runnables/passthrough.rs
+  dcf2fa05a19b48bc 1-2,4-47
+crates/synwire-test-utils/src/strategies/tools.rs
+  dcf2fa05a19b48bc 1-3,5-8,10-14,16-22,24-30,32-44,46-64
+docs/src/explanation/hooks-vs-callbacks.md
+  dcf2fa05a19b48bc 1-83
+crates/synwire-checkpoint/src/serde/protocol.rs
+  dcf2fa05a19b48bc 1-15
+crates/synwire-core/src/runnables/fallbacks.rs
+  dcf2fa05a19b48bc 1-2,4-20,22-71,73-75,77-86,88-102,104-110
+crates/synwire-core/src/observability/tracing_callback_handler.rs
+  dcf2fa05a19b48bc 1-2,4-118,120-133,135-149,151-304
+crates/synwire-core/src/error/embedding.rs
+  dcf2fa05a19b48bc 1-27
+crates/synwire-checkpoint/Cargo.toml
+  dcf2fa05a19b48bc 1-24
+.gitignore
+  dcf2fa05a19b48bc 1-13
+tilt/Dockerfile.ollama
+  dcf2fa05a19b48bc 1-6
+crates/synwire-llm-openai/src/error.rs
+  dcf2fa05a19b48bc 1-53
+crates/synwire-checkpoint/src/lib.rs
+  dcf2fa05a19b48bc 1-15
+crates/synwire-core/src/security/path.rs
+  dcf2fa05a19b48bc 1-89
+docs/src/getting-started/prompt-chains.md
+  dcf2fa05a19b48bc 1-102
+crates/synwire-core/src/vectorstores/filter.rs
+  dcf2fa05a19b48bc 1-56,58-115,117-122,124-180
+crates/synwire-core/src/lib.rs
+  dcf2fa05a19b48bc 1-43
+docs/src/reference/output-mode-typed-value.md
+  dcf2fa05a19b48bc 1-115
+crates/synwire-llm-openai/examples/streaming.rs
+  dcf2fa05a19b48bc 1-36
+crates/synwire/src/chat_history/runnable.rs
+  dcf2fa05a19b48bc 1-4,6-8,10-221
+crates/synwire-test-utils/src/fixtures/mod.rs
+  dcf2fa05a19b48bc 1-3
+crates/synwire-core/src/observability/content_filter.rs
+  dcf2fa05a19b48bc 1-204
+crates/synwire-core/src/rerankers/mod.rs
+  dcf2fa05a19b48bc 1-8
+crates/synwire-checkpoint-conformance/Cargo.toml
+  dcf2fa05a19b48bc 1-16
+crates/synwire-core/src/language_models/mod.rs
+  dcf2fa05a19b48bc 1-2,6-9,13-17
+crates/synwire-core/tests/prop_resource_cleanup.rs
+  dcf2fa05a19b48bc 1-53
+crates/synwire/examples/few_shot_rag.rs
+  dcf2fa05a19b48bc 1-15,17-83
+crates/synwire-core/src/callbacks/mod.rs
+  dcf2fa05a19b48bc 1-9
+crates/synwire-test-utils/src/strategies/embeddings.rs
+  dcf2fa05a19b48bc 1-31
+crates/synwire-core/src/embeddings/mod.rs
+  dcf2fa05a19b48bc 1-10
+crates/synwire-core/src/prompts/template.rs
+  dcf2fa05a19b48bc 1-133
+crates/synwire-llm-ollama/Cargo.toml
+  dcf2fa05a19b48bc 1-25
+crates/synwire-core/src/callbacks/traits.rs
+  dcf2fa05a19b48bc 1-3,5-48,50-53,55-58,60-87
+crates/synwire-core/src/observability/metrics_collector.rs
+  dcf2fa05a19b48bc 1-3,5-136
+docs/src/getting-started/streaming.md
+  dcf2fa05a19b48bc 1-118
+crates/synwire-test-utils/src/fixtures/builders.rs
+  dcf2fa05a19b48bc 1-223
+crates/synwire-core/src/vectorstores/mod.rs
+  dcf2fa05a19b48bc 1-14
+crates/synwire-core/src/runnables/mod.rs
+  dcf2fa05a19b48bc 1-16,18-19,22-25
+docs/src/how-to/switch-provider.md
+  dcf2fa05a19b48bc 1-80
+crates/synwire-core/src/language_models/types.rs
+  dcf2fa05a19b48bc 1-215
+crates/synwire-core/src/output_parsers/tools.rs
+  dcf2fa05a19b48bc 1-112
+crates/synwire/src/prompts/mod.rs
+  dcf2fa05a19b48bc 1-7
+docs/src/index.md
+  dcf2fa05a19b48bc 1-50
+crates/synwire-checkpoint-sqlite/src/saver.rs
+  dcf2fa05a19b48bc 1-197,199-271,273-424
+crates/synwire-core/src/observability/tracing_config.rs
+  dcf2fa05a19b48bc 1-182
+crates/synwire-llm-openai/examples/prompt_chain.rs
+  dcf2fa05a19b48bc 1-25,27-50
+crates/synwire-test-utils/src/lib.rs
+  dcf2fa05a19b48bc 1-25
+docs/src/how-to/enable-tracing.md
+  dcf2fa05a19b48bc 1-80
+crates/synwire-core/tests/prop_path_traversal_protection.rs
+  dcf2fa05a19b48bc 1-75
+crates/synwire-core/src/prompts/mod.rs
+  dcf2fa05a19b48bc 1-9
+crates/synwire-core/src/error/vectorstore.rs
+  dcf2fa05a19b48bc 1-27
+rustfmt.toml
+  dcf2fa05a19b48bc 1-5
+docs/src/explanation/migration.md
+  dcf2fa05a19b48bc 1-118
+crates/synwire/src/prompts/example_selector.rs
+  dcf2fa05a19b48bc 1-5,7-115
+crates/synwire/tests/e2e_agent.rs
+  dcf2fa05a19b48bc 1-22
+crates/synwire/src/output_parsers/xml.rs
+  dcf2fa05a19b48bc 1-122
+crates/synwire-core/src/output_parsers/json.rs
+  dcf2fa05a19b48bc 1-27,29,31-70
+crates/synwire-core/src/error/model.rs
+  dcf2fa05a19b48bc 1-48
+crates/synwire-llm-ollama/src/embeddings.rs
+  dcf2fa05a19b48bc 1-5,7-9,11-141,144-269,271,273-346
+crates/synwire-llm-openai/src/moderation.rs
+  dcf2fa05a19b48bc 1-2,4-5,7-74,76-99,101-173,175-178
+crates/synwire-checkpoint/src/store/in_memory.rs
+  dcf2fa05a19b48bc 1-100,102-112,114-169
+crates/synwire-core/src/messages/mod.rs
+  dcf2fa05a19b48bc 1-13
+crates/synwire-core/src/runnables/observable.rs
+  dcf2fa05a19b48bc 1-2,4-20,22
+docs/src/how-to/custom-tool.md
+  dcf2fa05a19b48bc 1-113
+crates/synwire-core/src/loaders/mod.rs
+  dcf2fa05a19b48bc 1-8
+crates/synwire-core/src/rerankers/traits.rs
+  dcf2fa05a19b48bc 1-2,4-19
+crates/synwire/src/text_splitters/mod.rs
+  dcf2fa05a19b48bc 1-7
+crates/synwire/src/output_parsers/regex_parser.rs
+  dcf2fa05a19b48bc 1-127
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "9f67818331833c0b57c05d0cc262ab4782e54aca",
+  "prompts": {}
+}
