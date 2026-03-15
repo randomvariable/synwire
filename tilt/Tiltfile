@@ -1,0 +1,24 @@
+# Tiltfile for Synwire E2E testing with Ollama
+#
+# Usage:
+#   cd tilt && tilt up
+
+docker_build(
+    'synwire-ollama',
+    '.',
+    dockerfile='Dockerfile.ollama',
+)
+
+k8s_yaml('k8s/ollama.yaml')
+
+k8s_resource(
+    'ollama',
+    port_forwards=['11434:11434'],
+    resource_deps=[],
+)
+
+local_resource(
+    'pull-model',
+    cmd='./pull-model.sh',
+    resource_deps=['ollama'],
+)
