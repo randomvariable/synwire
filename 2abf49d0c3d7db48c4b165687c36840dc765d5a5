@@ -1,0 +1,105 @@
+crates/synwire-orchestrator/src/constants.rs
+  dcf2fa05a19b48bc 1-10
+crates/synwire-orchestrator/src/channels/mod.rs
+  dcf2fa05a19b48bc 1-29
+crates/synwire-orchestrator/src/channels/ephemeral.rs
+  dcf2fa05a19b48bc 1-97
+crates/synwire-orchestrator/src/config/mod.rs
+  dcf2fa05a19b48bc 1-7
+crates/synwire-orchestrator/src/config/cache_policy.rs
+  dcf2fa05a19b48bc 1-23
+crates/synwire-orchestrator/src/types/snapshot.rs
+  dcf2fa05a19b48bc 1-25
+crates/synwire-orchestrator/src/channels/any_value.rs
+  dcf2fa05a19b48bc 1-90
+crates/synwire-derive/tests/state_tests.rs
+  dcf2fa05a19b48bc 1-5,7,9-13,15-22,24-91,184
+crates/synwire-orchestrator/src/prebuilt/tool_node.rs
+  dcf2fa05a19b48bc 1-172,181-183,185,187-188,193,209-226,228-414,417-419
+crates/synwire-orchestrator/tests/prop_send_fanout.rs
+  dcf2fa05a19b48bc 1-49
+crates/synwire-orchestrator/src/graph/mod.rs
+  dcf2fa05a19b48bc 1-3,6-8,10-11
+crates/synwire-orchestrator/Cargo.toml
+  dcf2fa05a19b48bc 1-31
+crates/synwire-orchestrator/tests/prop_graph_compilation.rs
+  dcf2fa05a19b48bc 1-4,8-16,18-20,22-42,44-45,47-55,57-58,60-63,65
+crates/synwire-derive/src/tool.rs
+  dcf2fa05a19b48bc 1-287
+crates/synwire-orchestrator/src/channels/traits.rs
+  dcf2fa05a19b48bc 1-39
+crates/synwire-orchestrator/src/messages/mod.rs
+  dcf2fa05a19b48bc 1-2,5,47-86,131-132
+crates/synwire-derive/src/lib.rs
+  dcf2fa05a19b48bc 1-88
+crates/synwire-orchestrator/src/types/interrupt.rs
+  dcf2fa05a19b48bc 1-29
+crates/synwire-orchestrator/src/types/command.rs
+  dcf2fa05a19b48bc 1-24
+crates/synwire-orchestrator/src/error.rs
+  dcf2fa05a19b48bc 1-96,104-158,162-180
+crates/synwire-orchestrator/src/config/retry_policy.rs
+  dcf2fa05a19b48bc 1-29
+crates/synwire-orchestrator/src/types/stream_mode.rs
+  dcf2fa05a19b48bc 1-19
+crates/synwire-derive/tests/tool_tests.rs
+  dcf2fa05a19b48bc 1-79
+crates/synwire-orchestrator/tests/graph_tests.rs
+  dcf2fa05a19b48bc 1-7,9,11-13,16,18-28,31,33-51,53-58,60-66,68-75,77-83,85-93,95-102,104-113,115-119,121-122,124-127,129-139,141-142,144-147,149-164,166,168-181,185-186,188-190,194-195,197-200,202-211,213-222,224-231,233,235-250,252-253,255-260,262-282,284-297,299-301,305-315,317-318,320
+crates/synwire-orchestrator/src/graph/state.rs
+  dcf2fa05a19b48bc 2,6-10,14,16-18,64,80,84-87,89,91-94,96-97,99-101,103-106,109,111-114,116-135,137-153,155-160,162-190,192-212,214-247,249-250,339-340
+crates/synwire-orchestrator/src/types/mod.rs
+  dcf2fa05a19b48bc 1-13,15-19
+crates/synwire-orchestrator/src/lib.rs
+  dcf2fa05a19b48bc 1-13,15-17,19-21,24-39
+crates/synwire-orchestrator/src/graph/compiled.rs
+  dcf2fa05a19b48bc 1-11,13-17,20,22-25,27-28,30,32-67,69-87,89-138,141-175
+crates/synwire-orchestrator/src/channels/last_value.rs
+  dcf2fa05a19b48bc 1-122
+crates/synwire-orchestrator/src/metrics/mod.rs
+  dcf2fa05a19b48bc 1-16
+crates/synwire-orchestrator/src/prebuilt/mod.rs
+  dcf2fa05a19b48bc 1-19,21-22
+crates/synwire-orchestrator/src/types/send.rs
+  dcf2fa05a19b48bc 1-24
+crates/synwire-orchestrator/src/prebuilt/nodes.rs
+  dcf2fa05a19b48bc 1-2,10-13,15-21,23,28-29,31-32,34-36,40-47,50-55,57-70,72-86,90-92,94-99,102-110,113-118,120-137,139-177,183-186,188-189,197-295,301-304,306-307,315-382,388-391,393-394,402-500,506-509,511-512,520-602,608-611,613-614,622-701,707-710,712-713,721-777,782-783,785-786,788-795,797-804,807-810,812-816,823-832,836-838,842,850,852-857,860-864,868-870,872-886,889,891,917,922-924,930-936,939-948,950,952-956,962-968,971-980,982,1032,1037-1040,1047-1050,1054-1057,1059,1061-1066,1068-1071,1073-1074,1098-1099,1104-1107,1109-1116,1118-1125,1127-1134,1136-1139,1144-1148,1150,1152-1157,1159-1160,1162,1167-1171,1173,1175-1186,1188,1190-1201,1203,1205-1216,1218,1220-1232,1234,1236-1243,1248-1252,1254,1256-1264,1266,1268-1270,1275-1280,1282-1284,1286-1291,1293,1295-1304,1306,1308-1316,1318,1320,1325-1330,1332,1338-1345,1347,1349-1360,1362,1364-1366
+crates/synwire-orchestrator/tests/prop_channel_topic_concatenates.rs
+  dcf2fa05a19b48bc 1-51
+crates/synwire-orchestrator/src/managed/mod.rs
+  dcf2fa05a19b48bc 1-13
+crates/synwire-orchestrator/src/registry/mod.rs
+  dcf2fa05a19b48bc 1-5,7-8,10,12-14,18-19,21-24,26-34,36-44,46-59,61-64
+crates/synwire-orchestrator/tests/prop_pregel_determinism.rs
+  dcf2fa05a19b48bc 1-6,8-19,21-22,24-29,31-36,38-40
+crates/synwire-derive/Cargo.toml
+  dcf2fa05a19b48bc 1-24,26-27
+crates/synwire-derive/src/state.rs
+  dcf2fa05a19b48bc 1-102,128-132,135-148,159-230,323-324
+crates/synwire-orchestrator/tests/prop_conditional_edge_routing.rs
+  dcf2fa05a19b48bc 1-8,10-21,23-26,28,30-41,43-44,46-63,65-66,68-75,77-79,81-86
+crates/synwire-orchestrator/src/types/node_state.rs
+  dcf2fa05a19b48bc 1-32
+crates/synwire-orchestrator/src/channels/named_barrier.rs
+  dcf2fa05a19b48bc 1-143
+crates/synwire-orchestrator/tests/prop_channel_last_value_overwrites.rs
+  dcf2fa05a19b48bc 1-46
+crates/synwire-orchestrator/src/func/mod.rs
+  dcf2fa05a19b48bc 1-2,4-5,7,9-11,13,16-21
+crates/synwire-orchestrator/src/types/overwrite.rs
+  dcf2fa05a19b48bc 1-18
+crates/synwire-orchestrator/src/prebuilt/react_agent.rs
+  dcf2fa05a19b48bc 1-20,23-32,34,36-49,51-69,71-79,81-83,85-105,107-121,123-136,209-215,217-225,227-231,233-238,240-244,246-252,254-258,260-264,266-292,294-296,298-299,301-302,396-397
+crates/synwire-orchestrator/src/channels/topic.rs
+  dcf2fa05a19b48bc 1-118
+crates/synwire-orchestrator/src/channels/binary_operator.rs
+  dcf2fa05a19b48bc 1-140
+crates/synwire-orchestrator/tests/prop_checkpoint_roundtrip.rs
+  dcf2fa05a19b48bc 1-48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "2abf49d0c3d7db48c4b165687c36840dc765d5a5",
+  "prompts": {}
+}
