@@ -1,0 +1,145 @@
+docs/src/how-to/credentials.md
+  dcf2fa05a19b48bc 1-77
+docs/src/reference/output-mode-typed-value.md
+  dcf2fa05a19b48bc 1-115
+docs/roadmap/agents.md
+  bfa95a7a0b6ddf06 1-4,6-34,65-66,68-81,84,86,93,98,101,104-106,109-147,155-160
+docs/roadmap/ag-ui.md
+  bfa95a7a0b6ddf06 1-107
+docs/src/how-to/add-checkpointing.md
+  dcf2fa05a19b48bc 1-59
+docs/src/how-to/custom-channel.md
+  dcf2fa05a19b48bc 1-75
+docs/src/explanation/hooks-vs-callbacks.md
+  dcf2fa05a19b48bc 1-83
+docs/src/explanation/migration.md
+  dcf2fa05a19b48bc 1-118
+docs/roadmap.md
+  bfa95a7a0b6ddf06 3,5,7-17,19,21,23,27-29,34-35,39,41,45-68,71-75
+  0c8294b333fc3809 1-2,4,6,18,20,22,24-26,38,40,42-44
+docs/roadmap/structured-output.md
+  bfa95a7a0b6ddf06 1-124
+docs/src/how-to/graph-interrupts.md
+  dcf2fa05a19b48bc 1-70
+docs/src/how-to/switch-provider.md
+  dcf2fa05a19b48bc 1-80
+docs/src/explanation/architecture.md
+  dcf2fa05a19b48bc 1-94
+docs/roadmap/evaluations.md
+  bfa95a7a0b6ddf06 1-96
+docs/src/getting-started/streaming.md
+  dcf2fa05a19b48bc 1-118
+docs/roadmap/a2a.md
+  bfa95a7a0b6ddf06 1-102
+docs/src/reference/error-guide.md
+  dcf2fa05a19b48bc 1-83
+docs/roadmap/system-infrastructure.md
+  bfa95a7a0b6ddf06 1-3,5-8,10,20-29,34,44-46,55-58,63-123
+docs/src/how-to/retry-fallback.md
+  dcf2fa05a19b48bc 1-88
+docs/src/getting-started/rag.md
+  dcf2fa05a19b48bc 1-117
+docs/src/index.md
+  dcf2fa05a19b48bc 1-50
+docs/src/contributing/style-guide.md
+  dcf2fa05a19b48bc 1-122
+docs/src/contributing/setup.md
+  dcf2fa05a19b48bc 1-75
+docs/src/how-to/enable-tracing.md
+  dcf2fa05a19b48bc 1-80
+docs/src/getting-started/graph-agent.md
+  dcf2fa05a19b48bc 1-142
+docs/roadmap/mcp-and-tools.md
+  bfa95a7a0b6ddf06 1-145
+docs/src/reference/glossary.md
+  dcf2fa05a19b48bc 1-75
+docs/src/getting-started/first-chat.md
+  dcf2fa05a19b48bc 1-124
+docs/src/how-to/custom-provider.md
+  dcf2fa05a19b48bc 1-138
+docs/src/getting-started/derive-macros.md
+  dcf2fa05a19b48bc 1-112
+docs/src/explanation/channels.md
+  dcf2fa05a19b48bc 1-59
+docs/src/SUMMARY.md
+  dcf2fa05a19b48bc 1-47
+docs/src/getting-started/tools-agent.md
+  dcf2fa05a19b48bc 1-131
+docs/book.toml
+  dcf2fa05a19b48bc 1-20
+docs/src/explanation/pregel.md
+  dcf2fa05a19b48bc 1-66
+docs/src/explanation/crate-organisation.md
+  dcf2fa05a19b48bc 1-88
+docs/src/reference/feature-flags.md
+  dcf2fa05a19b48bc 1-63
+docs/src/getting-started/prompt-chains.md
+  dcf2fa05a19b48bc 1-102
+docs/src/reference/offline-usage.md
+  dcf2fa05a19b48bc 1-80
+docs/roadmap/observability.md
+  bfa95a7a0b6ddf06 1-3,5-30,35-37,42-91
+docs/src/how-to/custom-tool.md
+  dcf2fa05a19b48bc 1-113
+docs/roadmap/providers.md
+  bfa95a7a0b6ddf06 1-137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "941f96087334207afeac0603adfcbc47e24debcb",
+  "prompts": {
+    "0c8294b333fc3809": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2df8a86-f302-4d46-adfd-815eda580672",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1466,
+      "overriden_lines": 0
+    },
+    "5253be1db07c33ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "87cdbee4-b88b-4766-bc0f-f5fb7925be26",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 202,
+      "overriden_lines": 0
+    },
+    "bfa95a7a0b6ddf06": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bdbb9d4f-dfaa-461c-97c3-bb5883aea9e5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1034,
+      "overriden_lines": 0
+    },
+    "dcf2fa05a19b48bc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a9377dfa-98b0-4f3e-84a9-329978721034",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2968,
+      "overriden_lines": 0
+    }
+  }
+}
