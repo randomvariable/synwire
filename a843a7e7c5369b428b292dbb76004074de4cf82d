@@ -1,0 +1,158 @@
+crates/synwire-orchestrator/src/messages/mod.rs
+  dcf2fa05a19b48bc 1-2,5,46-85,132-133
+crates/synwire-orchestrator/src/config/cache_policy.rs
+  dcf2fa05a19b48bc 1-23
+crates/synwire-orchestrator/src/channels/binary_operator.rs
+  dcf2fa05a19b48bc 1-140
+crates/synwire-derive/Cargo.toml
+  dcf2fa05a19b48bc 1-24,26-27
+crates/synwire-orchestrator/src/prebuilt/tool_node.rs
+  dcf2fa05a19b48bc 1-172,181-183,185,187-188,193,209-226,228-414,417-419
+crates/synwire-orchestrator/tests/prop_graph_compilation.rs
+  dcf2fa05a19b48bc 1-4,8-16,18-20,22-42,44-45,47-55,57-58,60-63,65
+crates/synwire-orchestrator/src/prebuilt/nodes.rs
+  dcf2fa05a19b48bc 1-2,10-13,15-21,23,28-29,31-32,34-36,40-47,50-55,57-70,72-86,90-92,94-99,102-110,113-118,120-137,139-177,183-186,188-189,197-295,301-304,306-307,315-382,388-391,393-394,402-500,506-509,511-512,520-602,608-611,613-614,622-701,707-710,712-713,721-777,782-783,785-786,788-795,797-804,807-810,812-816,823-832,836-838,842,851,853-858,861-865,869-871,873-887,890,892,918,923-925,931-937,940-949,951,953-957,963-969,972-981,983,1033,1038-1041,1043,1045-1047,1049-1052,1056-1059,1061,1063-1068,1070-1073,1075-1076,1100-1101,1106-1109,1111-1118,1120-1127,1129-1136,1138-1141,1146-1150,1152,1154-1159,1161-1162,1164,1169-1173,1175,1177-1188,1190,1192-1203,1205,1207-1218,1220,1222-1234,1236,1238-1245,1250-1254,1256,1258-1266,1268,1270-1272,1277-1282,1284-1286,1288-1293,1295,1297-1306,1308,1310-1318,1320,1322,1327-1332,1334,1337-1344,1346,1348-1359,1361,1363-1365
+crates/synwire-derive/tests/tool_tests.rs
+  dcf2fa05a19b48bc 1-79
+crates/synwire-orchestrator/src/managed/mod.rs
+  dcf2fa05a19b48bc 1-13
+crates/synwire-orchestrator/src/config/retry_policy.rs
+  dcf2fa05a19b48bc 1-29
+crates/synwire-orchestrator/tests/graph_tests.rs
+  dcf2fa05a19b48bc 1-7,9,11-13,16,18-28,31,33-51,53-58,60-66,68-75,77-83,85-93,95-102,104-113,115-119,121-122,124-127,129-139,141-142,144-147,149-164,166,168-181,183-184,186-188,190-191,193-196,198-207,209-218,220-227,229,231-246,248-249,251-256,258-278,280-293,295-297,301-311,313-314,316
+crates/synwire-orchestrator/src/types/mod.rs
+  dcf2fa05a19b48bc 1-13,15-19
+crates/synwire-orchestrator/src/func/mod.rs
+  dcf2fa05a19b48bc 1-2,4-5,7,9-11,13,16-21
+crates/synwire-orchestrator/tests/prop_pregel_determinism.rs
+  dcf2fa05a19b48bc 1-6,8-19,21-22,24-29,31-36,38-40
+crates/synwire-orchestrator/src/constants.rs
+  dcf2fa05a19b48bc 1-10
+crates/synwire-orchestrator/tests/prop_channel_topic_concatenates.rs
+  dcf2fa05a19b48bc 1-51
+crates/synwire-orchestrator/src/metrics/mod.rs
+  dcf2fa05a19b48bc 1-16
+crates/synwire-orchestrator/tests/prop_checkpoint_roundtrip.rs
+  dcf2fa05a19b48bc 1-48
+crates/synwire-orchestrator/src/channels/mod.rs
+  dcf2fa05a19b48bc 1-29
+crates/synwire-orchestrator/src/channels/traits.rs
+  dcf2fa05a19b48bc 1-39
+crates/synwire-orchestrator/src/types/overwrite.rs
+  dcf2fa05a19b48bc 1-18
+crates/synwire-orchestrator/src/prebuilt/react_agent.rs
+  dcf2fa05a19b48bc 1-20,23-32,34,36-49,51-69,71-79,81-83,85-105,107-121,123-136,209-215,217-225,227-231,233-238,240-244,246-252,254-258,260-264,266-292,294-296,298-299,301-302,396-397
+crates/synwire-derive/tests/state_tests.rs
+  dcf2fa05a19b48bc 1-5,7,9-13,15-22,24-91,184
+crates/synwire-orchestrator/src/channels/named_barrier.rs
+  dcf2fa05a19b48bc 1-143
+crates/synwire-orchestrator/Cargo.toml
+  dcf2fa05a19b48bc 1-31
+crates/synwire-orchestrator/src/registry/mod.rs
+  dcf2fa05a19b48bc 1-5,7-8,10,12-14,18-19,21-24,26-37,39-48,50-63,65-68
+crates/synwire-derive/src/lib.rs
+  dcf2fa05a19b48bc 1-88
+crates/synwire-orchestrator/src/channels/ephemeral.rs
+  dcf2fa05a19b48bc 1-97
+crates/synwire-orchestrator/src/types/stream_mode.rs
+  dcf2fa05a19b48bc 1-19
+crates/synwire-orchestrator/src/channels/any_value.rs
+  dcf2fa05a19b48bc 1-90
+crates/synwire-orchestrator/src/error.rs
+  dcf2fa05a19b48bc 1-96,104-158,162-180
+crates/synwire-orchestrator/src/types/node_state.rs
+  dcf2fa05a19b48bc 1-32
+crates/synwire-derive/src/state.rs
+  dcf2fa05a19b48bc 1-102,128-132,135-148,159-230,323-324
+crates/synwire-orchestrator/src/lib.rs
+  dcf2fa05a19b48bc 1-13,15-17,19-21,24-39
+crates/synwire-orchestrator/src/channels/topic.rs
+  dcf2fa05a19b48bc 1-118
+crates/synwire-orchestrator/src/graph/state.rs
+  dcf2fa05a19b48bc 2,6-10,14,16-18,66,82,86-92,94,96-99,101-102,104-106,108-111,114,116-119,121-140,142-158,160-165,167-195,197-217,219-252,254-255,344-345
+crates/synwire-orchestrator/src/config/mod.rs
+  dcf2fa05a19b48bc 1-7
+crates/synwire-orchestrator/src/channels/last_value.rs
+  dcf2fa05a19b48bc 1-122
+crates/synwire-orchestrator/src/graph/mod.rs
+  dcf2fa05a19b48bc 1-3,6-8,10-11
+crates/synwire-derive/src/tool.rs
+  dcf2fa05a19b48bc 1-287
+crates/synwire-orchestrator/tests/prop_conditional_edge_routing.rs
+  dcf2fa05a19b48bc 1-8,10-21,23-26,28,30-41,43-44,46-63,65-66,68-75,77-79,81-86
+crates/synwire-orchestrator/src/prebuilt/mod.rs
+  dcf2fa05a19b48bc 1-19,21-22
+crates/synwire-orchestrator/src/graph/compiled.rs
+  dcf2fa05a19b48bc 1-11,13-17,20,22-25,27-28,30,32-67,69-87,89-138,141-175,404-411
+crates/synwire-orchestrator/src/types/interrupt.rs
+  dcf2fa05a19b48bc 1-29
+crates/synwire-orchestrator/src/types/command.rs
+  dcf2fa05a19b48bc 1-24
+crates/synwire-orchestrator/src/types/send.rs
+  dcf2fa05a19b48bc 1-24
+crates/synwire-orchestrator/tests/prop_send_fanout.rs
+  dcf2fa05a19b48bc 1-49
+crates/synwire-orchestrator/src/types/snapshot.rs
+  dcf2fa05a19b48bc 1-25
+crates/synwire-orchestrator/tests/prop_channel_last_value_overwrites.rs
+  dcf2fa05a19b48bc 1-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.12",
+  "base_commit_sha": "a843a7e7c5369b428b292dbb76004074de4cf82d",
+  "prompts": {
+    "0c8294b333fc3809": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e2df8a86-f302-4d46-adfd-815eda580672",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1466,
+      "overriden_lines": 0
+    },
+    "5253be1db07c33ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "87cdbee4-b88b-4766-bc0f-f5fb7925be26",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 202,
+      "overriden_lines": 0
+    },
+    "bfa95a7a0b6ddf06": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bdbb9d4f-dfaa-461c-97c3-bb5883aea9e5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1034,
+      "overriden_lines": 0
+    },
+    "dcf2fa05a19b48bc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a9377dfa-98b0-4f3e-84a9-329978721034",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "Naadir Jeewa <naadir@randomvariable.co.uk>",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7772,
+      "overriden_lines": 0
+    }
+  }
+}
