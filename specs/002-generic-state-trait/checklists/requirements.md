@@ -1,7 +1,7 @@
-# Specification Quality Checklist: LangChain Rust Port
+# Specification Quality Checklist: Generic State Trait for Graph Execution
 
 **Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2026-03-09
+**Created**: 2026-03-15
 **Feature**: [spec.md](../spec.md)
 
 ## Content Quality
@@ -31,10 +31,6 @@
 
 ## Notes
 
-- The spec references Rust-specific concepts (traits, crates, async) because
-  this is a language port — the "what" inherently includes the target language.
-  However, no specific library versions, internal architectures, or code
-  patterns are prescribed.
-- Provider integrations beyond OpenAI are explicitly out of scope.
-- Assumptions section documents reasonable defaults for runtime, serialisation,
-  and audience.
+- All items pass validation. Spec is ready for `/speckit.clarify` or `/speckit.plan`.
+- Note: FR-S14 explicitly guards the boundary — RunnableCore must NOT change. This is an important scope constraint.
+- The spec references Rust-specific concepts (traits, derive macros, serde) because this is a library feature where the "users" are developers. These are domain terms, not implementation details — they describe WHAT the developer interacts with, not HOW it's built internally.
