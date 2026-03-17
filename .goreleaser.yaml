@@ -88,3 +88,15 @@ release:
     | [synwire-checkpoint-sqlite](https://crates.io/crates/synwire-checkpoint-sqlite) | {{ .Tag }} |
     | [synwire-llm-openai](https://crates.io/crates/synwire-llm-openai) | {{ .Tag }} |
     | [synwire-llm-ollama](https://crates.io/crates/synwire-llm-ollama) | {{ .Tag }} |
+    | [synwire-agent](https://crates.io/crates/synwire-agent) | {{ .Tag }} |
+    | [synwire-mcp-adapters](https://crates.io/crates/synwire-mcp-adapters) | {{ .Tag }} |
+    | [synwire-chunker](https://crates.io/crates/synwire-chunker) | {{ .Tag }} |
+    | [synwire-embeddings-local](https://crates.io/crates/synwire-embeddings-local) | {{ .Tag }} |
+    | [synwire-vectorstore-lancedb](https://crates.io/crates/synwire-vectorstore-lancedb) | {{ .Tag }} |
+    | [synwire-index](https://crates.io/crates/synwire-index) | {{ .Tag }} |
+    | [synwire-lsp](https://crates.io/crates/synwire-lsp) | {{ .Tag }} |
+    | [synwire-dap](https://crates.io/crates/synwire-dap) | {{ .Tag }} |
+    | [synwire-sandbox](https://crates.io/crates/synwire-sandbox) | {{ .Tag }} |
+    | [synwire-storage](https://crates.io/crates/synwire-storage) | {{ .Tag }} |
+    | [synwire-agent-skills](https://crates.io/crates/synwire-agent-skills) | {{ .Tag }} |
+    | [synwire-daemon](https://crates.io/crates/synwire-daemon) | {{ .Tag }} |
