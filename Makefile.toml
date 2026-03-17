@@ -101,7 +101,7 @@ args = [
 ]
 
 [tasks.msrv-check]
-description = "Check compilation with MSRV (1.85)"
+description = "Check compilation with MSRV (1.88)"
 toolchain = "1.88.0"
 command = "cargo"
 args = [

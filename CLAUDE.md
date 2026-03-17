@@ -1,7 +1,7 @@
 # Synwire Development Guidelines
 
 ## Active Technologies
-- Rust stable, edition 2024, MSRV 1.85
+- Rust stable, edition 2024, MSRV 1.88
 - Async: tokio 1, futures-core/futures-util 0.3
 - Serialization: serde/serde_json 1
 - Errors: thiserror 2
@@ -16,7 +16,7 @@
 - Community detection: hit-leiden (planned)
 - Scripting: mlua (Lua), rhai, extism (WASM) — for agent skills (planned)
 - Build: cargo-make (Makefile.toml at workspace root)
-- Rust stable, edition 2024, MSRV 1.85 (CodeQL supports editions 2021 and 2024) + GitHub Actions runners (`ubuntu-latest`), GitHub Advanced Security (free for public repos) (004-supply-chain-security)
+- Rust stable, edition 2024, MSRV 1.88 (CodeQL supports editions 2021 and 2024) + GitHub Actions runners (`ubuntu-latest`), GitHub Advanced Security (free for public repos) (004-supply-chain-security)
 - N/A — this feature produces workflow YAML, TOML/YAML config files, and release SBOM artifacts (004-supply-chain-security)
 
 ## Project Structure
@@ -122,6 +122,6 @@ cargo make updatecli-apply  # apply dependency updates + raise PRs
 - Research: `docs/tempresearch/` (3 research docs on SWE-bench, code localization, tool search)
 
 ## Recent Changes
-- 004-supply-chain-security: Added Rust stable, edition 2024, MSRV 1.85 (CodeQL supports editions 2021 and 2024) + GitHub Actions runners (`ubuntu-latest`), GitHub Advanced Security (free for public repos)
+- 004-supply-chain-security: Added Rust stable, edition 2024, MSRV 1.88 (CodeQL supports editions 2021 and 2024) + GitHub Actions runners (`ubuntu-latest`), GitHub Advanced Security (free for public repos)
 - 003-agent-core: Expanded spec with 23 new user stories (US16-US39) covering VFS, semantic search, LSP/DAP, code graphs, community detection, agent skills, MCP server, daemon, tool search
 - 003-agent-core: Refactored all `Backend*` terminology to `*Provider`/`Vfs` throughout spec

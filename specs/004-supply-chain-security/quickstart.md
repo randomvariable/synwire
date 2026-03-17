@@ -35,7 +35,7 @@ CodeQL findings that originate inside proc-macro-generated code (e.g., `serde` d
 ### Understanding the two scan modes
 
 - **PR scan**: Runs on every pull request. Reports only vulnerabilities *newly introduced* by the PR (i.e., not present in the base branch). This prevents pre-existing issues from blocking every PR.
-- **Scheduled scan**: Runs daily at 02:00 UTC. Full scan of `Cargo.lock` and all GitHub Actions workflow files. Reports all known vulnerabilities in current dependencies.
+- **Scheduled scan**: Runs daily at 02:00 UTC. Full scan of `Cargo.lock`. Reports all known vulnerabilities in current Cargo dependencies. GitHub Actions workflow file vulnerability coverage is handled separately by Dependabot (`github-actions` ecosystem) and Scorecard's `Pinned-Dependencies` check.
 
 ### Acting on a vulnerability finding
 
@@ -107,7 +107,14 @@ Add the human-readable tag as a comment so updatecli can match and update it.
 
 ### How it works
 
-updatecli runs weekly (Monday 05:00 UTC) as a GitHub Actions workflow. It reads the policy files in `updatecli/updatecli.d/`, checks for newer versions of each declared dependency, and opens a PR for each update found. If a PR already exists for that update (e.g., from a previous week's run), it updates the existing PR branch rather than opening a duplicate.
+updatecli runs weekly (Monday 05:00 UTC) as a GitHub Actions workflow. It processes `updatecli/updatecli.d/github-actions.yaml` to update GitHub Actions SHA pins, and opens a PR for each action with a new release. If a PR already exists for that update (e.g., from a previous week's run), it updates the existing PR branch rather than opening a duplicate.
+
+**Note**: The CI workflow processes `github-actions.yaml` only. `cargo.yaml` uses the `autodiscovery.crawlers.cargo` feature which requires the `--experimental` flag — this flag is not supported by the `updatecli-action`. Run Cargo updates locally instead:
+
+```bash
+cargo make updatecli-diff    # preview
+cargo make updatecli-apply   # apply and raise PRs
+```
 
 ### Merging an update PR
 
@@ -117,11 +124,11 @@ updatecli runs weekly (Monday 05:00 UTC) as a GitHub Actions workflow. It reads 
 
 ### Triggering updatecli manually
 
-Go to Actions → updatecli → Run workflow. This is useful after adding a new dependency that you want updatecli to track immediately.
+Go to Actions → updatecli → Run workflow. This triggers the GitHub Actions SHA-pin updates only.
 
-### Adding a new dependency to updatecli tracking
+### Adding a new Cargo dependency to updatecli tracking
 
-Edit `updatecli/updatecli.d/cargo.yaml` and add a new source/condition/target block for the crate. Follow the existing pattern in the file. Commit the change; updatecli will pick it up on the next scheduled run.
+No manual entries are needed. `cargo.yaml` uses updatecli's built-in Cargo autodiscovery crawler, which recursively discovers all `Cargo.toml` files and generates per-dependency update pipelines automatically. Any new dependency added to `Cargo.toml` is tracked on the next `cargo make updatecli-diff/apply` run.
 
 ---
 

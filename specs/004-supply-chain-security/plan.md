@@ -9,7 +9,7 @@ Add five complementary, free, open-source security tooling workflows to the Synw
 
 ## Technical Context
 
-**Language/Version**: Rust stable, edition 2024, MSRV 1.85 (CodeQL supports editions 2021 and 2024)
+**Language/Version**: Rust stable, edition 2024, MSRV 1.88 (CodeQL supports editions 2021 and 2024)
 **Primary Dependencies**: GitHub Actions runners (`ubuntu-latest`), GitHub Advanced Security (free for public repos)
 **Storage**: N/A — this feature produces workflow YAML, TOML/YAML config files, and release SBOM artifacts
 **Testing**: `actionlint` for static lint of workflow YAML; live workflow runs are the acceptance tests

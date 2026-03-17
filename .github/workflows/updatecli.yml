@@ -28,3 +28,4 @@ jobs:
           config: updatecli/updatecli.d/github-actions.yaml
         env:
           UPDATECLI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

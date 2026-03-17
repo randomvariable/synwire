@@ -13,7 +13,7 @@ Use CodeQL with `build-mode: none` and the `security-extended` query suite. Pin 
 
 **Status**: GA since CodeQL CLI 2.23.3 (October 2025). Not experimental.
 
-**Supported editions**: Rust 2021 and 2024. Nightly features are explicitly not supported (not relevant for Synwire, which targets stable MSRV 1.85 edition 2024).
+**Supported editions**: Rust 2021 and 2024. Nightly features are explicitly not supported (not relevant for Synwire, which targets stable MSRV 1.88 edition 2024).
 
 **Build modes**: Only `build-mode: none` is available for Rust. `autobuild` and manual build are not supported. Under `none` mode, CodeQL uses `rust-analyzer` to extract the database — `build.rs` scripts and macro code are compiled by rust-analyzer, not via a full `cargo build`. A `Cargo.toml` workspace root is sufficient for CodeQL to discover all member crates.
 
