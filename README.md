@@ -12,15 +12,28 @@ Synwire provides idiomatic Rust implementations of core LLM abstractions — lan
 
 ```text
 crates/
-├── synwire-core/               # Foundational traits (BaseChatModel, Embeddings, VectorStore, Tool, RunnableCore)
-├── synwire-orchestrator/       # Graph execution: StateGraph<S>, CompiledGraph<S>, channels, Pregel engine
-├── synwire-checkpoint/         # Checkpoint persistence (in-memory, SQLite)
-├── synwire-checkpoint-sqlite/  # SQLite checkpoint backend
-├── synwire-llm-openai/         # OpenAI provider (ChatOpenAI, OpenAIEmbeddings)
-├── synwire-llm-ollama/         # Ollama provider (ChatOllama, OllamaEmbeddings)
-├── synwire-derive/             # Proc macros: #[tool], #[derive(State)]
-├── synwire-test-utils/         # Proptest strategies and test fixtures
-└── synwire/                    # Convenience re-exports and reference implementations
+├── synwire-core/                  # Foundational traits: Vfs, Tool, agents, embeddings, vector stores, MCP
+├── synwire-orchestrator/          # Graph execution: StateGraph<S>, CompiledGraph<S>
+├── synwire-checkpoint/            # Checkpoint persistence traits + in-memory impl
+├── synwire-checkpoint-sqlite/     # SQLite checkpoint backend (WAL mode)
+├── synwire-llm-openai/            # OpenAI provider
+├── synwire-llm-ollama/            # Ollama provider
+├── synwire-derive/                # Proc macros: #[tool], #[derive(State)]
+├── synwire-agent/                 # Agent runtime: VFS providers, middleware, strategies, MCP, sessions
+├── synwire-mcp-adapters/          # MCP client: multi-server, stdio/HTTP/WebSocket transports
+├── synwire-chunker/               # Tree-sitter AST-aware code chunking (14 languages)
+├── synwire-embeddings-local/      # Local embedding + reranking via fastembed-rs
+├── synwire-vectorstore-lancedb/   # LanceDB vector store
+├── synwire-index/                 # Semantic indexing pipeline: walk → chunk → embed → store
+├── synwire-lsp/                   # LSP client (12 tools)
+├── synwire-dap/                   # DAP debug client (sessions, breakpoints, evaluate)
+├── synwire-sandbox/               # Process sandboxing: isolation, approval gates
+├── synwire-storage/               # StorageLayout, RepoId/WorktreeId
+├── synwire-agent-skills/          # Agent skills (agentskills.io spec, Lua/Rhai/WASM)
+├── synwire-daemon/                # Singleton background process per product
+├── synwire-mcp-server/            # MCP server binary — stdio proxy to daemon
+├── synwire-test-utils/            # Proptest strategies and test fixtures (not published)
+└── synwire/                       # Convenience re-exports
 ```
 
 ### Design Principles
