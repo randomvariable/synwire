@@ -1,0 +1,42 @@
+[package]
+name = "synwire-agent-skills"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "Agent skills runtime for Synwire following the agentskills.io specification"
+
+[lints]
+workspace = true
+
+[features]
+rhai-runtime = ["dep:rhai"]
+lua-runtime = ["dep:mlua"]
+wasm-runtime = ["dep:extism"]
+sandboxed = ["dep:synwire-sandbox"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tokio = { workspace = true }
+synwire-storage = { workspace = true }
+synwire-core = { path = "../synwire-core" }
+regex = { workspace = true }
+walkdir = { workspace = true }
+globset = { workspace = true }
+
+rhai = { workspace = true, optional = true }
+mlua = { workspace = true, optional = true }
+extism = { workspace = true, optional = true }
+synwire-sandbox = { workspace = true, optional = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }

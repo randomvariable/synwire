@@ -100,3 +100,5 @@ let add_prefix = RunnableLambda::new(|input: serde_json::Value| {
 
 - [Streaming](./streaming.md) -- stream responses incrementally
 - [RAG](./rag.md) -- add retrieval-augmented generation
+
+> **Background**: [Prompt Chaining](https://www.promptingguide.ai/techniques/prompt_chaining) — the technique of decomposing a task into sequential LLM calls, each building on the previous output.

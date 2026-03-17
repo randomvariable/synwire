@@ -4,9 +4,10 @@
 //! executes them sequentially, appending tool-response messages to the state.
 
 use std::collections::HashMap;
+use std::time::Duration;
 
 use serde::{Deserialize, Serialize};
-use synwire_core::tools::Tool;
+use synwire_core::tools::{TimeoutBehavior, Tool, ToolConfig};
 
 use crate::error::GraphError;
 
@@ -38,6 +39,10 @@ pub struct ToolResultEntry {
 pub struct ToolNode {
     tools: HashMap<String, Box<dyn Tool>>,
     max_result_size: Option<usize>,
+    /// Per-tool operational configuration keyed by tool name.
+    tool_configs: HashMap<String, ToolConfig>,
+    /// Default timeout applied to all tools without a per-tool override.
+    default_timeout: Option<Duration>,
 }
 
 impl ToolNode {
@@ -52,6 +57,8 @@ impl ToolNode {
         Self {
             tools,
             max_result_size: None,
+            tool_configs: HashMap::new(),
+            default_timeout: None,
         }
     }
 
@@ -65,6 +72,27 @@ impl ToolNode {
         self
     }
 
+    /// Sets per-tool operational configuration.
+    ///
+    /// The `name` must match the tool's [`Tool::name`]. Per-tool timeouts
+    /// take precedence over the default timeout set with
+    /// [`with_default_timeout`](Self::with_default_timeout).
+    #[must_use]
+    pub fn with_tool_config(mut self, name: impl Into<String>, config: ToolConfig) -> Self {
+        let _ = self.tool_configs.insert(name.into(), config);
+        self
+    }
+
+    /// Sets the default timeout applied to every tool invocation.
+    ///
+    /// Per-tool configurations set via [`with_tool_config`](Self::with_tool_config)
+    /// override this value when they specify their own timeout.
+    #[must_use]
+    pub const fn with_default_timeout(mut self, timeout: Duration) -> Self {
+        self.default_timeout = Some(timeout);
+        self
+    }
+
     /// Executes tool calls found in the state.
     ///
     /// # Errors
@@ -73,6 +101,7 @@ impl ToolNode {
     ///   the last message has no tool calls.
     /// - [`GraphError::ToolNotFound`] if a tool call references an unknown tool.
     /// - [`GraphError::ToolInvocation`] if a tool returns an error.
+    #[allow(clippy::too_many_lines)]
     pub async fn invoke(
         &self,
         mut state: serde_json::Value,
@@ -122,13 +151,62 @@ impl ToolNode {
                     name: name.to_owned(),
                 })?;
 
-            let output = tool
-                .invoke(arguments)
-                .await
-                .map_err(|e| GraphError::ToolInvocation {
-                    tool: name.to_owned(),
-                    message: e.to_string(),
-                })?;
+            // Validate arguments against the tool's JSON Schema (T302).
+            if !tool.schema().parameters.is_null() {
+                if let Ok(validator) = jsonschema::validator_for(&tool.schema().parameters) {
+                    if !validator.is_valid(&arguments) {
+                        return Err(GraphError::ToolInvocation {
+                            tool: name.to_owned(),
+                            message: "arguments failed JSON Schema validation".into(),
+                        });
+                    }
+                }
+            }
+
+            // Resolve timeout: per-tool config takes precedence (T300).
+            let timeout_duration = self
+                .tool_configs
+                .get(name)
+                .and_then(|c| c.timeout)
+                .or(self.default_timeout);
+            let timeout_behavior = self
+                .tool_configs
+                .get(name)
+                .map(|c| c.timeout_behavior)
+                .unwrap_or_default();
+
+            let output = if let Some(duration) = timeout_duration {
+                match tokio::time::timeout(duration, tool.invoke(arguments)).await {
+                    Ok(result) => result.map_err(|e| GraphError::ToolInvocation {
+                        tool: name.to_owned(),
+                        message: e.to_string(),
+                    })?,
+                    Err(_elapsed) => match timeout_behavior {
+                        TimeoutBehavior::RaiseException => {
+                            return Err(GraphError::ToolInvocation {
+                                tool: name.to_owned(),
+                                message: format!(
+                                    "tool raised timeout exception after {duration:?}"
+                                ),
+                            });
+                        }
+                        // ReturnError and any future non_exhaustive variants.
+                        _ => {
+                            return Err(GraphError::ToolInvocation {
+                                tool: name.to_owned(),
+                                message: format!("tool timed out after {duration:?}"),
+                            });
+                        }
+                    },
+                }
+            } else {
+                tool.invoke(arguments)
+                    .await
+                    .map_err(|e| GraphError::ToolInvocation {
+                        tool: name.to_owned(),
+                        message: e.to_string(),
+                    })?
+            };
 
             let mut content = output.content;
             let mut truncated = false;
@@ -210,18 +288,20 @@ impl ToolNode {
     }
 }
 
+#[allow(clippy::missing_fields_in_debug)]
 impl std::fmt::Debug for ToolNode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("ToolNode")
             .field("tool_count", &self.tools.len())
             .field("max_result_size", &self.max_result_size)
+            .field("default_timeout", &self.default_timeout)
             .field("tools", &self.tools.keys().collect::<Vec<_>>())
             .finish()
     }
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used)]
+#[allow(clippy::unwrap_used, clippy::unnecessary_literal_bound)]
 mod tests {
     use super::*;
     use synwire_core::BoxFuture;
@@ -264,6 +344,7 @@ mod tests {
                 Ok(ToolOutput {
                     content: format!("result for {}: {input}", self.tool_name),
                     artifact: None,
+                    ..ToolOutput::default()
                 })
             })
         }
@@ -393,6 +474,125 @@ mod tests {
         assert_eq!(messages.len(), 3);
         assert_eq!(messages[1]["tool_call_id"], "tc_1");
         assert_eq!(messages[2]["tool_call_id"], "tc_2");
+    }
+
+    #[tokio::test]
+    async fn test_tool_node_timeout_returns_error() {
+        use std::time::Duration;
+        use synwire_core::tools::ToolConfig;
+
+        struct SlowTool {
+            schema: ToolSchema,
+        }
+        impl Tool for SlowTool {
+            fn name(&self) -> &str {
+                "slow"
+            }
+            fn description(&self) -> &str {
+                "slow"
+            }
+            fn schema(&self) -> &ToolSchema {
+                &self.schema
+            }
+            fn invoke(
+                &self,
+                _input: serde_json::Value,
+            ) -> BoxFuture<'_, Result<ToolOutput, SynwireError>> {
+                Box::pin(async {
+                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    Ok(ToolOutput::default())
+                })
+            }
+        }
+
+        let tools: Vec<Box<dyn Tool>> = vec![Box::new(SlowTool {
+            schema: ToolSchema {
+                name: "slow".into(),
+                description: "slow".into(),
+                parameters: serde_json::json!({"type": "object"}),
+            },
+        })];
+        let config = ToolConfig {
+            timeout: Some(Duration::from_millis(50)),
+            ..ToolConfig::default()
+        };
+        let node = ToolNode::new(tools).with_tool_config("slow", config);
+
+        let state = serde_json::json!({
+            "messages": [
+                {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                        {"id": "tc_1", "name": "slow", "arguments": {}}
+                    ]
+                }
+            ]
+        });
+
+        let err = node.invoke(state).await.unwrap_err();
+        assert!(
+            err.to_string().contains("timed out"),
+            "unexpected error: {err}"
+        );
+    }
+
+    #[tokio::test]
+    async fn test_tool_node_schema_validation_rejects_bad_args() {
+        struct StrictTool {
+            schema: ToolSchema,
+        }
+        impl Tool for StrictTool {
+            fn name(&self) -> &str {
+                "strict"
+            }
+            fn description(&self) -> &str {
+                "strict"
+            }
+            fn schema(&self) -> &ToolSchema {
+                &self.schema
+            }
+            fn invoke(
+                &self,
+                _input: serde_json::Value,
+            ) -> BoxFuture<'_, Result<ToolOutput, SynwireError>> {
+                Box::pin(async { Ok(ToolOutput::default()) })
+            }
+        }
+
+        let tools: Vec<Box<dyn Tool>> = vec![Box::new(StrictTool {
+            schema: ToolSchema {
+                name: "strict".into(),
+                description: "strict".into(),
+                // Requires a "query" field of type string.
+                parameters: serde_json::json!({
+                    "type": "object",
+                    "required": ["query"],
+                    "properties": {"query": {"type": "string"}},
+                    "additionalProperties": false
+                }),
+            },
+        })];
+        let node = ToolNode::new(tools);
+
+        let state = serde_json::json!({
+            "messages": [
+                {
+                    "type": "ai",
+                    "content": "",
+                    "tool_calls": [
+                        // Missing required "query" field.
+                        {"id": "tc_1", "name": "strict", "arguments": {"bad": 42}}
+                    ]
+                }
+            ]
+        });
+
+        let err = node.invoke(state).await.unwrap_err();
+        assert!(
+            err.to_string().contains("validation"),
+            "unexpected error: {err}"
+        );
     }
 
     #[tokio::test]

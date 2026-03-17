@@ -29,7 +29,7 @@ Defines `invoke`, `batch`, `stream`, `model_type`, and `bind_tools`. All methods
 
 ### RunnableCore
 
-The universal composition primitive. Uses `serde_json::Value` as the I/O type for object safety and heterogeneous chaining. This trades compile-time type safety for composability, matching LangChain Python's dynamic typing model.
+The universal composition primitive. Uses `serde_json::Value` as the I/O type for object safety and heterogeneous chaining. Heterogeneous chaining in a statically-typed language requires a common I/O boundary; `serde_json::Value` provides that boundary without sacrificing `Send + Sync` or object safety.
 
 ### Embeddings
 

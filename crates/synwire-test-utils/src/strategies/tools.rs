@@ -2,7 +2,7 @@
 
 use proptest::prelude::*;
 use serde_json::{Value, json};
-use synwire_core::tools::{ToolOutput, ToolResult, ToolSchema};
+use synwire_core::tools::{ToolOutput, ToolResult, ToolResultStatus, ToolSchema};
 
 /// Strategy for generating arbitrary [`ToolSchema`].
 pub fn arb_tool_schema() -> impl Strategy<Value = ToolSchema> {
@@ -41,8 +41,16 @@ pub fn arb_json_schema() -> impl Strategy<Value = Value> {
 
 /// Strategy for generating arbitrary [`ToolOutput`].
 pub fn arb_tool_output() -> impl Strategy<Value = ToolOutput> {
-    (".{0,200}", proptest::option::of(arb_simple_json()))
-        .prop_map(|(content, artifact)| ToolOutput { content, artifact })
+    (".{0,200}", proptest::option::of(arb_simple_json())).prop_map(|(content, artifact)| {
+        ToolOutput {
+            content,
+            artifact,
+            binary_results: Vec::new(),
+            status: ToolResultStatus::Success,
+            telemetry: None,
+            content_type: None,
+        }
+    })
 }
 
 /// Strategy for generating arbitrary [`ToolResult`].

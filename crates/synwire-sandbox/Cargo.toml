@@ -1,0 +1,38 @@
+[package]
+name = "synwire-sandbox"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Platform-specific sandbox backends for synwire agents"
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+futures-util = { workspace = true }
+regex = { workspace = true }
+expectrl = { workspace = true }
+tempfile = { workspace = true }
+which = { workspace = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+nix = { workspace = true }
+oci-spec = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
+serde_json = { workspace = true }
+
+[target.'cfg(target_os = "linux")'.dev-dependencies]
+nix = { workspace = true }
+
+[lints]
+workspace = true

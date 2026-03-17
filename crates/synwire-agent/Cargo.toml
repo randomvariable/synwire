@@ -1,0 +1,52 @@
+[package]
+name = "synwire-agent"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Agent runtime implementations for synwire"
+readme = "README.md"
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0", features = ["agentic-ignore"] }
+tokio = { workspace = true, features = ["full"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+futures-util = { workspace = true }
+reqwest = { workspace = true }
+tracing = { workspace = true }
+typetag = { workspace = true }
+bitflags = { workspace = true }
+dyn-clone = { workspace = true }
+uuid = { workspace = true }
+regex = { workspace = true }
+chrono = { workspace = true }
+rusqlite = { workspace = true }
+tar = { workspace = true }
+flate2 = { workspace = true }
+bzip2 = { workspace = true }
+zip = { workspace = true }
+synwire-index = { path = "../synwire-index", optional = true }
+synwire-embeddings-local = { path = "../synwire-embeddings-local", optional = true }
+synwire-vectorstore-lancedb = { path = "../synwire-vectorstore-lancedb", optional = true }
+once_cell = { version = "1", optional = true }
+
+[features]
+## Enable semantic indexing and search via fastembed + LanceDB.
+##
+## When enabled, `LocalProvider` gains `index`, `index_status`, and
+## `semantic_search` VFS operations backed by local BAAI/bge models.
+semantic-search = [
+    "dep:synwire-index",
+    "dep:synwire-embeddings-local",
+    "dep:synwire-vectorstore-lancedb",
+    "dep:once_cell",
+]
+
+[dev-dependencies]
+tempfile = { workspace = true }
+
+[lints]
+workspace = true

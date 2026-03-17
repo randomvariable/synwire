@@ -1,0 +1,32 @@
+[package]
+name = "synwire-vectorstore-lancedb"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+readme = "README.md"
+description = "LanceDB vector store for Synwire semantic search"
+
+[lints]
+workspace = true
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
+lancedb = { workspace = true }
+arrow-array = { workspace = true }
+arrow-schema = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+futures-util = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
+tempfile = "3"

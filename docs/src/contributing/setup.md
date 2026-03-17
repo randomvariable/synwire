@@ -9,8 +9,8 @@
 ## Clone and build
 
 ```sh
-git clone https://github.com/randomvariable/langchain-rs.git
-cd langchain-rs
+git clone https://github.com/randomvariable/synwire.git
+cd synwire
 cargo build --workspace
 ```
 

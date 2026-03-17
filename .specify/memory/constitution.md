@@ -1,19 +1,21 @@
 <!--
   Sync Impact Report
   ===================================================
-  Version change: 0.0.0 → 1.0.0 (MAJOR: initial ratification)
-  Modified principles: N/A (initial)
-  Added sections: Core Principles (5), Technology Stack, Development Workflow, Governance
-  Removed sections: N/A (initial)
+  Version change: 1.0.0 → 1.1.0 (MINOR: new principle added)
+  Modified principles: N/A
+  Added sections: Principle VI (Diataxis Documentation)
+  Removed sections: N/A
   Templates requiring updates:
     - .specify/templates/plan-template.md: ✅ compatible (no changes needed)
-    - .specify/templates/spec-template.md: ✅ compatible (no changes needed)
-    - .specify/templates/tasks-template.md: ✅ compatible (no changes needed)
-  Follow-up TODOs: none
+    - .specify/templates/spec-template.md: ⚠️ should reference Diataxis requirement in future features
+    - .specify/templates/tasks-template.md: ⚠️ documentation tasks should include Diataxis quadrants
+  Follow-up TODOs:
+    - Ensure existing specs reference Diataxis documentation requirements
+    - Add documentation tasks to tasks.md for 003-agent-core
   ===================================================
 -->
 
-# LangChain Rust Constitution
+# Synwire Constitution
 
 ## Core Principles
 
@@ -23,21 +25,20 @@ All core abstractions (language models, embeddings, vector stores, retrievers,
 document loaders, tools, callbacks) MUST be defined as Rust traits. Concrete
 implementations MUST satisfy these traits, enabling provider-agnostic composition.
 
-- Each trait MUST live in the `langchain-core` crate.
+- Each trait MUST live in the `synwire-core` crate.
 - Provider-specific implementations MUST live in separate crates
-  (e.g. `langchain-openai`, `langchain-anthropic`).
+  (e.g. `synwire-llm-openai`, `synwire-llm-ollama`).
 - Traits MUST use associated types and generic bounds rather than trait objects
   where zero-cost abstraction is achievable. Use `dyn Trait` only at
   composition boundaries where dynamic dispatch is required.
 
 **Rationale**: Rust's trait system is the idiomatic mechanism for polymorphism.
-Trait-first design ensures the same pluggable architecture that makes LangChain
-Python successful, while preserving compile-time type safety.
+Trait-first design ensures the same pluggable architecture that makes LangChain Python (the upstream reference)
+successful, while preserving compile-time type safety.
 
 ### II. API Conceptual Parity
 
-The Rust port MUST maintain conceptual parity with the Python LangChain
-abstractions. Module structure, type names, and method semantics SHOULD mirror
+The Rust port MUST maintain conceptual parity with the Python LangChain abstractions (the upstream reference). Module structure, type names, and method semantics SHOULD mirror
 the Python equivalents unless Rust idiom demands deviation.
 
 - Core modules MUST map to their Python counterparts: `messages`, `prompts`,
@@ -49,7 +50,7 @@ the Python equivalents unless Rust idiom demands deviation.
   Python's LCEL (LangChain Expression Language).
 
 **Rationale**: Conceptual parity lowers the barrier for developers moving
-between Python and Rust LangChain. It also ensures feature completeness is
+between Python LangChain and Synwire. It also ensures feature completeness is
 measurable against the upstream project.
 
 ### III. Safety and Correctness (NON-NEGOTIABLE)
@@ -99,6 +100,38 @@ Every public trait, type, and function MUST have corresponding tests.
 **Rationale**: A port without tests is an unverified translation. Tests are the
 mechanism by which we confirm behavioural parity with the Python original.
 
+### VI. Diataxis Documentation
+
+Every public API surface MUST have documentation structured according to the
+[Diataxis framework](https://diataxis.fr/) across four quadrants:
+
+- **Tutorials** (learning-oriented): Step-by-step guides that teach core
+  concepts by building working examples. MUST be provided for each major
+  subsystem (e.g., agent lifecycle, plugin composition, backend usage).
+- **How-To Guides** (task-oriented): Goal-focused instructions for specific
+  tasks. MUST be provided for each public trait's primary use cases and
+  configuration patterns.
+- **Reference** (information-oriented): Complete, accurate descriptions of
+  every public trait, type, enum, struct, and function. `rustdoc` with
+  examples on all public items is the minimum. MUST include method
+  signatures, parameter descriptions, return types, and error conditions.
+- **Explanation** (understanding-oriented): Conceptual discussions of
+  architectural decisions, design trade-offs, and system relationships.
+  MUST be provided for non-obvious design choices (e.g., algebraic effects,
+  state isolation, signal routing tiers).
+
+Documentation MUST be:
+- Cross-linked between quadrants (tutorials reference explanations, how-to
+  guides reference API docs).
+- Kept in sync with code changes — documentation updates are required as
+  part of any PR that modifies public API.
+- Tested where possible (`cargo test --doc` for rustdoc examples).
+
+**Rationale**: The Diataxis framework ensures documentation serves all user
+needs — learning, doing, understanding, and looking up. Without structured
+documentation, even well-designed APIs are inaccessible to new contributors
+and difficult to maintain.
+
 ## Technology Stack
 
 - **Language**: Rust (latest stable edition, currently 2024)
@@ -144,13 +177,13 @@ Each workspace member crate is independently versioned following SemVer:
 - **MINOR**: New traits, types, or provider crates
 - **PATCH**: Bug fixes, documentation, internal refactoring
 
-The `langchain-core` crate version acts as the compatibility baseline.
-Provider crates MUST declare a compatible `langchain-core` version range.
+The `synwire-core` crate version acts as the compatibility baseline.
+Provider crates MUST declare a compatible `synwire-core` version range.
 
 ## Governance
 
 This constitution is the authoritative reference for architectural decisions
-and development standards in the LangChain Rust port. All code contributions
+and development standards in the Synwire project. All code contributions
 MUST comply with these principles.
 
 - **Amendments** require: (1) a written proposal documenting the change and
@@ -164,4 +197,4 @@ MUST comply with these principles.
 - **Guidance**: For day-to-day development guidance beyond this constitution,
   refer to `CLAUDE.md` and `README.md` at the repository root.
 
-**Version**: 1.0.0 | **Ratified**: 2026-03-09 | **Last Amended**: 2026-03-09
+**Version**: 1.1.1 | **Ratified**: 2026-03-09 | **Last Amended**: 2026-03-16 (renamed langchain→synwire throughout)

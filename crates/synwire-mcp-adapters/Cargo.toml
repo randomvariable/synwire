@@ -1,0 +1,26 @@
+[package]
+name = "synwire-mcp-adapters"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "High-level MCP adapters: multi-server client, tool conversion, interceptors, and provider abstraction"
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
+synwire-agent = { path = "../synwire-agent", version = "0.1.0" }
+tokio = { workspace = true, features = ["full"] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+futures-util = { workspace = true }
+tokio-tungstenite = { workspace = true }
+jsonschema = { workspace = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }
+
+[lints]
+workspace = true

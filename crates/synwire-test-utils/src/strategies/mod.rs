@@ -4,6 +4,7 @@
 //! types such as [`Message`](synwire_core::messages::Message),
 //! [`Document`](synwire_core::documents::Document), and checkpoint data.
 
+pub mod agents;
 pub mod channels;
 pub mod checkpoints;
 pub mod documents;

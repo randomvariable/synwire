@@ -122,3 +122,10 @@ for r in &results {
 
 - [Prompt Chains](./prompt-chains.md) -- compose templates with models
 - [Streaming](./streaming.md) -- stream responses token by token
+
+## See also
+
+- [Local Inference with Ollama](./ollama.md) — run the same example with a local model, no API key required
+- [LLM Providers Explanation](../explanation/synwire-llm-providers.md) — choosing and swapping providers
+
+> **Background**: [Zero-shot Prompting](https://www.promptingguide.ai/techniques/zeroshot) — how LLMs respond to instructions without examples.

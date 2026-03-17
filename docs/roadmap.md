@@ -1,6 +1,6 @@
 # Synwire Roadmap
 
-Post-M1 features organised as concrete work units, each sized for one `/speckit.specify` cycle. M1 (Core + Orchestrator) is defined in [spec.md](../specs/001-synwire/spec.md). The generic State trait refactor (002) is complete.
+Post-M1 features organised as concrete work units, each sized for one `/speckit.specify` cycle. M1 (Core + Orchestrator) is defined in [spec.md](../specs/001-synwire/spec.md). The generic State trait refactor (002) is complete. The agent core (003) is complete. MCP adapters (004) are complete.
 
 ## Work Units
 
@@ -9,11 +9,11 @@ Each unit produces one speckit feature branch (`NNN-short-name`), one `synwire-*
 ### Critical Path (AG-UI)
 
 ```text
-001-synwire (done) → 002-generic-state-trait (done)
-    → 003-agent-core ──→ 004-mcp-adapters ──→ 006-ag-ui
-           │                                      ↑
-           ├──→ 005-cognitive-session ────────────┘
-           └──→ 011-observability ───────────────┘
+001-synwire (done) → 002-generic-state-trait (done) → 003-agent-core (done)
+    → 004-mcp-adapters ──→ 006-ag-ui
+           │                    ↑
+           ├──→ 005-cognitive-session ─┘
+           └──→ 011-observability ────┘
 ```
 
 ### Full Sequence
@@ -22,8 +22,8 @@ Each unit produces one speckit feature branch (`NNN-short-name`), one `synwire-*
 |---|------|----------|------------|-----|--------|
 | 001 | [M1 Core + Orchestrator](../specs/001-synwire/spec.md) | synwire-core, synwire-orchestrator, synwire-checkpoint, synwire-checkpoint-sqlite, synwire-llm-openai, synwire-llm-ollama, synwire-derive, synwire-test-utils, synwire | — | FR-001–FR-068 | Done |
 | 002 | [Generic State Trait](../specs/002-generic-state-trait/spec.md) | synwire-orchestrator, synwire-derive | 001 | FR-S01–FR-S18 | Done |
-| 003 | [Agent Core](#003-agent-core) | synwire-agents | 002 | FR-070–094, FR-133–163, FR-363–366, FR-557–572 | — |
-| 004 | [MCP Adapters](#004-mcp-adapters) | synwire-mcp-adapters | 003 | FR-112–132, FR-333–335, FR-357–362 | — |
+| 003 | [Agent Core](#003-agent-core) | synwire-agent, synwire-chunker, synwire-index, synwire-embeddings-local, synwire-vectorstore-lancedb, synwire-lsp, synwire-dap, synwire-sandbox, synwire-storage, synwire-agent-skills, synwire-mcp-server | 002 | FR-070–094, FR-133–163, FR-363–366, FR-557–572, FR-618–632, FR-840–915 | Done |
+| 004 | [MCP Adapters](#004-mcp-adapters) | synwire-mcp-adapters | 003 | FR-112–132, FR-333–335, FR-357–362 | Done |
 | 005 | [Cognitive Architecture & Sessions](#005-cognitive-session) | synwire-agents | 003 | FR-573–583, FR-385–393, FR-371–377 | — |
 | 006 | [AG-UI Protocol](#006-ag-ui) | synwire-ag-ui | 003, 004 | FR-213–260 | — |
 | 007 | [Neo4j Provider](#007-neo4j) | synwire-neo4j | 002 | FR-336–339 (Neo4j subset) | — |
@@ -47,58 +47,73 @@ Each unit produces one speckit feature branch (`NNN-short-name`), one `synwire-*
 
 ## Work Unit Summaries
 
-### 003 — Agent Core
+### 003 — Agent Core ✓ Done
 
-**Crate**: `synwire-agents`
+**Crates**: `synwire-agent`, `synwire-chunker`, `synwire-index`, `synwire-embeddings-local`, `synwire-vectorstore-lancedb`, `synwire-lsp`, `synwire-dap`, `synwire-sandbox`, `synwire-storage`, `synwire-agent-skills`, `synwire-mcp-server`
 
-The minimum viable agent runtime. Agents are pure functions returning directives; a separate executor handles side effects.
+243 tasks across 35 phases. Spec: [spec.md](../specs/003-agent-core/spec.md).
 
-**Scope**:
-- Directive system: `Directive` enum, `DirectiveResult<S>`, `DirectiveExecutor` trait, `DirectiveFilter`, serialisation (FR-557–562)
-- Execution strategies: `ExecutionStrategy` trait, `DirectStrategy`, `FsmStrategy` with transitions and guards (FR-563–567)
-- Plugin system with state isolation: `PluginStateKey`, typed state accessors, merge-on-compose (FR-143–144, FR-568–570)
-- Signal routing: three-tier priority (strategy / agent / plugin), `SignalRouter` trait (FR-571–572)
-- `AgentNode` trait, `Agent<D, O>` builder, `RunContext<D>`, `OutputMode<T>`, `ModelSelector` (FR-133–138)
-- Agent callbacks: `BeforeAgentCallback`, `AfterAgentCallback` (FR-139)
-- Runner: session lookup, routing, invocation, event collection (FR-160–163)
-- Backend protocol: `BackendProtocol`, `BackendFactory`, `FileOperationError` (FR-070–074)
-- Backend implementations: StateBackend, StoreBackend, FilesystemBackend, CompositeBackend (FR-075–079)
-- Middleware: Filesystem, PatchToolCalls, Summarisation, PromptCaching (FR-081–082, FR-087–089)
-- Execution control: `max_turns`, `run_error_handlers`, `tool_error_formatter` (FR-363–366)
-- Streaming events: partial vs final, `turn_complete`, `is_final_response()` (FR-157–159)
+**Implemented**:
+- Directive system, FSM/MCTS execution strategies, plugin state isolation, three-tier signal routing
+- `AgentNode`, `RunContext`, `OutputMode`, `ModelSelector`, streaming events
+- `Vfs` trait (30 capability flags), `LocalProvider`, `MemoryProvider`, `CompositeProvider`, `StoreProvider`, `ReadGuard`
+- Middleware: `HierarchicalNarrowing`, `RepoFetchDetector`, `PatchToolCalls`, `PromptCaching`
+- `synwire-chunker`: tree-sitter AST-aware chunking, 14 languages, per-method qualified symbols, `skeleton` VFS op
+- `synwire-index`: semantic pipeline (walk→chunk→embed→store), BM25 hybrid search (tantivy, `hybrid-search` feature), code dependency graph (`code-graph` feature), community detection via label propagation (`community-detection` feature), xref graph
+- `synwire-embeddings-local`: fastembed-rs, bge-small-en-v1.5 default, reranking
+- `synwire-vectorstore-lancedb`: LanceDB vector store
+- `synwire-lsp`: 12-tool LSP client (hover, goto-definition, references, document-symbols, rename, …)
+- `synwire-dap`: DAP debug client (sessions, breakpoints, evaluate)
+- `synwire-sandbox`: process isolation, approval gates, `ShellSandbox`, `ProcessManager`, `ArchiveManager`
+- `synwire-storage`: `StorageLayout` (product-scoped paths, durable/cache split), `RepoId`, `WorktreeId`, `DependencyIndex` (Cargo/go.mod/npm/pyproject)
+- `synwire-agent-skills`: agentskills.io spec, Lua/Rhai/WASM/tool-sequence/external runtimes, progressive disclosure, `SkillRegistry`
+- `synwire-mcp-server`: standalone stdio MCP binary, 20+ tools, `ToolSearchIndex` (hybrid keyword+vector, progressive disclosure, ~85% token reduction), `SamplingProvider` trait, agent skills auto-discovery, daily-rotating log files
+- Research features: SBFL Ochiai fault localisation, experience pool (SQLite, two-tier local+global), dynamic call graph, dataflow tracer
 
-**Not included** (deferred): SubAgentMiddleware, SkillsMiddleware, TodoListMiddleware, MemoryMiddleware, agent transfer/handoff, workflow agents (Sequential/Parallel/Loop), sandbox backends, CLI.
-
-### 004 — MCP Adapters
+### 004 — MCP Adapters ✓ Done
 
 **Crate**: `synwire-mcp-adapters`
 
 Multi-server MCP client with bidirectional tool conversion.
 
-**Scope**:
-- `MultiServerMcpClient`: connection lifecycle, health checks (FR-112–116)
-- Four transports: Stdio, SSE, StreamableHttp, WebSocket (FR-117–120)
-- Bidirectional tool conversion: MCP tool ↔ Synwire `Tool` trait (FR-121–124)
-- Cursor-based tool pagination with 1000-page safeguard (FR-125–126)
-- Tool interceptor pattern (onion/middleware style) (FR-127–128)
-- MCP callbacks: LoggingMessage, Progress, Elicitation (FR-129–132)
-- Tool system enrichment: categories, `ToolProvider` trait, `#[tool]` macro enhancements (FR-333–335, FR-357–362)
+**Implemented**:
+- `McpTransport` trait, `McpConnectionState`, `McpServerStatus`, `McpToolDescriptor` — `synwire-core/src/mcp/traits.rs`
+- `McpServerConfig` — `synwire-core/src/mcp/config.rs`
+- `ElicitationRequest`/`ElicitationResult`/`ElicitationCallback` — `synwire-core/src/mcp/elicitation.rs`
+- `McpLifecycleManager` (connect, reconnect, health monitoring) — `synwire-agent/src/mcp/lifecycle.rs`
+- `StdioMcpTransport`, `HttpMcpTransport` (SSE + StreamableHttp), `InProcessMcpTransport` — `synwire-agent/src/mcp/`
+- `SamplingProvider` trait — `synwire-core/src/agents/sampling.rs`
+- `MultiServerMcpClient`: aggregate tools from multiple servers, health checks — `synwire-mcp-adapters/src/client.rs`
+- WebSocket transport — `synwire-mcp-adapters/src/transport/websocket.rs`
+- Bidirectional tool conversion: MCP tool ↔ Synwire `Tool` trait — `synwire-mcp-adapters/src/convert/tool.rs`
+- Cursor-based tool pagination with 1000-page safeguard — `synwire-mcp-adapters/src/pagination.rs`
+- Tool interceptor pattern (onion/middleware style) — `synwire-mcp-adapters/src/interceptor.rs`
+- MCP callbacks: LoggingMessage, Progress — `synwire-mcp-adapters/src/callbacks.rs`
+- Tool system enrichment: `ToolProvider` trait, `#[tool]` macro enhancements — `synwire-mcp-adapters/src/provider.rs`
 
 ### 005 — Cognitive Architecture & Sessions
 
-**Crate**: `synwire-agents` (extends 003)
+**Crate**: `synwire-agent` (extends 003)
 
 Cognitive primitives, session management, approval/HITL. Builds on agent core.
 
-**Scope**:
+**Already implemented (in 003)**:
+- `Session`, `SessionManager`, `SessionMetadata` traits — `synwire-core/src/agents/session.rs`
+- `InMemorySessionManager` + `MountedRepo` session state — `synwire-agent/src/session/`
+- `PreToolUseHook`, `PostToolUseHook`, `PreModelHook` with timeout enforcement and glob matching — `synwire-core/src/agents/hooks.rs`
+- `PermissionMode`, `PermissionBehavior`, `PermissionRule` — `synwire-core/src/agents/permission.rs`
+- `SandboxConfig`, `IsolationLevel`, filesystem rules — `synwire-core/src/agents/sandbox.rs`
+- `synwire-sandbox`: process isolation, approval gates, `ShellSandbox`, `ProcessManager`
+- Experience pool (two-tier SQLite-backed, local-first fallback) — `synwire-agent/src/experience/`
+
+**Remaining scope**:
 - Thread: append-only canonical log, `ProjectionStrategy` (Full, SlidingWindow, Summarizing, TokenBudget) (FR-573–575)
 - Memory: `AgentMemory` with typed named spaces (world, tasks, scratch), persistence policies (FR-576–577)
 - Identity: `AgentIdentity` with profile, revision counter, capabilities (FR-578–579)
 - Memory scoring: composite scoring (recency/semantic/importance), consolidation, `KnowledgeBase`, LLM importance inference (FR-371–374)
-- Session management: `RunState` serialisation, `SessionProvider`, in-memory + file backends (FR-385–387)
 - Hibernation: `Hibernatable` trait, `HibernationStore`, metadata, auto-hibernation policy (FR-580–583)
-- Hooks & lifecycle: bidirectional hooks (cancel/retry), FIFO/LIFO ordering, `pre_model_filter` (FR-388–390)
 - Approval & HITL: `ApprovalRequest`/`ApprovalResponse`, approval ledger, `FeedbackProvider` (FR-391–393)
+- Hooks: bidirectional (cancel/retry), FIFO/LIFO ordering, `pre_model_filter` (FR-388–390; pre/post-tool and pre-model hooks are done)
 
 ### 006 — AG-UI Protocol
 
@@ -185,8 +200,8 @@ OpenTelemetry-based observability with GenAI semantic conventions and per-agent 
 ## Parallel Opportunities
 
 ```text
-After 002 (done):
-  ├── 003 (agent core)        — critical path
+After 003 (done):
+  ├── 004 (mcp adapters)      — critical path, can start now
   ├── 007 (neo4j)             — independent, can start now
   ├── 008 (temporal)          — independent, can start now
   ├── 009 (search providers)  — independent, can start now

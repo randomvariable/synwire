@@ -64,3 +64,9 @@ Different channel types implement different reduction strategies (last value, ap
 ## Determinism
 
 Given the same input state and the same graph topology, execution is deterministic. The Pregel loop is sequential (one node per superstep), so there are no concurrency-related non-determinism concerns within a single invocation.
+
+## See also
+
+- [Checkpointing Tutorial](../tutorials/06-checkpointing.md) — how to snapshot and resume Pregel runs
+- [Checkpointing Explanation](../explanation/synwire-checkpoint.md) — `BaseCheckpointSaver` and the serde protocol
+- [Channel System](./channels.md) — how channels accumulate state between supersteps

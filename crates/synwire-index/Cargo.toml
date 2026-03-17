@@ -1,0 +1,38 @@
+[package]
+name = "synwire-index"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+description = "Semantic index pipeline for Synwire VFS providers"
+
+[lints]
+workspace = true
+
+[dependencies]
+synwire-core = { path = "../synwire-core", features = ["agentic-ignore"] }
+synwire-chunker = { path = "../synwire-chunker" }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+walkdir = { workspace = true }
+sha2 = { workspace = true }
+notify = { workspace = true }
+directories = { workspace = true }
+globset = { workspace = true }
+xxhash-rust = { workspace = true }
+synwire-storage = { workspace = true }
+tantivy = { workspace = true, optional = true }
+
+[features]
+code-graph = []
+hybrid-search = ["dep:tantivy"]
+community-detection = []
+
+[dev-dependencies]
+tempfile = { workspace = true }

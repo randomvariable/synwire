@@ -29,6 +29,39 @@ synwire-core = { version = "0.1", default-features = false, features = ["http"] 
 |---------|---------|-------------|
 | `openai` | No | Include `synwire-llm-openai` provider |
 | `ollama` | No | Include `synwire-llm-ollama` provider |
+| `lsp` | No | Include `synwire-lsp` for Language Server Protocol integration |
+| `dap` | No | Include `synwire-dap` for Debug Adapter Protocol integration |
+
+## synwire-index
+
+| Feature | Default | Description |
+|---------|---------|-------------|
+| `hybrid-search` | No | BM25 (tantivy) + vector hybrid search with configurable alpha weighting |
+| `code-graph` | No | Cross-file call/import/inherit dependency graph backed by SQLite |
+| `community-detection` | No | HIT-Leiden community clustering over the code graph |
+
+### Example
+
+```toml
+[dependencies]
+synwire-index = { version = "0.1", features = ["hybrid-search", "code-graph"] }
+```
+
+`community-detection` requires `code-graph` — community clustering operates on the graph edges.
+
+## synwire-agent-skills
+
+| Feature | Default | Description |
+|---------|---------|-------------|
+| `lua` | No | Lua scripting runtime via `mlua` |
+| `rhai` | No | Rhai scripting runtime |
+| `wasm` | No | WebAssembly runtime via `extism` |
+
+All runtimes are opt-in to keep binary size small. Enable only the runtimes your skills require:
+
+```toml
+synwire-agent-skills = { version = "0.1", features = ["lua"] }
+```
 
 ### Example
 

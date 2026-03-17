@@ -61,7 +61,14 @@ impl std::fmt::Debug for BaseChatOpenAIBuilder {
         f.debug_struct("BaseChatOpenAIBuilder")
             .field("model", &self.model)
             .field("api_base", &self.api_base)
-            .field("api_key", &self.api_key.as_ref().map(|_| "***"))
+            .field(
+                "api_key",
+                if self.api_key.is_some() {
+                    &"[redacted]"
+                } else {
+                    &"<not set>"
+                },
+            )
             .field("api_key_env", &self.api_key_env)
             .finish_non_exhaustive()
     }
