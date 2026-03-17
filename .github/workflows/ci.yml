@@ -32,10 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      RUSTC_WRAPPER: sccache
-      SCCACHE_GHA_ENABLED: "true"
-    steps:
+        steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
@@ -45,9 +42,6 @@ jobs:
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
         with:
           shared-key: stable
-      - uses: taiki-e/install-action@94a7388bec5d4c8dd93e3ebf09e0ff448f3f6f4d  # v2
-        with:
-          tool: sccache
       - uses: davidB/rust-cargo-make@d8952235ddd22b65d7c6b9194d4dbd58c3ffc48a  # v1
       - run: cargo make clippy
 
@@ -56,10 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      RUSTC_WRAPPER: sccache
-      SCCACHE_GHA_ENABLED: "true"
-    steps:
+        steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
@@ -69,7 +60,7 @@ jobs:
           shared-key: stable
       - uses: taiki-e/install-action@94a7388bec5d4c8dd93e3ebf09e0ff448f3f6f4d  # v2
         with:
-          tool: nextest,sccache
+          tool: nextest
       - uses: davidB/rust-cargo-make@d8952235ddd22b65d7c6b9194d4dbd58c3ffc48a  # v1
       - name: Run tests with nextest
         run: cargo make test
@@ -87,10 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      RUSTC_WRAPPER: sccache
-      SCCACHE_GHA_ENABLED: "true"
-    steps:
+        steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
@@ -98,9 +86,6 @@ jobs:
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
         with:
           shared-key: stable
-      - uses: taiki-e/install-action@94a7388bec5d4c8dd93e3ebf09e0ff448f3f6f4d  # v2
-        with:
-          tool: sccache
       - uses: davidB/rust-cargo-make@d8952235ddd22b65d7c6b9194d4dbd58c3ffc48a  # v1
       - run: cargo make doc
 
@@ -141,10 +126,7 @@ jobs:
     if: github.event_name == 'push'
     permissions:
       contents: read
-    env:
-      RUSTC_WRAPPER: sccache
-      SCCACHE_GHA_ENABLED: "true"
-    steps:
+        steps:
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
@@ -152,9 +134,6 @@ jobs:
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
         with:
           shared-key: stable
-      - uses: taiki-e/install-action@94a7388bec5d4c8dd93e3ebf09e0ff448f3f6f4d  # v2
-        with:
-          tool: sccache
       - uses: davidB/rust-cargo-make@d8952235ddd22b65d7c6b9194d4dbd58c3ffc48a  # v1
       - name: Run cargo-geiger
         run: cargo make geiger || true
@@ -165,10 +144,7 @@ jobs:
     if: github.event_name == 'push'
     permissions:
       contents: read
-    env:
-      RUSTC_WRAPPER: sccache
-      SCCACHE_GHA_ENABLED: "true"
-    strategy:
+        strategy:
       matrix:
         partition: [1, 2]
     steps:
@@ -181,7 +157,7 @@ jobs:
           shared-key: stable
       - uses: taiki-e/install-action@94a7388bec5d4c8dd93e3ebf09e0ff448f3f6f4d  # v2
         with:
-          tool: nextest,sccache
+          tool: nextest
       - name: Run partitioned tests
         run: >
           cargo nextest run --workspace --all-features

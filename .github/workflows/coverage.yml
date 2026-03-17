@@ -17,11 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      # Use RUSTC_WORKSPACE_WRAPPER so sccache and cargo-llvm-cov can both wrap
-      # rustc without conflict (llvm-cov uses RUSTC_WRAPPER itself).
-      RUSTC_WORKSPACE_WRAPPER: sccache
-      SCCACHE_GHA_ENABLED: "true"
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7  # stable
@@ -32,7 +27,7 @@ jobs:
           shared-key: stable
       - uses: taiki-e/install-action@94a7388bec5d4c8dd93e3ebf09e0ff448f3f6f4d  # v2
         with:
-          tool: cargo-llvm-cov,nextest,sccache
+          tool: cargo-llvm-cov,nextest
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
       - uses: davidB/rust-cargo-make@d8952235ddd22b65d7c6b9194d4dbd58c3ffc48a  # v1
