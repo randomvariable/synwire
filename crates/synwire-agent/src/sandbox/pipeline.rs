@@ -86,12 +86,14 @@ impl PipelineExecutor {
                     .map_err(VfsError::Io)?;
 
                 let mut stdout = output.stdout;
-                if stage.stderr_to_stdout {
+                let stderr = if stage.stderr_to_stdout {
                     stdout.extend_from_slice(&output.stderr);
-                }
+                    String::new()
+                } else {
+                    String::from_utf8_lossy(&output.stderr).into_owned()
+                };
                 // Cap buffered output to avoid excessive memory use between stages.
                 stdout.truncate(MAX_STAGE_OUTPUT_BYTES);
-                let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
 
                 let resp = ExecuteResponse {
                     exit_code: output.status.code().unwrap_or(-1),

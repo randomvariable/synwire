@@ -70,15 +70,15 @@ impl HttpMcpTransport {
         let resp = req
             .send()
             .await
-            .map_err(|e| AgentError::Vfs(e.to_string()))?;
+            .map_err(|e| AgentError::Tool(e.to_string()))?;
         if !resp.status().is_success() {
             let status = resp.status();
             let text = resp.text().await.unwrap_or_default();
-            return Err(AgentError::Vfs(format!("MCP HTTP error {status}: {text}")));
+            return Err(AgentError::Tool(format!("MCP HTTP error {status}: {text}")));
         }
         resp.json::<Value>()
             .await
-            .map_err(|e| AgentError::Vfs(e.to_string()))
+            .map_err(|e| AgentError::Tool(e.to_string()))
     }
 }
 
@@ -155,7 +155,11 @@ impl McpTransport for HttpMcpTransport {
                     let _ = self.calls_failed.fetch_add(1, Ordering::Relaxed);
                 }
             }
-            result.map(|r| r["result"].clone())
+            result.and_then(|r| {
+                r.get("result")
+                    .cloned()
+                    .ok_or_else(|| AgentError::Tool("MCP response missing 'result' field".into()))
+            })
         })
     }
 

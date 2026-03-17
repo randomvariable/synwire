@@ -4,10 +4,10 @@ use synwire_core::BoxFuture;
 use synwire_core::agents::error::AgentError;
 use synwire_core::agents::middleware::{Middleware, MiddlewareInput, MiddlewareResult};
 
-/// Middleware that adds cache control hints to static portions of the prompt.
+/// Middleware that adds cache control hints to the last user message.
 ///
-/// Injects `cache_control: { type: "ephemeral" }` onto the system message
-/// and the last user message so providers like Anthropic can cache them.
+/// Injects `cache_control: { type: "ephemeral" }` onto the last user message
+/// so providers like Anthropic can cache it at that breakpoint.
 #[derive(Debug, Default)]
 pub struct PromptCachingMiddleware;
 

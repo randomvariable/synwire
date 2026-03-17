@@ -91,9 +91,16 @@ impl Shell {
 }
 
 fn truncate_string(mut s: String, max: usize) -> String {
+    const SUFFIX: &str = "\n[truncated]";
     if s.len() > max {
-        s.truncate(max);
-        s.push_str("\n[truncated]");
+        let keep = max.saturating_sub(SUFFIX.len());
+        // Walk back to a valid UTF-8 boundary.
+        let mut boundary = keep;
+        while boundary > 0 && !s.is_char_boundary(boundary) {
+            boundary -= 1;
+        }
+        s.truncate(boundary);
+        s.push_str(SUFFIX);
     }
     s
 }

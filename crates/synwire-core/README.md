@@ -49,17 +49,25 @@ Implement a custom `Tool`:
 
 ```rust,no_run
 use synwire_core::tools::{Tool, ToolOutput, ToolSchema};
+use synwire_core::error::SynwireError;
 use synwire_core::BoxFuture;
 
-struct EchoTool;
+struct EchoTool {
+    schema: ToolSchema,
+}
 
 impl Tool for EchoTool {
     fn name(&self) -> &str { "echo" }
     fn description(&self) -> &str { "Returns its input unchanged" }
-    fn schema(&self) -> ToolSchema { ToolSchema::simple(self.name(), self.description()) }
+    fn schema(&self) -> &ToolSchema { &self.schema }
 
-    fn call<'a>(&'a self, input: serde_json::Value) -> BoxFuture<'a, anyhow::Result<ToolOutput>> {
-        Box::pin(async move { Ok(ToolOutput::text(input.to_string())) })
+    fn invoke(&self, input: serde_json::Value) -> BoxFuture<'_, Result<ToolOutput, SynwireError>> {
+        Box::pin(async move {
+            Ok(ToolOutput {
+                content: input.to_string(),
+                ..Default::default()
+            })
+        })
     }
 }
 ```
@@ -80,7 +88,7 @@ impl Tool for EchoTool {
 |---|---|
 | `synwire-llm-openai` | `BaseChatModel`, `Embeddings` |
 | `synwire-llm-ollama` | `BaseChatModel`, `Embeddings` |
-| `synwire-agent` | `ExecutionStrategy`, `BackendProtocol`, `Middleware`, `Plugin`, `SessionManager`, `McpTransport` |
+| `synwire-agent` | `ExecutionStrategy`, `Vfs`, `Middleware`, `SessionManager`, `McpTransport` |
 | `synwire-checkpoint` | `BaseCheckpointSaver`, `BaseStore` |
 | `synwire-test-utils` | `BaseChatModel` (`FakeChatModel`), `Embeddings` (`FakeEmbeddings`) |
 

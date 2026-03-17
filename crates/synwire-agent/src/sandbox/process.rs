@@ -1,7 +1,8 @@
 //! Process management backend.
 
 use std::collections::HashMap;
-use std::sync::Mutex;
+
+use tokio::sync::Mutex;
 
 use serde::{Deserialize, Serialize};
 use synwire_core::BoxFuture;
@@ -102,37 +103,26 @@ impl ProcessManager {
             let child = Command::new(cmd).args(args).spawn().map_err(VfsError::Io)?;
 
             let pid = child.id();
-            let _ = self
-                .jobs
-                .lock()
-                .map_err(|_| VfsError::Unsupported("mutex poisoned".into()))?
-                .insert(
-                    job_id.clone(),
-                    JobInfo {
-                        id: job_id.clone(),
-                        pid,
-                        command: format!("{cmd} {}", args.join(" ")),
-                        status: "running".to_string(),
-                    },
-                );
+            let _ = self.jobs.lock().await.insert(
+                job_id.clone(),
+                JobInfo {
+                    id: job_id.clone(),
+                    pid,
+                    command: format!("{cmd} {}", args.join(" ")),
+                    status: "running".to_string(),
+                },
+            );
 
             if let Some(pid) = pid {
-                let mut pids = self
-                    .bg_pids
-                    .lock()
-                    .map_err(|_| VfsError::Unsupported("mutex poisoned".into()))?;
-                let _ = pids.insert(job_id.clone(), pid);
+                let _ = self.bg_pids.lock().await.insert(job_id.clone(), pid);
             }
             Ok(job_id)
         })
     }
 
     /// List background jobs.
-    pub fn list_jobs(&self) -> Result<Vec<JobInfo>, VfsError> {
-        self.jobs
-            .lock()
-            .map(|g| g.values().cloned().collect())
-            .map_err(|_| VfsError::Unsupported("mutex poisoned".into()))
+    pub async fn list_jobs(&self) -> Vec<JobInfo> {
+        self.jobs.lock().await.values().cloned().collect()
     }
 
     /// Execute a command and wait for it.
@@ -176,10 +166,10 @@ mod tests {
             .spawn_background("sleep", &["60".to_string()])
             .await
             .expect("spawn");
-        let jobs = backend.list_jobs().expect("list_jobs");
+        let jobs = backend.list_jobs().await;
         assert!(jobs.iter().any(|j| j.id == job_id));
         // Clean up: kill the background process so no leaked subprocess remains.
-        let pid = backend.bg_pids.lock().expect("lock").get(&job_id).copied();
+        let pid = backend.bg_pids.lock().await.get(&job_id).copied();
         if let Some(pid) = pid {
             let _ = backend.kill_process(pid).await;
         }
