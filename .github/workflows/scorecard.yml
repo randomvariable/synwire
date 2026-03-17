@@ -1,0 +1,54 @@
+name: Scorecard
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly — Saturday 01:30 UTC
+    - cron: "30 1 * * 6"
+
+# Scorecard's own Token-Permissions check requires permissions: read-all at
+# the workflow level. Individual jobs override this to add specific writes.
+permissions: read-all
+
+jobs:
+  analysis:
+    name: Scorecard analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      id-token: write          # required for publish_results: true (Sigstore keyless signing)
+      contents: read
+      actions: read
+      checks: read             # required for Scorecard GraphQL queries
+      issues: read             # required for Scorecard GraphQL queries
+      pull-requests: read      # required for Scorecard GraphQL queries
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+        with:
+          persist-credentials: false
+
+      - name: Run Scorecard
+        uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a  # v2.4.3
+        with:
+          results_file: results.sarif
+          results_format: sarif
+          # publish_results requires id-token: write above.
+          # Results appear at https://securityscorecards.dev/viewer/?uri=github.com/randomvariable/synwire
+          publish_results: true
+          # SCORECARD_TOKEN: fine-grained or classic PAT with public_repo scope only.
+          # Provides higher GitHub API rate limits. Falls back to GITHUB_TOKEN if unset.
+          repo-token: ${{ secrets.SCORECARD_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Upload SARIF results as artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f  # v6
+        with:
+          name: scorecard-results
+          path: results.sarif
+          retention-days: 5
+
+      - name: Upload SARIF results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@b1bff81932f5cdfc8695c7752dcee935dcd061c8  # v4
+        with:
+          sarif_file: results.sarif
