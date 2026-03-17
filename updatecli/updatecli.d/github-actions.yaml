@@ -142,7 +142,7 @@ targets:
     sourceid: dtolnay-rust-toolchain-stable
     spec:
       file: .github/workflows/ci.yml
-      matchpattern: 'dtolnay/rust-toolchain@\S+(\s+#\s+stable)?'
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
       replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
     scmid: default
   nightly:
@@ -150,7 +150,7 @@ targets:
     sourceid: dtolnay-rust-toolchain-stable
     spec:
       file: .github/workflows/nightly.yml
-      matchpattern: 'dtolnay/rust-toolchain@\S+(\s+#\s+stable)?'
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
       replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
     scmid: default
   coverage:
@@ -158,7 +158,7 @@ targets:
     sourceid: dtolnay-rust-toolchain-stable
     spec:
       file: .github/workflows/coverage.yml
-      matchpattern: 'dtolnay/rust-toolchain@\S+(\s+#\s+stable)?'
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
       replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
     scmid: default
   release:
@@ -166,7 +166,7 @@ targets:
     sourceid: dtolnay-rust-toolchain-stable
     spec:
       file: .github/workflows/release.yml
-      matchpattern: 'dtolnay/rust-toolchain@\S+(\s+#\s+stable)?'
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
       replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
     scmid: default
   codeql:
@@ -174,7 +174,7 @@ targets:
     sourceid: dtolnay-rust-toolchain-stable
     spec:
       file: .github/workflows/codeql.yml
-      matchpattern: 'dtolnay/rust-toolchain@\S+(\s+#\s+stable)?'
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
       replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
     scmid: default
   sbom:
@@ -182,8 +182,44 @@ targets:
     sourceid: dtolnay-rust-toolchain-stable
     spec:
       file: .github/workflows/sbom.yml
-      matchpattern: 'dtolnay/rust-toolchain@\S+(\s+#\s+stable)?'
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
       replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  dtolnay-rust-toolchain-1_88:
+    kind: githubrelease
+    spec:
+      owner: dtolnay
+      repository: rust-toolchain
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  nightly-msrv:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-1_88
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+1\.88'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-1_88" }}  # 1.88'
     scmid: default
 
 ---
@@ -314,6 +350,58 @@ scms:
         scope: deps
 
 sources:
+  davidb-rust-cargo-make:
+    kind: githubrelease
+    spec:
+      owner: davidB
+      repository: rust-cargo-make
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: davidb-rust-cargo-make
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'davidB/rust-cargo-make@\S+(\s+#\s+\S+)?'
+      replacepattern: 'davidB/rust-cargo-make@{{ source "davidb-rust-cargo-make" }}  # {{ source "davidb-rust-cargo-make" }}'
+    scmid: default
+  nightly:
+    kind: file
+    sourceid: davidb-rust-cargo-make
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'davidB/rust-cargo-make@\S+(\s+#\s+\S+)?'
+      replacepattern: 'davidB/rust-cargo-make@{{ source "davidb-rust-cargo-make" }}  # {{ source "davidb-rust-cargo-make" }}'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: davidb-rust-cargo-make
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'davidB/rust-cargo-make@\S+(\s+#\s+\S+)?'
+      replacepattern: 'davidB/rust-cargo-make@{{ source "davidb-rust-cargo-make" }}  # {{ source "davidb-rust-cargo-make" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
   codeql-action:
     kind: githubrelease
     spec:
@@ -325,20 +413,28 @@ sources:
         pattern: ">=4,<5"
 
 targets:
-  codeql:
+  codeql-init:
     kind: file
     sourceid: codeql-action
     spec:
       file: .github/workflows/codeql.yml
-      matchpattern: 'github/codeql-action/[a-z]+@\S+(\s+#\s+\S+)?'
-      replacepattern: 'github/codeql-action/{{ source "codeql-action" }}  # {{ source "codeql-action" }}'
+      matchpattern: 'github/codeql-action/init@\S+(\s+#\s+\S+)?'
+      replacepattern: 'github/codeql-action/init@{{ source "codeql-action" }}  # {{ source "codeql-action" }}'
     scmid: default
-  scorecard:
+  codeql-analyze:
+    kind: file
+    sourceid: codeql-action
+    spec:
+      file: .github/workflows/codeql.yml
+      matchpattern: 'github/codeql-action/analyze@\S+(\s+#\s+\S+)?'
+      replacepattern: 'github/codeql-action/analyze@{{ source "codeql-action" }}  # {{ source "codeql-action" }}'
+    scmid: default
+  scorecard-upload-sarif:
     kind: file
     sourceid: codeql-action
     spec:
       file: .github/workflows/scorecard.yml
-      matchpattern: 'github/codeql-action/[a-z-]+@\S+(\s+#\s+\S+)?'
+      matchpattern: 'github/codeql-action/upload-sarif@\S+(\s+#\s+\S+)?'
       replacepattern: 'github/codeql-action/upload-sarif@{{ source "codeql-action" }}  # {{ source "codeql-action" }}'
     scmid: default
 
@@ -376,4 +472,316 @@ targets:
       file: .github/workflows/sbom.yml
       matchpattern: 'anchore/sbom-action@\S+(\s+#\s+\S+)?'
       replacepattern: 'anchore/sbom-action@{{ source "anchore-sbom-action" }}  # {{ source "anchore-sbom-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  ossf-scorecard-action:
+    kind: githubrelease
+    spec:
+      owner: ossf
+      repository: scorecard-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  scorecard:
+    kind: file
+    sourceid: ossf-scorecard-action
+    spec:
+      file: .github/workflows/scorecard.yml
+      matchpattern: 'ossf/scorecard-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'ossf/scorecard-action@{{ source "ossf-scorecard-action" }}  # {{ source "ossf-scorecard-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-upload-artifact:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: upload-artifact
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: actions-upload-artifact
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'actions/upload-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-artifact@{{ source "actions-upload-artifact" }}  # {{ source "actions-upload-artifact" }}'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: actions-upload-artifact
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'actions/upload-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-artifact@{{ source "actions-upload-artifact" }}  # {{ source "actions-upload-artifact" }}'
+    scmid: default
+  scorecard:
+    kind: file
+    sourceid: actions-upload-artifact
+    spec:
+      file: .github/workflows/scorecard.yml
+      matchpattern: 'actions/upload-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-artifact@{{ source "actions-upload-artifact" }}  # {{ source "actions-upload-artifact" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  softprops-action-gh-release:
+    kind: githubrelease
+    spec:
+      owner: softprops
+      repository: action-gh-release
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  release:
+    kind: file
+    sourceid: softprops-action-gh-release
+    spec:
+      file: .github/workflows/release.yml
+      matchpattern: 'softprops/action-gh-release@\S+(\s+#\s+\S+)?'
+      replacepattern: 'softprops/action-gh-release@{{ source "softprops-action-gh-release" }}  # {{ source "softprops-action-gh-release" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-configure-pages:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: configure-pages
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  pages:
+    kind: file
+    sourceid: actions-configure-pages
+    spec:
+      file: .github/workflows/pages.yml
+      matchpattern: 'actions/configure-pages@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/configure-pages@{{ source "actions-configure-pages" }}  # {{ source "actions-configure-pages" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-upload-pages-artifact:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: upload-pages-artifact
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  pages:
+    kind: file
+    sourceid: actions-upload-pages-artifact
+    spec:
+      file: .github/workflows/pages.yml
+      matchpattern: 'actions/upload-pages-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-pages-artifact@{{ source "actions-upload-pages-artifact" }}  # {{ source "actions-upload-pages-artifact" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-deploy-pages:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: deploy-pages
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  pages:
+    kind: file
+    sourceid: actions-deploy-pages
+    spec:
+      file: .github/workflows/pages.yml
+      matchpattern: 'actions/deploy-pages@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/deploy-pages@{{ source "actions-deploy-pages" }}  # {{ source "actions-deploy-pages" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  updatecli-action:
+    kind: githubrelease
+    spec:
+      owner: updatecli
+      repository: updatecli-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  updatecli:
+    kind: file
+    sourceid: updatecli-action
+    spec:
+      file: .github/workflows/updatecli.yml
+      matchpattern: 'updatecli/updatecli-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'updatecli/updatecli-action@{{ source "updatecli-action" }}  # {{ source "updatecli-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  google-osv-scanner-action:
+    kind: githubrelease
+    spec:
+      owner: google
+      repository: osv-scanner-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  osv-scanner-pr:
+    kind: file
+    sourceid: google-osv-scanner-action
+    spec:
+      file: .github/workflows/osv-scanner-pr.yml
+      matchpattern: 'google/osv-scanner-action/[^@]+@\S+(\s+#\s+\S+)?'
+      replacepattern: 'google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@{{ source "google-osv-scanner-action" }}  # {{ source "google-osv-scanner-action" }}'
+    scmid: default
+  osv-scanner-scheduled:
+    kind: file
+    sourceid: google-osv-scanner-action
+    spec:
+      file: .github/workflows/osv-scanner-scheduled.yml
+      matchpattern: 'google/osv-scanner-action/[^@]+@\S+(\s+#\s+\S+)?'
+      replacepattern: 'google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@{{ source "google-osv-scanner-action" }}  # {{ source "google-osv-scanner-action" }}'
     scmid: default
