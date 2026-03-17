@@ -1,29 +1,29 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/synwire-core",
-    "crates/synwire-orchestrator",
-    "crates/synwire-checkpoint",
-    "crates/synwire-checkpoint-sqlite",
-    "crates/synwire-llm-openai",
-    "crates/synwire-llm-ollama",
-    "crates/synwire",
-    "crates/synwire-derive",
-    "crates/synwire-test-utils",
-    "crates/synwire-checkpoint-conformance",
-    "crates/synwire-agent",
-    "crates/synwire-sandbox",
-    "crates/synwire-embeddings-local",
-    "crates/synwire-chunker",
-    "crates/synwire-vectorstore-lancedb",
-    "crates/synwire-index",
-    "crates/synwire-lsp",
-    "crates/synwire-dap",
-    "crates/synwire-storage",
-    "crates/synwire-daemon",
-    "crates/synwire-mcp-server",
-    "crates/synwire-agent-skills",
-    "crates/synwire-mcp-adapters",
+  "crates/synwire-core",
+  "crates/synwire-orchestrator",
+  "crates/synwire-checkpoint",
+  "crates/synwire-checkpoint-sqlite",
+  "crates/synwire-llm-openai",
+  "crates/synwire-llm-ollama",
+  "crates/synwire",
+  "crates/synwire-derive",
+  "crates/synwire-test-utils",
+  "crates/synwire-checkpoint-conformance",
+  "crates/synwire-agent",
+  "crates/synwire-sandbox",
+  "crates/synwire-embeddings-local",
+  "crates/synwire-chunker",
+  "crates/synwire-vectorstore-lancedb",
+  "crates/synwire-index",
+  "crates/synwire-lsp",
+  "crates/synwire-dap",
+  "crates/synwire-storage",
+  "crates/synwire-daemon",
+  "crates/synwire-mcp-server",
+  "crates/synwire-agent-skills",
+  "crates/synwire-mcp-adapters",
 ]
 
 [workspace.package]
@@ -34,43 +34,76 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/randomvariable/synwire"
 homepage = "https://randomvariable.github.io/synwire/"
 documentation = "https://docs.rs/synwire"
-keywords = ["llm", "ai", "agents", "langchain", "async"]
-categories = ["asynchronous", "science"]
+keywords = [
+  "llm",
+  "ai",
+  "agents",
+  "langchain",
+  "async",
+]
+categories = [
+  "asynchronous",
+  "science",
+]
 
 [workspace.dependencies]
-tokio = { version = "1", features = ["full"] }
-serde = { version = "1", features = ["derive"] }
+tokio = { version = "1", features = [
+  "full",
+] }
+serde = { version = "1", features = [
+  "derive",
+] }
 serde_json = "1"
 thiserror = "2"
 futures-core = "0.3"
 futures-util = "0.3"
 pin-project-lite = "0.2"
-uuid = { version = "1", features = ["v4", "serde"] }
-chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1", features = [
+  "v4",
+  "serde",
+] }
+chrono = { version = "0.4", features = [
+  "serde",
+] }
 secrecy = "0.10"
-reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json", "stream"] }
+reqwest = { version = "0.12", default-features = false, features = [
+  "rustls-tls",
+  "json",
+  "stream",
+] }
 eventsource-stream = "0.2"
-backoff = { version = "0.4", features = ["tokio"] }
+backoff = { version = "0.4", features = [
+  "tokio",
+] }
 json-patch = "3"
 tracing = "0.1"
 tracing-opentelemetry = "0.28"
 opentelemetry = "0.27"
 opentelemetry_sdk = "0.27"
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "0.32", features = [
+  "bundled",
+] }
 r2d2 = "0.8"
 r2d2_sqlite = "0.25"
-syn = { version = "2", features = ["full", "extra-traits"] }
+syn = { version = "2", features = [
+  "full",
+  "extra-traits",
+] }
 quote = "1"
 proc-macro2 = "1"
 schemars = "0.8"
-moka = { version = "0.12", features = ["future"] }
+moka = { version = "0.12", features = [
+  "future",
+] }
 proptest = "1"
 mockall = "0.13"
 tokio-test = "0.4"
 reqwest-middleware = "0.4"
 reqwest-retry = "0.7"
 regex = "1"
-criterion = { version = "0.5", features = ["html_reports"] }
+criterion = { version = "0.5", features = [
+  "html_reports",
+] }
 typetag = "0.2"
 bitflags = "2"
 dyn-clone = "1"
@@ -80,10 +113,21 @@ tar = "0.4"
 flate2 = "1"
 bzip2 = "0.5"
 zip = "2"
-nix = { version = "0.29", features = ["process", "signal", "mount", "sched", "user", "term", "socket", "fs"] }
+nix = { version = "0.29", features = [
+  "process",
+  "signal",
+  "mount",
+  "sched",
+  "user",
+  "term",
+  "socket",
+  "fs",
+] }
 expectrl = "0.8"
 tempfile = "3"
-oci-spec = { version = "0.9", features = ["runtime"] }
+oci-spec = { version = "0.9", features = [
+  "runtime",
+] }
 which = "7"
 fastembed = "4"
 anyhow = "1"
@@ -108,13 +152,21 @@ arrow-array = "57"
 arrow-schema = "57"
 walkdir = "2"
 sha2 = "0.10"
-tokio-util = { version = "0.7", features = ["rt"] }
+tokio-util = { version = "0.7", features = [
+  "rt",
+] }
 notify = "6"
 directories = "5"
 globset = "0.4"
 ignore = "0.4"
-xxhash-rust = { version = "0.8", features = ["xxh3"] }
-async-lsp = { version = "0.2", features = ["tracing", "tokio", "omni-trait"] }
+xxhash-rust = { version = "0.8", features = [
+  "xxh3",
+] }
+async-lsp = { version = "0.2", features = [
+  "tracing",
+  "tokio",
+  "omni-trait",
+] }
 tower = "0.5"
 lsp-types = "0.95"
 dapts = "0.0.6"
@@ -125,39 +177,61 @@ synwire-daemon = { path = "crates/synwire-daemon" }
 synwire-mcp-server = { path = "crates/synwire-mcp-server" }
 synwire-agent-skills = { path = "crates/synwire-agent-skills" }
 serde_yaml = "0.9"
-rhai = { version = "1", features = ["serde"] }
-mlua = { version = "0.10", features = ["lua54", "vendored", "serialize"] }
+rhai = { version = "1", features = [
+  "serde",
+] }
+mlua = { version = "0.10", features = [
+  "lua54",
+  "vendored",
+  "serialize",
+] }
 extism = "1"
-tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+tracing-subscriber = { version = "0.3", features = [
+  "env-filter",
+  "fmt",
+] }
 tracing-appender = "0.2"
-clap = { version = "4", features = ["derive", "env"] }
+clap = { version = "4", features = [
+  "derive",
+  "env",
+] }
 serde_toml = "0.1"
 toml = "0.8"
 tantivy = "0.22"
-tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
+tokio-tungstenite = { version = "0.24", features = [
+  "native-tls",
+] }
 jsonschema = "0.28"
 futures = "0.3"
 synwire-sandbox = { path = "crates/synwire-sandbox" }
 synwire-mcp-adapters = { path = "crates/synwire-mcp-adapters" }
 
 [workspace.lints.clippy]
-unwrap_used = "deny"
-expect_used = "deny"
-panic = "deny"
-todo = "deny"
-unimplemented = "deny"
-dbg_macro = "deny"
-print_stdout = "deny"
-print_stderr = "deny"
-pedantic = { level = "warn", priority = -1 }
-nursery = { level = "warn", priority = -1 }
+unwrap_used             = "deny"
+expect_used             = "deny"
+panic                   = "deny"
+todo                    = "deny"
+unimplemented           = "deny"
+dbg_macro               = "deny"
+print_stdout            = "deny"
+print_stderr            = "deny"
+pedantic                = { level = "warn", priority = -1 }
+nursery                 = { level = "warn", priority = -1 }
 module_name_repetitions = "allow"
-must_use_candidate = "allow"
-missing_errors_doc = "allow"
+must_use_candidate      = "allow"
+missing_errors_doc      = "allow"
+
+[profile.dev]
+opt-level = 1
+debug = "line-tables-only"
+
+[profile.dev.build-override]
+opt-level = 3
+debug = false
 
 [workspace.lints.rust]
-unsafe_code = "deny"
-missing_docs = "deny"
+unsafe_code    = "deny"
+missing_docs   = "deny"
 unused_results = "deny"
 unused_imports = "deny"
-dead_code = "deny"
+dead_code      = "deny"

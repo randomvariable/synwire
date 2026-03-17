@@ -1,0 +1,16 @@
+# Dependabot configuration.
+#
+# Covers the github-actions ecosystem only.
+# Satisfies:
+#   - FR-008: GitHub Actions dependency scanning coverage
+#   - Scorecard "Dependency-Update-Tool" check (updatecli is not recognised by
+#     Scorecard; this file satisfies the check)
+#
+# Cargo dependency updates are handled by updatecli
+# (see .github/workflows/updatecli.yml and updatecli/updatecli.d/).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

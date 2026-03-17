@@ -1,0 +1,32 @@
+name: SBOM on Release
+
+on:
+  release:
+    types: [published]
+
+permissions: {}
+
+jobs:
+  sbom:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
+
+      # Syft calls `cargo metadata` internally to resolve the full dependency
+      # graph including dev-dependencies. Without a Rust toolchain on PATH,
+      # Syft falls back to Cargo.lock-only and dev-deps are incomplete.
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7  # stable
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@57aae528053a48a3f6235f2d9461b05fbcb7366d  # v0.23.1
+        with:
+          path: ./
+          format: spdx-json
+          artifact-name: synwire-${{ github.ref_name }}-sbom.spdx.json
+          output-file: synwire.spdx.json

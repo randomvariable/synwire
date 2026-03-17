@@ -1,0 +1,33 @@
+# updatecli Cargo autodiscovery policy.
+#
+# Uses updatecli's built-in Cargo crawler, which recursively discovers all
+# Cargo.toml files from the root and generates per-dependency update pipelines
+# automatically. No per-crate manual entries required.
+#
+# Requires: updatecli pipeline diff/apply --experimental
+# (auto-discovery crawlers are behind the --experimental flag)
+
+name: "Cargo dependency updates"
+
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+autodiscovery:
+  scmid: default
+  crawlers:
+    cargo:
+      rootdir: .
+      versionfilter:
+        kind: semver
+        pattern: ">=0"

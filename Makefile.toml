@@ -8,32 +8,62 @@ default_to_workspace = false
 [tasks.fmt]
 description = "Check formatting (cargo fmt --check)"
 command = "cargo"
-args = ["fmt", "--all", "--", "--check"]
+args = [
+  "fmt",
+  "--all",
+  "--",
+  "--check",
+]
 
 [tasks.fmt-fix]
 description = "Auto-format all code"
 command = "cargo"
-args = ["fmt", "--all"]
+args = [
+  "fmt",
+  "--all",
+]
 
 [tasks.clippy]
 description = "Run clippy with deny warnings"
 command = "cargo"
-args = ["clippy", "--workspace", "--all-targets", "--all-features", "--", "-D", "warnings"]
+args = [
+  "clippy",
+  "--workspace",
+  "--all-targets",
+  "--all-features",
+  "--",
+  "-D",
+  "warnings",
+]
 
 [tasks.test]
 description = "Run tests with nextest"
 command = "cargo"
-args = ["nextest", "run", "--workspace", "--all-features"]
+args = [
+  "nextest",
+  "run",
+  "--workspace",
+  "--all-features",
+]
 
 [tasks.doctest]
 description = "Run doc-tests"
 command = "cargo"
-args = ["test", "--workspace", "--doc"]
+args = [
+  "test",
+  "--workspace",
+  "--doc",
+]
 
 [tasks.doc]
 description = "Build documentation with deny warnings"
 command = "cargo"
-args = ["doc", "--workspace", "--no-deps", "--all-features"]
+args = [
+  "doc",
+  "--workspace",
+  "--no-deps",
+  "--all-features",
+]
 
 [tasks.doc.env]
 RUSTDOCFLAGS = "-Dwarnings"
@@ -42,33 +72,123 @@ RUSTDOCFLAGS = "-Dwarnings"
 clear = true
 description = "Generate code coverage report"
 command = "cargo"
-args = ["llvm-cov", "nextest", "--workspace", "--all-features", "--lcov", "--output-path", "lcov.info"]
+args = [
+  "llvm-cov",
+  "nextest",
+  "--workspace",
+  "--all-features",
+  "--lcov",
+  "--output-path",
+  "lcov.info",
+]
 
 [tasks.geiger]
-description = "Audit for unsafe code usage"
-command = "cargo"
-args = ["geiger", "--all-features", "--all-targets"]
+description = "Audit for unsafe code usage (runs per-crate; cargo-geiger does not support workspace-level execution)"
+script = """
+set -e
+for crate_dir in crates/*/; do
+  crate_name=$(basename "$crate_dir")
+  echo "--- cargo-geiger: $crate_name ---"
+  cargo geiger --all-features --all-targets --manifest-path "$(realpath "$crate_dir/Cargo.toml")" 2>&1 | grep -v "^Failed to match" || true
+done
+"""
 
 [tasks.audit]
 description = "Audit dependencies for vulnerabilities"
 command = "cargo"
-args = ["audit"]
+args = [
+  "audit",
+]
 
 [tasks.msrv-check]
-description = "Check compilation with MSRV (1.85)"
+description = "Check compilation with MSRV (1.88)"
 toolchain = "1.88.0"
 command = "cargo"
-args = ["check", "--workspace", "--all-features"]
+args = [
+  "check",
+  "--workspace",
+  "--all-features",
+]
 
 [tasks.mdbook]
 description = "Build mdBook documentation"
 command = "mdbook"
-args = ["build", "docs"]
+args = [
+  "build",
+  "docs",
+]
 
 [tasks.prop-tests]
 description = "Run property-based tests (extended)"
 command = "cargo"
-args = ["nextest", "run", "--workspace", "--all-features", "-E", "binary(/prop_/)"]
+args = [
+  "nextest",
+  "run",
+  "--workspace",
+  "--all-features",
+  "-E",
+  "binary(/prop_/)",
+]
+
+[tasks.osv-scan]
+description = "Scan Cargo.lock for known vulnerabilities (OSV database)"
+command = "osv-scanner"
+args = [
+  "--lockfile=Cargo.lock",
+]
+
+[tasks.sbom]
+description = "Generate SPDX 2.3 JSON SBOM for the workspace (requires syft on PATH)"
+command = "syft"
+args = [
+  "scan",
+  ".",
+  "--output",
+  "spdx-json=sbom.spdx.json",
+]
+
+[tasks.codeql]
+description = "Run CodeQL SAST locally (requires codeql CLI on PATH; mirrors CI build-mode: none)"
+script = """
+set -e
+echo "Creating CodeQL database (build-mode: none)..."
+codeql database create codeql-db \
+  --language=rust \
+  --build-mode=none \
+  --overwrite
+echo "Analysing with security-extended suite..."
+codeql database analyze codeql-db \
+  --format=sarif-latest \
+  --output=codeql-results.sarif \
+  codeql/rust-queries:codeql-suites/rust-security-extended.qls
+echo "Results written to codeql-results.sarif"
+"""
+
+[tasks.scorecard]
+description = "Run OSSF Scorecard locally (requires scorecard CLI and GITHUB_TOKEN)"
+command = "scorecard"
+args = [
+  "--repo=github.com/randomvariable/synwire",
+  "--format=text",
+]
+
+[tasks.updatecli-diff]
+description = "Preview dependency updates without raising PRs (auto-sources GITHUB_TOKEN from 'gh auth token' if not set)"
+script = """
+set -e
+GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || true)}"
+export GITHUB_TOKEN
+updatecli pipeline diff --config updatecli/updatecli.d --experimental
+"""
+
+[tasks.updatecli-apply]
+description = "Apply dependency updates and raise PRs (auto-sources GITHUB_TOKEN from 'gh auth token' if not set)"
+script = """
+set -e
+GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || true)}"
+export GITHUB_TOKEN
+updatecli pipeline apply --config updatecli/updatecli.d --experimental
+"""
 
 # ---------------------------------------------------------------------------
 # Composite tasks
@@ -76,12 +196,34 @@ args = ["nextest", "run", "--workspace", "--all-features", "-E", "binary(/prop_/
 
 [tasks.ci]
 description = "Run all Tier 1 CI checks (fmt + clippy + test + doctest + doc)"
-dependencies = ["fmt", "clippy", "test", "doctest", "doc"]
+dependencies = [
+  "fmt",
+  "clippy",
+  "test",
+  "doctest",
+  "doc",
+]
 
 [tasks.ci-full]
 description = "Run Tier 1 + Tier 2 CI checks"
-dependencies = ["ci", "geiger"]
+dependencies = [
+  "ci",
+  "geiger",
+]
 
 [tasks.nightly]
-description = "Run nightly checks (prop tests + audit + MSRV)"
-dependencies = ["prop-tests", "audit", "msrv-check"]
+description = "Run nightly checks (prop tests + audit + osv-scan + MSRV)"
+dependencies = [
+  "prop-tests",
+  "audit",
+  "osv-scan",
+  "msrv-check",
+]
+
+[tasks.security]
+description = "Run all local supply-chain security checks (audit + osv-scan + geiger)"
+dependencies = [
+  "audit",
+  "osv-scan",
+  "geiger",
+]

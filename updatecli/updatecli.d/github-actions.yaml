@@ -1,0 +1,787 @@
+# updatecli policy: GitHub Actions SHA-pin updates
+#
+# Each manifest (--- separated) covers one action reference used across the
+# workflow files. updatecli checks GitHub Releases for a newer tag, resolves
+# it to its commit SHA, and opens a PR updating the relevant workflow files.
+#
+# The `file` kind with matchPattern is used instead of yaml key paths because
+# step indexes change as workflows evolve.
+#
+# Extend this file by adding a new --- block for each new action added to
+# any workflow file.
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-checkout:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: checkout
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  nightly:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  release:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/release.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  pages:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/pages.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  codeql:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/codeql.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  sbom:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/sbom.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  scorecard:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/scorecard.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+  updatecli:
+    kind: file
+    sourceid: actions-checkout
+    spec:
+      file: .github/workflows/updatecli.yml
+      matchpattern: 'actions/checkout@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/checkout@{{ source "actions-checkout" }}  # {{ source "actions-checkout" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  dtolnay-rust-toolchain-stable:
+    kind: githubrelease
+    spec:
+      owner: dtolnay
+      repository: rust-toolchain
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-stable
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
+    scmid: default
+  nightly:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-stable
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-stable
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
+    scmid: default
+  release:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-stable
+    spec:
+      file: .github/workflows/release.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
+    scmid: default
+  codeql:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-stable
+    spec:
+      file: .github/workflows/codeql.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
+    scmid: default
+  sbom:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-stable
+    spec:
+      file: .github/workflows/sbom.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+stable'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-stable" }}  # stable'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  dtolnay-rust-toolchain-1_88:
+    kind: githubrelease
+    spec:
+      owner: dtolnay
+      repository: rust-toolchain
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  nightly-msrv:
+    kind: file
+    sourceid: dtolnay-rust-toolchain-1_88
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'dtolnay/rust-toolchain@\S+\s+#\s+1\.88'
+      replacepattern: 'dtolnay/rust-toolchain@{{ source "dtolnay-rust-toolchain-1_88" }}  # 1.88'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  swatinem-rust-cache:
+    kind: githubrelease
+    spec:
+      owner: Swatinem
+      repository: rust-cache
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: swatinem-rust-cache
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'Swatinem/rust-cache@\S+(\s+#\s+\S+)?'
+      replacepattern: 'Swatinem/rust-cache@{{ source "swatinem-rust-cache" }}  # {{ source "swatinem-rust-cache" }}'
+    scmid: default
+  nightly:
+    kind: file
+    sourceid: swatinem-rust-cache
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'Swatinem/rust-cache@\S+(\s+#\s+\S+)?'
+      replacepattern: 'Swatinem/rust-cache@{{ source "swatinem-rust-cache" }}  # {{ source "swatinem-rust-cache" }}'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: swatinem-rust-cache
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'Swatinem/rust-cache@\S+(\s+#\s+\S+)?'
+      replacepattern: 'Swatinem/rust-cache@{{ source "swatinem-rust-cache" }}  # {{ source "swatinem-rust-cache" }}'
+    scmid: default
+  release:
+    kind: file
+    sourceid: swatinem-rust-cache
+    spec:
+      file: .github/workflows/release.yml
+      matchpattern: 'Swatinem/rust-cache@\S+(\s+#\s+\S+)?'
+      replacepattern: 'Swatinem/rust-cache@{{ source "swatinem-rust-cache" }}  # {{ source "swatinem-rust-cache" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  taiki-e-install-action:
+    kind: githubrelease
+    spec:
+      owner: taiki-e
+      repository: install-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: taiki-e-install-action
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'taiki-e/install-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'taiki-e/install-action@{{ source "taiki-e-install-action" }}  # {{ source "taiki-e-install-action" }}'
+    scmid: default
+  nightly:
+    kind: file
+    sourceid: taiki-e-install-action
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'taiki-e/install-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'taiki-e/install-action@{{ source "taiki-e-install-action" }}  # {{ source "taiki-e-install-action" }}'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: taiki-e-install-action
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'taiki-e/install-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'taiki-e/install-action@{{ source "taiki-e-install-action" }}  # {{ source "taiki-e-install-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  davidb-rust-cargo-make:
+    kind: githubrelease
+    spec:
+      owner: davidB
+      repository: rust-cargo-make
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: davidb-rust-cargo-make
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'davidB/rust-cargo-make@\S+(\s+#\s+\S+)?'
+      replacepattern: 'davidB/rust-cargo-make@{{ source "davidb-rust-cargo-make" }}  # {{ source "davidb-rust-cargo-make" }}'
+    scmid: default
+  nightly:
+    kind: file
+    sourceid: davidb-rust-cargo-make
+    spec:
+      file: .github/workflows/nightly.yml
+      matchpattern: 'davidB/rust-cargo-make@\S+(\s+#\s+\S+)?'
+      replacepattern: 'davidB/rust-cargo-make@{{ source "davidb-rust-cargo-make" }}  # {{ source "davidb-rust-cargo-make" }}'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: davidb-rust-cargo-make
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'davidB/rust-cargo-make@\S+(\s+#\s+\S+)?'
+      replacepattern: 'davidB/rust-cargo-make@{{ source "davidb-rust-cargo-make" }}  # {{ source "davidb-rust-cargo-make" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  codeql-action:
+    kind: githubrelease
+    spec:
+      owner: github
+      repository: codeql-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=4,<5"
+
+targets:
+  codeql-init:
+    kind: file
+    sourceid: codeql-action
+    spec:
+      file: .github/workflows/codeql.yml
+      matchpattern: 'github/codeql-action/init@\S+(\s+#\s+\S+)?'
+      replacepattern: 'github/codeql-action/init@{{ source "codeql-action" }}  # {{ source "codeql-action" }}'
+    scmid: default
+  codeql-analyze:
+    kind: file
+    sourceid: codeql-action
+    spec:
+      file: .github/workflows/codeql.yml
+      matchpattern: 'github/codeql-action/analyze@\S+(\s+#\s+\S+)?'
+      replacepattern: 'github/codeql-action/analyze@{{ source "codeql-action" }}  # {{ source "codeql-action" }}'
+    scmid: default
+  scorecard-upload-sarif:
+    kind: file
+    sourceid: codeql-action
+    spec:
+      file: .github/workflows/scorecard.yml
+      matchpattern: 'github/codeql-action/upload-sarif@\S+(\s+#\s+\S+)?'
+      replacepattern: 'github/codeql-action/upload-sarif@{{ source "codeql-action" }}  # {{ source "codeql-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  anchore-sbom-action:
+    kind: githubrelease
+    spec:
+      owner: anchore
+      repository: sbom-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  sbom:
+    kind: file
+    sourceid: anchore-sbom-action
+    spec:
+      file: .github/workflows/sbom.yml
+      matchpattern: 'anchore/sbom-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'anchore/sbom-action@{{ source "anchore-sbom-action" }}  # {{ source "anchore-sbom-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  ossf-scorecard-action:
+    kind: githubrelease
+    spec:
+      owner: ossf
+      repository: scorecard-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  scorecard:
+    kind: file
+    sourceid: ossf-scorecard-action
+    spec:
+      file: .github/workflows/scorecard.yml
+      matchpattern: 'ossf/scorecard-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'ossf/scorecard-action@{{ source "ossf-scorecard-action" }}  # {{ source "ossf-scorecard-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-upload-artifact:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: upload-artifact
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  ci:
+    kind: file
+    sourceid: actions-upload-artifact
+    spec:
+      file: .github/workflows/ci.yml
+      matchpattern: 'actions/upload-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-artifact@{{ source "actions-upload-artifact" }}  # {{ source "actions-upload-artifact" }}'
+    scmid: default
+  coverage:
+    kind: file
+    sourceid: actions-upload-artifact
+    spec:
+      file: .github/workflows/coverage.yml
+      matchpattern: 'actions/upload-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-artifact@{{ source "actions-upload-artifact" }}  # {{ source "actions-upload-artifact" }}'
+    scmid: default
+  scorecard:
+    kind: file
+    sourceid: actions-upload-artifact
+    spec:
+      file: .github/workflows/scorecard.yml
+      matchpattern: 'actions/upload-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-artifact@{{ source "actions-upload-artifact" }}  # {{ source "actions-upload-artifact" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  softprops-action-gh-release:
+    kind: githubrelease
+    spec:
+      owner: softprops
+      repository: action-gh-release
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  release:
+    kind: file
+    sourceid: softprops-action-gh-release
+    spec:
+      file: .github/workflows/release.yml
+      matchpattern: 'softprops/action-gh-release@\S+(\s+#\s+\S+)?'
+      replacepattern: 'softprops/action-gh-release@{{ source "softprops-action-gh-release" }}  # {{ source "softprops-action-gh-release" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-configure-pages:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: configure-pages
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  pages:
+    kind: file
+    sourceid: actions-configure-pages
+    spec:
+      file: .github/workflows/pages.yml
+      matchpattern: 'actions/configure-pages@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/configure-pages@{{ source "actions-configure-pages" }}  # {{ source "actions-configure-pages" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-upload-pages-artifact:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: upload-pages-artifact
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  pages:
+    kind: file
+    sourceid: actions-upload-pages-artifact
+    spec:
+      file: .github/workflows/pages.yml
+      matchpattern: 'actions/upload-pages-artifact@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/upload-pages-artifact@{{ source "actions-upload-pages-artifact" }}  # {{ source "actions-upload-pages-artifact" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  actions-deploy-pages:
+    kind: githubrelease
+    spec:
+      owner: actions
+      repository: deploy-pages
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  pages:
+    kind: file
+    sourceid: actions-deploy-pages
+    spec:
+      file: .github/workflows/pages.yml
+      matchpattern: 'actions/deploy-pages@\S+(\s+#\s+\S+)?'
+      replacepattern: 'actions/deploy-pages@{{ source "actions-deploy-pages" }}  # {{ source "actions-deploy-pages" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  updatecli-action:
+    kind: githubrelease
+    spec:
+      owner: updatecli
+      repository: updatecli-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  updatecli:
+    kind: file
+    sourceid: updatecli-action
+    spec:
+      file: .github/workflows/updatecli.yml
+      matchpattern: 'updatecli/updatecli-action@\S+(\s+#\s+\S+)?'
+      replacepattern: 'updatecli/updatecli-action@{{ source "updatecli-action" }}  # {{ source "updatecli-action" }}'
+    scmid: default
+
+---
+scms:
+  default:
+    kind: github
+    spec:
+      user: '{{ env "GITHUB_ACTOR" | default "updatecli-bot" }}'
+      email: "updatecli@users.noreply.github.com"
+      owner: randomvariable
+      repository: synwire
+      token: '{{ env "GITHUB_TOKEN" }}'
+      branch: main
+      commitmessage:
+        type: chore
+        scope: deps
+
+sources:
+  google-osv-scanner-action:
+    kind: githubrelease
+    spec:
+      owner: google
+      repository: osv-scanner-action
+      token: '{{ env "GITHUB_TOKEN" }}'
+      versionfilter:
+        kind: semver
+        pattern: ">=0"
+
+targets:
+  osv-scanner-pr:
+    kind: file
+    sourceid: google-osv-scanner-action
+    spec:
+      file: .github/workflows/osv-scanner-pr.yml
+      matchpattern: 'google/osv-scanner-action/[^@]+@\S+(\s+#\s+\S+)?'
+      replacepattern: 'google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@{{ source "google-osv-scanner-action" }}  # {{ source "google-osv-scanner-action" }}'
+    scmid: default
+  osv-scanner-scheduled:
+    kind: file
+    sourceid: google-osv-scanner-action
+    spec:
+      file: .github/workflows/osv-scanner-scheduled.yml
+      matchpattern: 'google/osv-scanner-action/[^@]+@\S+(\s+#\s+\S+)?'
+      replacepattern: 'google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@{{ source "google-osv-scanner-action" }}  # {{ source "google-osv-scanner-action" }}'
+    scmid: default

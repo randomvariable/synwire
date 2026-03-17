@@ -1,0 +1,17 @@
+# OSV-Scanner suppression configuration.
+#
+# Add entries here to suppress known-accepted vulnerabilities.
+# Each entry requires a justification and an expiry date so suppressions
+# are re-evaluated on a fixed schedule rather than forgotten.
+#
+# Format:
+#   [[IgnoredVulns]]
+#   id = "GHSA-xxxx-xxxx-xxxx"   # GHSA, CVE, RUSTSEC, or OSV ID
+#   reason = "No fix available upstream; risk accepted YYYY-MM-DD, revisit by YYYY-MM-DD"
+#   ignoreUntil = YYYY-MM-DD     # ISO date; OSV-Scanner re-reports after this date
+#
+# Example (commented out):
+# [[IgnoredVulns]]
+# id = "RUSTSEC-2023-0071"
+# reason = "Only affects Windows targets; Synwire targets Linux only"
+# ignoreUntil = 2026-09-17
