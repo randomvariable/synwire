@@ -1,42 +1,55 @@
 [package]
-name = "synwire"
-version = "0.1.0"
-edition.workspace = true
+name                   = "synwire"
+version                = "0.1.0"
+edition.workspace      = true
 rust-version.workspace = true
-license.workspace = true
-repository.workspace = true
-homepage.workspace = true
-keywords.workspace = true
-categories.workspace = true
-readme = "README.md"
-description = "Convenience re-exports and reference implementations for Synwire"
+license.workspace      = true
+repository.workspace   = true
+homepage.workspace     = true
+keywords.workspace     = true
+categories.workspace   = true
+readme                 = "README.md"
+description            = "Convenience re-exports and reference implementations for Synwire"
 
 [lints]
 workspace = true
 
 [dependencies]
 synwire-core = { path = "../synwire-core", version = "0.1.0" }
-moka = { workspace = true }
-tokio = { workspace = true }
-serde = { workspace = true }
-serde_json = { workspace = true }
-regex = { workspace = true }
+moka         = { workspace = true }
+tokio        = { workspace = true }
+serde        = { workspace = true }
+serde_json   = { workspace = true }
+regex        = { workspace = true }
 
 synwire-llm-openai = { path = "../synwire-llm-openai", version = "0.1.0", optional = true }
 synwire-llm-ollama = { path = "../synwire-llm-ollama", version = "0.1.0", optional = true }
-synwire-sandbox = { path = "../synwire-sandbox", version = "0.1.0", optional = true }
-synwire-lsp = { path = "../synwire-lsp", version = "0.1.0", optional = true }
-synwire-dap = { path = "../synwire-dap", version = "0.1.0", optional = true }
-tracing = { workspace = true }
+synwire-sandbox    = { path = "../synwire-sandbox", version = "0.1.0", optional = true }
+synwire-lsp        = { path = "../synwire-lsp", version = "0.1.0", optional = true }
+synwire-dap        = { path = "../synwire-dap", version = "0.1.0", optional = true }
+tracing            = { workspace = true }
 
 [dev-dependencies]
-tokio = { workspace = true, features = ["full"] }
+tokio = { workspace = true, features = [
+  "full",
+] }
 tokio-test = { workspace = true }
 
 [features]
-default = []
-openai = ["dep:synwire-llm-openai"]
-ollama = ["dep:synwire-llm-ollama"]
-sandbox = ["dep:synwire-sandbox"]
-lsp = ["dep:synwire-lsp"]
-dap = ["dep:synwire-dap"]
+default = [
+]
+openai = [
+  "dep:synwire-llm-openai",
+]
+ollama = [
+  "dep:synwire-llm-ollama",
+]
+sandbox = [
+  "dep:synwire-sandbox",
+]
+lsp = [
+  "dep:synwire-lsp",
+]
+dap = [
+  "dep:synwire-dap",
+]

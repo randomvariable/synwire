@@ -16,6 +16,8 @@
 - Community detection: hit-leiden (planned)
 - Scripting: mlua (Lua), rhai, extism (WASM) — for agent skills (planned)
 - Build: cargo-make (Makefile.toml at workspace root)
+- Rust stable, edition 2024, MSRV 1.85 (CodeQL supports editions 2021 and 2024) + GitHub Actions runners (`ubuntu-latest`), GitHub Advanced Security (free for public repos) (004-supply-chain-security)
+- N/A — this feature produces workflow YAML, TOML/YAML config files, and release SBOM artifacts (004-supply-chain-security)
 
 ## Project Structure
 
@@ -58,7 +60,14 @@ cargo make doc         # build docs (deny warnings)
 cargo make doctest     # doc-tests only
 cargo make coverage    # generate lcov coverage report
 cargo make ci-full     # Tier 1 + Tier 2 (includes geiger)
-cargo make nightly     # prop-tests + audit + MSRV check
+cargo make nightly     # prop-tests + audit + osv-scan + MSRV check
+cargo make security    # local supply-chain: audit + osv-scan + geiger
+cargo make osv-scan    # OSV vulnerability scan (Cargo.lock)
+cargo make sbom        # generate SPDX 2.3 JSON SBOM (requires syft)
+cargo make codeql      # CodeQL SAST locally (requires codeql CLI)
+cargo make scorecard   # OSSF Scorecard locally (requires scorecard CLI + GITHUB_TOKEN)
+cargo make updatecli-diff   # preview dependency updates (requires GITHUB_TOKEN)
+cargo make updatecli-apply  # apply dependency updates + raise PRs
 ```
 
 ## Code Style
@@ -113,10 +122,6 @@ cargo make nightly     # prop-tests + audit + MSRV check
 - Research: `docs/tempresearch/` (3 research docs on SWE-bench, code localization, tool search)
 
 ## Recent Changes
+- 004-supply-chain-security: Added Rust stable, edition 2024, MSRV 1.85 (CodeQL supports editions 2021 and 2024) + GitHub Actions runners (`ubuntu-latest`), GitHub Advanced Security (free for public repos)
 - 003-agent-core: Expanded spec with 23 new user stories (US16-US39) covering VFS, semantic search, LSP/DAP, code graphs, community detection, agent skills, MCP server, daemon, tool search
 - 003-agent-core: Refactored all `Backend*` terminology to `*Provider`/`Vfs` throughout spec
-- 003-agent-core: Added synwire-daemon singleton architecture (replaces per-repo coordinators)
-- 003-agent-core: Added two-level identity (RepoId + WorktreeId) for multi-worktree support
-- 003-agent-core: Replaced flock-based locking with native backend concurrency (SQLite WAL, LanceDB, tantivy)
-- 003-agent-core: Added MCP sampling for tool-internal LLM access (lazy/on-demand, zero calls during indexing)
-- 003-agent-core: Added ToolSearchIndex for progressive tool discovery (~85% token reduction)
