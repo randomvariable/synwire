@@ -59,12 +59,12 @@ impl DocumentSyncManager {
     ///
     /// Returns the new version, or `None` if the document is not tracked.
     pub fn change(&self, uri: &Url, new_content: String) -> Option<i32> {
-        if let Ok(mut docs) = self.open_documents.write() {
-            if let Some(state) = docs.get_mut(uri) {
-                state.version += 1;
-                state.content = new_content;
-                return Some(state.version);
-            }
+        if let Ok(mut docs) = self.open_documents.write()
+            && let Some(state) = docs.get_mut(uri)
+        {
+            state.version += 1;
+            state.content = new_content;
+            return Some(state.version);
         }
         None
     }

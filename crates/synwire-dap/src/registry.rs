@@ -203,10 +203,10 @@ fn collect_extensions_recursive(
                     extensions,
                 );
             }
-        } else if file_type.is_file() {
-            if let Some(ext) = entry.path().extension().and_then(|e| e.to_str()) {
-                let _inserted = extensions.insert(ext.to_owned());
-            }
+        } else if file_type.is_file()
+            && let Some(ext) = entry.path().extension().and_then(|e| e.to_str())
+        {
+            let _inserted = extensions.insert(ext.to_owned());
         }
     }
 }

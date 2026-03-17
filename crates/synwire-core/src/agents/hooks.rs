@@ -416,12 +416,11 @@ impl HookRegistry {
         ctx: NotificationContext,
     ) -> Result<HookResult, AgentError> {
         for entry in &self.hooks {
-            if let HookEntry::Notification(matcher, f) = entry {
-                if let HookResult::Abort(msg) =
+            if let HookEntry::Notification(matcher, f) = entry
+                && let HookResult::Abort(msg) =
                     run_with_timeout(f(ctx.clone()), matcher.timeout).await
-                {
-                    return Ok(HookResult::Abort(msg));
-                }
+            {
+                return Ok(HookResult::Abort(msg));
             }
         }
         Ok(HookResult::Continue)
@@ -433,12 +432,11 @@ impl HookRegistry {
         ctx: SessionStartContext,
     ) -> Result<HookResult, AgentError> {
         for entry in &self.hooks {
-            if let HookEntry::SessionStart(matcher, f) = entry {
-                if let HookResult::Abort(msg) =
+            if let HookEntry::SessionStart(matcher, f) = entry
+                && let HookResult::Abort(msg) =
                     run_with_timeout(f(ctx.clone()), matcher.timeout).await
-                {
-                    return Ok(HookResult::Abort(msg));
-                }
+            {
+                return Ok(HookResult::Abort(msg));
             }
         }
         Ok(HookResult::Continue)
@@ -447,12 +445,11 @@ impl HookRegistry {
     /// Run all session end hooks.
     pub async fn run_session_end(&self, ctx: SessionEndContext) -> Result<HookResult, AgentError> {
         for entry in &self.hooks {
-            if let HookEntry::SessionEnd(matcher, f) = entry {
-                if let HookResult::Abort(msg) =
+            if let HookEntry::SessionEnd(matcher, f) = entry
+                && let HookResult::Abort(msg) =
                     run_with_timeout(f(ctx.clone()), matcher.timeout).await
-                {
-                    return Ok(HookResult::Abort(msg));
-                }
+            {
+                return Ok(HookResult::Abort(msg));
             }
         }
         Ok(HookResult::Continue)
@@ -464,12 +461,11 @@ impl HookRegistry {
         ctx: SubagentStartContext,
     ) -> Result<HookResult, AgentError> {
         for entry in &self.hooks {
-            if let HookEntry::SubagentStart(matcher, f) = entry {
-                if let HookResult::Abort(msg) =
+            if let HookEntry::SubagentStart(matcher, f) = entry
+                && let HookResult::Abort(msg) =
                     run_with_timeout(f(ctx.clone()), matcher.timeout).await
-                {
-                    return Ok(HookResult::Abort(msg));
-                }
+            {
+                return Ok(HookResult::Abort(msg));
             }
         }
         Ok(HookResult::Continue)
@@ -481,12 +477,11 @@ impl HookRegistry {
         ctx: SubagentStopContext,
     ) -> Result<HookResult, AgentError> {
         for entry in &self.hooks {
-            if let HookEntry::SubagentStop(matcher, f) = entry {
-                if let HookResult::Abort(msg) =
+            if let HookEntry::SubagentStop(matcher, f) = entry
+                && let HookResult::Abort(msg) =
                     run_with_timeout(f(ctx.clone()), matcher.timeout).await
-                {
-                    return Ok(HookResult::Abort(msg));
-                }
+            {
+                return Ok(HookResult::Abort(msg));
             }
         }
         Ok(HookResult::Continue)
@@ -495,12 +490,11 @@ impl HookRegistry {
     /// Run all pre-compact hooks.
     pub async fn run_pre_compact(&self, ctx: PreCompactContext) -> Result<HookResult, AgentError> {
         for entry in &self.hooks {
-            if let HookEntry::PreCompact(matcher, f) = entry {
-                if let HookResult::Abort(msg) =
+            if let HookEntry::PreCompact(matcher, f) = entry
+                && let HookResult::Abort(msg) =
                     run_with_timeout(f(ctx.clone()), matcher.timeout).await
-                {
-                    return Ok(HookResult::Abort(msg));
-                }
+            {
+                return Ok(HookResult::Abort(msg));
             }
         }
         Ok(HookResult::Continue)
@@ -512,12 +506,11 @@ impl HookRegistry {
         ctx: PostCompactContext,
     ) -> Result<HookResult, AgentError> {
         for entry in &self.hooks {
-            if let HookEntry::PostCompact(matcher, f) = entry {
-                if let HookResult::Abort(msg) =
+            if let HookEntry::PostCompact(matcher, f) = entry
+                && let HookResult::Abort(msg) =
                     run_with_timeout(f(ctx.clone()), matcher.timeout).await
-                {
-                    return Ok(HookResult::Abort(msg));
-                }
+            {
+                return Ok(HookResult::Abort(msg));
             }
         }
         Ok(HookResult::Continue)

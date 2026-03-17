@@ -300,10 +300,10 @@ async fn sync_node_helper() {
         .add_node(
             "double",
             sync_node(|mut state: ValueState| {
-                if let Some(n) = state.0.get("n").and_then(serde_json::Value::as_i64) {
-                    if let Some(obj) = state.0.as_object_mut() {
-                        obj.insert("n".to_owned(), serde_json::json!(n * 2));
-                    }
+                if let Some(n) = state.0.get("n").and_then(serde_json::Value::as_i64)
+                    && let Some(obj) = state.0.as_object_mut()
+                {
+                    obj.insert("n".to_owned(), serde_json::json!(n * 2));
                 }
                 Ok(state)
             }),

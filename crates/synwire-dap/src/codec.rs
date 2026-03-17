@@ -60,13 +60,13 @@ impl Decoder for ContentLengthCodec {
         }
 
         // If we have content length, try to read body.
-        if let Some(len) = self.content_length {
-            if src.len() >= len {
-                let body = src.split_to(len);
-                self.content_length = None;
-                let value: serde_json::Value = serde_json::from_slice(&body)?;
-                return Ok(Some(value));
-            }
+        if let Some(len) = self.content_length
+            && src.len() >= len
+        {
+            let body = src.split_to(len);
+            self.content_length = None;
+            let value: serde_json::Value = serde_json::from_slice(&body)?;
+            return Ok(Some(value));
         }
 
         Ok(None) // Need more data.

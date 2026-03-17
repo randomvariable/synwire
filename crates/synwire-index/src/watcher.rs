@@ -133,11 +133,11 @@ async fn handle_change(
             // Skip re-indexing if the content hash is unchanged.
             {
                 let hashes = file_hashes.lock().await;
-                if let Some(old_hash) = hashes.get(&path_str) {
-                    if *old_hash == new_hash {
-                        debug!("Skipping {path_str} (unchanged, xxh128 match)");
-                        return;
-                    }
+                if let Some(old_hash) = hashes.get(&path_str)
+                    && *old_hash == new_hash
+                {
+                    debug!("Skipping {path_str} (unchanged, xxh128 match)");
+                    return;
                 }
             }
 

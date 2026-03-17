@@ -93,10 +93,10 @@ impl ProjectRegistry {
     /// Add a tag to an existing entry.
     pub fn add_tag(&mut self, worktree: &WorktreeId, tag: impl Into<String>) {
         let tag = tag.into();
-        if let Some(entry) = self.entries.get_mut(&worktree.key()) {
-            if !entry.tags.contains(&tag) {
-                entry.tags.push(tag);
-            }
+        if let Some(entry) = self.entries.get_mut(&worktree.key())
+            && !entry.tags.contains(&tag)
+        {
+            entry.tags.push(tag);
         }
     }
 

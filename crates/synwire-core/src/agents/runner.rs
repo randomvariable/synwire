@@ -209,33 +209,33 @@ async fn run_loop<O: serde::Serialize + Send + Sync + 'static>(
         }
 
         // Enforce max_turns.
-        if let Some(limit) = max_turns {
-            if turn >= limit {
-                tracing::debug!(turn, limit, "max_turns reached");
-                emit(
-                    &event_tx,
-                    AgentEvent::TurnComplete {
-                        reason: TerminationReason::MaxTurnsExceeded,
-                    },
-                )
-                .await;
-                return;
-            }
+        if let Some(limit) = max_turns
+            && turn >= limit
+        {
+            tracing::debug!(turn, limit, "max_turns reached");
+            emit(
+                &event_tx,
+                AgentEvent::TurnComplete {
+                    reason: TerminationReason::MaxTurnsExceeded,
+                },
+            )
+            .await;
+            return;
         }
 
         // Enforce max_budget.
-        if let Some(budget) = max_budget {
-            if cumulative_cost > budget {
-                tracing::debug!(cumulative_cost, budget, "budget exceeded");
-                emit(
-                    &event_tx,
-                    AgentEvent::TurnComplete {
-                        reason: TerminationReason::BudgetExceeded,
-                    },
-                )
-                .await;
-                return;
-            }
+        if let Some(budget) = max_budget
+            && cumulative_cost > budget
+        {
+            tracing::debug!(cumulative_cost, budget, "budget exceeded");
+            emit(
+                &event_tx,
+                AgentEvent::TurnComplete {
+                    reason: TerminationReason::BudgetExceeded,
+                },
+            )
+            .await;
+            return;
         }
 
         turn += 1;
@@ -335,10 +335,10 @@ fn dispatch_model_error(
             }
             if retry_count < max_retries {
                 // Try fallback on second retry if available.
-                if retry_count > 0 {
-                    if let Some(fb) = fallback_model {
-                        return RunErrorAction::SwitchModel(fb.to_string());
-                    }
+                if retry_count > 0
+                    && let Some(fb) = fallback_model
+                {
+                    return RunErrorAction::SwitchModel(fb.to_string());
                 }
                 RunErrorAction::Retry
             } else if let Some(fb) = fallback_model {
@@ -458,13 +458,13 @@ mod tests {
 
         let mut saw_stop_or_complete = false;
         while let Some(event) = rx.recv().await {
-            if let AgentEvent::TurnComplete { reason } = event {
-                if matches!(
+            if let AgentEvent::TurnComplete { reason } = event
+                && matches!(
                     reason,
                     TerminationReason::Stopped | TerminationReason::Complete
-                ) {
-                    saw_stop_or_complete = true;
-                }
+                )
+            {
+                saw_stop_or_complete = true;
             }
         }
         assert!(saw_stop_or_complete);

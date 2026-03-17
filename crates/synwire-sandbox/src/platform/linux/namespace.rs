@@ -807,10 +807,10 @@ fn build_oci_spec(
     // gVisor provides its own syscall filtering via its sentry kernel —
     // applying an OCI seccomp profile on top is redundant and can cause
     // compatibility issues with runsc's internal syscall handling.
-    if runtime != OciRuntime::Gvisor {
-        if let Some(sec) = seccomp {
-            linux_builder = linux_builder.seccomp(sec);
-        }
+    if runtime != OciRuntime::Gvisor
+        && let Some(sec) = seccomp
+    {
+        linux_builder = linux_builder.seccomp(sec);
     }
 
     let linux = linux_builder.build()?;
@@ -1053,16 +1053,16 @@ fn recv_pty_controller(stream: &std::os::unix::net::UnixStream) -> Result<OwnedF
         reason: format!("parse control messages: {e}"),
     })?;
     for cmsg in iter {
-        if let ControlMessageOwned::ScmRights(fds) = cmsg {
-            if let Some(&raw_fd) = fds.first() {
-                // SAFETY: The fd was received via SCM_RIGHTS from the OCI
-                // runtime's console socket protocol. The runtime guarantees
-                // this is a valid, newly-created PTY controller fd that we
-                // now exclusively own.
-                #[allow(unsafe_code)]
-                let owned = unsafe { std::os::fd::OwnedFd::from_raw_fd(raw_fd) };
-                return Ok(owned);
-            }
+        if let ControlMessageOwned::ScmRights(fds) = cmsg
+            && let Some(&raw_fd) = fds.first()
+        {
+            // SAFETY: The fd was received via SCM_RIGHTS from the OCI
+            // runtime's console socket protocol. The runtime guarantees
+            // this is a valid, newly-created PTY controller fd that we
+            // now exclusively own.
+            #[allow(unsafe_code)]
+            let owned = unsafe { std::os::fd::OwnedFd::from_raw_fd(raw_fd) };
+            return Ok(owned);
         }
     }
 

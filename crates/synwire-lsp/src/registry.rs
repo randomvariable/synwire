@@ -319,10 +319,11 @@ impl LanguageServerRegistry {
         let mut result = Vec::new();
 
         for ext in &extensions {
-            if let Some(entry) = self.find_by_extension(ext) {
-                if seen.insert(&entry.name) && which::which(&entry.command).is_ok() {
-                    result.push(entry);
-                }
+            if let Some(entry) = self.find_by_extension(ext)
+                && seen.insert(&entry.name)
+                && which::which(&entry.command).is_ok()
+            {
+                result.push(entry);
             }
         }
         result
@@ -415,10 +416,10 @@ fn collect_extensions_recursive(
                     extensions,
                 );
             }
-        } else if file_type.is_file() {
-            if let Some(ext) = entry.path().extension().and_then(|e| e.to_str()) {
-                let _inserted = extensions.insert(ext.to_owned());
-            }
+        } else if file_type.is_file()
+            && let Some(ext) = entry.path().extension().and_then(|e| e.to_str())
+        {
+            let _inserted = extensions.insert(ext.to_owned());
         }
     }
 }

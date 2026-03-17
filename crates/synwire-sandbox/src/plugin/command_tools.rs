@@ -712,11 +712,11 @@ impl Tool for ShellExpectCasesTool {
                     let full_match = groups.first().cloned().unwrap_or_default();
                     let mut matched_idx = None;
                     for (i, case) in cases.iter().enumerate() {
-                        if let std::result::Result::Ok(re) = regex::Regex::new(&case.pattern) {
-                            if re.is_match(&full_match) {
-                                matched_idx = Some(i);
-                                break;
-                            }
+                        if let std::result::Result::Ok(re) = regex::Regex::new(&case.pattern)
+                            && re.is_match(&full_match)
+                        {
+                            matched_idx = Some(i);
+                            break;
                         }
                     }
 
@@ -946,11 +946,10 @@ impl Tool for ShellBatchTool {
                                 for (j, case) in cases.iter().enumerate() {
                                     if let std::result::Result::Ok(re) =
                                         regex::Regex::new(&case.pattern)
+                                        && re.is_match(&full)
                                     {
-                                        if re.is_match(&full) {
-                                            idx = j;
-                                            break;
-                                        }
+                                        idx = j;
+                                        break;
                                     }
                                 }
 

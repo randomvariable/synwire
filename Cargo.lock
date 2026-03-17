@@ -7930,6 +7930,7 @@ dependencies = [
  "flate2",
  "futures-util",
  "once_cell",
+ "proptest",
  "regex",
  "reqwest",
  "rusqlite",
@@ -7938,6 +7939,7 @@ dependencies = [
  "synwire-core",
  "synwire-embeddings-local",
  "synwire-index",
+ "synwire-test-utils",
  "synwire-vectorstore-lancedb",
  "tar",
  "tempfile",
@@ -8013,6 +8015,7 @@ dependencies = [
 name = "synwire-chunker"
 version = "0.1.0"
 dependencies = [
+ "proptest",
  "serde_json",
  "synwire-core",
  "tracing",

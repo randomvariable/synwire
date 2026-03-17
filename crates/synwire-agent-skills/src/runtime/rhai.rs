@@ -292,10 +292,10 @@ impl RhaiCtx {
         match safe_resolve(&self.root, path) {
             Err(e) => format!("ERROR: {e}"),
             Ok(r) => {
-                if let Some(p) = r.parent() {
-                    if let Err(e) = std::fs::create_dir_all(p) {
-                        return format!("ERROR: {e}");
-                    }
+                if let Some(p) = r.parent()
+                    && let Err(e) = std::fs::create_dir_all(p)
+                {
+                    return format!("ERROR: {e}");
                 }
                 match std::fs::write(&r, content) {
                     Ok(()) => "ok".to_owned(),

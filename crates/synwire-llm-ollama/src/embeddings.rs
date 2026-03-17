@@ -117,42 +117,42 @@ impl OllamaEmbeddings {
             let error_text = response.text().await.unwrap_or_default();
 
             // On auth failure with credential provider, refresh and retry once.
-            if status_code == 401 || status_code == 403 {
-                if let Some(ref provider) = self.credential_provider {
-                    let refreshed = provider.refresh_credential().await?;
-                    let retry_headers = Self::headers_with_key(refreshed.expose());
-                    let retry_response = self
-                        .client
-                        .post(&url)
-                        .headers(retry_headers)
-                        .json(&body)
-                        .send()
-                        .await
-                        .map_err(|e| OllamaError::Http {
-                            status: e.status().map(|s| s.as_u16()),
-                            message: e.to_string(),
-                        })?;
+            if (status_code == 401 || status_code == 403)
+                && let Some(ref provider) = self.credential_provider
+            {
+                let refreshed = provider.refresh_credential().await?;
+                let retry_headers = Self::headers_with_key(refreshed.expose());
+                let retry_response = self
+                    .client
+                    .post(&url)
+                    .headers(retry_headers)
+                    .json(&body)
+                    .send()
+                    .await
+                    .map_err(|e| OllamaError::Http {
+                        status: e.status().map(|s| s.as_u16()),
+                        message: e.to_string(),
+                    })?;
 
-                    let retry_status = retry_response.status();
-                    if retry_status.is_success() {
-                        let json: Value =
-                            retry_response
-                                .json()
-                                .await
-                                .map_err(|e| EmbeddingError::Failed {
-                                    message: e.to_string(),
-                                })?;
-                        return parse_embedding_response(&json);
-                    }
-
-                    let retry_status_code = retry_status.as_u16();
-                    let retry_error = retry_response.text().await.unwrap_or_default();
-                    return Err(OllamaError::Http {
-                        status: Some(retry_status_code),
-                        message: retry_error,
-                    }
-                    .into());
+                let retry_status = retry_response.status();
+                if retry_status.is_success() {
+                    let json: Value =
+                        retry_response
+                            .json()
+                            .await
+                            .map_err(|e| EmbeddingError::Failed {
+                                message: e.to_string(),
+                            })?;
+                    return parse_embedding_response(&json);
                 }
+
+                let retry_status_code = retry_status.as_u16();
+                let retry_error = retry_response.text().await.unwrap_or_default();
+                return Err(OllamaError::Http {
+                    status: Some(retry_status_code),
+                    message: retry_error,
+                }
+                .into());
             }
 
             return Err(OllamaError::Http {

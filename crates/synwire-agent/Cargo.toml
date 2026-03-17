@@ -46,6 +46,8 @@ semantic-search = [
 ]
 
 [dev-dependencies]
+proptest = { workspace = true }
+synwire-test-utils = { path = "../synwire-test-utils", version = "0.1.0" }
 tempfile = { workspace = true }
 
 [lints]

@@ -55,12 +55,13 @@ fn split_at_separator(text: &str, max_len: usize) -> (&str, &str) {
 /// Compute the 1-indexed line number of the byte at `byte_offset` within
 /// `content`.
 fn line_number_at(content: &str, byte_offset: usize) -> usize {
-    let safe_offset = byte_offset.min(content.len());
-    content[..safe_offset]
-        .chars()
-        .filter(|&c| c == '\n')
-        .count()
-        + 1
+    let mut boundary = byte_offset.min(content.len());
+    // Walk back to a char boundary — the caller may pass e.g. `abs_end - 1`
+    // which can land inside a multi-byte character.
+    while boundary > 0 && !content.is_char_boundary(boundary) {
+        boundary -= 1;
+    }
+    content[..boundary].chars().filter(|&c| c == '\n').count() + 1
 }
 
 /// Split text into overlapping chunks using a recursive character splitter.
@@ -131,6 +132,12 @@ pub fn chunk_text(
             break;
         }
         byte_start += advance;
+        // `advance` may not align to a UTF-8 char boundary when `overlap`
+        // cuts into a multi-byte character.  Walk forward to the next
+        // boundary so the slice `&content[byte_start..]` cannot panic.
+        while byte_start < content.len() && !content.is_char_boundary(byte_start) {
+            byte_start += 1;
+        }
     }
 
     docs

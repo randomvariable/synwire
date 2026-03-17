@@ -87,55 +87,55 @@ pub fn lsp_tools(client: Arc<LspClient>) -> Vec<Box<dyn Tool>> {
     // Capability-conditional.
     let caps = client.capabilities();
     if let Some(ref caps) = caps {
-        if caps.definition_provider.is_some() {
-            if let Some(tool) = build_goto_definition_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.definition_provider.is_some()
+            && let Some(tool) = build_goto_definition_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.references_provider.is_some() {
-            if let Some(tool) = build_find_references_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.references_provider.is_some()
+            && let Some(tool) = build_find_references_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.hover_provider.is_some() {
-            if let Some(tool) = build_hover_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.hover_provider.is_some()
+            && let Some(tool) = build_hover_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.completion_provider.is_some() {
-            if let Some(tool) = build_completion_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.completion_provider.is_some()
+            && let Some(tool) = build_completion_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.document_symbol_provider.is_some() {
-            if let Some(tool) = build_document_symbols_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.document_symbol_provider.is_some()
+            && let Some(tool) = build_document_symbols_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.workspace_symbol_provider.is_some() {
-            if let Some(tool) = build_workspace_symbols_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.workspace_symbol_provider.is_some()
+            && let Some(tool) = build_workspace_symbols_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.code_action_provider.is_some() {
-            if let Some(tool) = build_code_actions_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.code_action_provider.is_some()
+            && let Some(tool) = build_code_actions_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.document_formatting_provider.is_some() {
-            if let Some(tool) = build_formatting_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.document_formatting_provider.is_some()
+            && let Some(tool) = build_formatting_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.rename_provider.is_some() {
-            if let Some(tool) = build_rename_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.rename_provider.is_some()
+            && let Some(tool) = build_rename_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
-        if caps.signature_help_provider.is_some() {
-            if let Some(tool) = build_signature_help_tool(Arc::clone(&client)) {
-                tools.push(Box::new(tool));
-            }
+        if caps.signature_help_provider.is_some()
+            && let Some(tool) = build_signature_help_tool(Arc::clone(&client))
+        {
+            tools.push(Box::new(tool));
         }
     }
 

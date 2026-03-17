@@ -170,12 +170,12 @@ impl BaseChatModel for FakeChatModel {
             let total = chunks.len();
             let stream =
                 futures_util::stream::iter(chunks.into_iter().enumerate().map(move |(i, text)| {
-                    if let Some(error_at) = error_after {
-                        if i >= error_at {
-                            return Err(SynwireError::from(ModelError::Other {
-                                message: "stream error injected".into(),
-                            }));
-                        }
+                    if let Some(error_at) = error_after
+                        && i >= error_at
+                    {
+                        return Err(SynwireError::from(ModelError::Other {
+                            message: "stream error injected".into(),
+                        }));
                     }
                     let finish_reason = if i + 1 == total {
                         Some("stop".into())

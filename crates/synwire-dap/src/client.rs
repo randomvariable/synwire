@@ -431,10 +431,10 @@ impl DapClient {
             "context": "repl",
         });
 
-        if let Some(fid) = frame_id {
-            if let Some(obj) = args.as_object_mut() {
-                let _ = obj.insert("frameId".to_string(), serde_json::json!(fid));
-            }
+        if let Some(fid) = frame_id
+            && let Some(obj) = args.as_object_mut()
+        {
+            let _ = obj.insert("frameId".to_string(), serde_json::json!(fid));
         }
 
         let response = self.transport.send_request("evaluate", args).await?;

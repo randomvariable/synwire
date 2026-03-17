@@ -149,12 +149,11 @@ impl DaemonProxy {
         // If the PID file exists and the process is alive, nothing to do.
         let pid_path = layout.daemon_pid_file();
         if pid_path.exists() {
-            if let Ok(contents) = std::fs::read_to_string(&pid_path) {
-                if let Ok(pid) = contents.trim().parse::<u32>() {
-                    if is_process_alive(pid) {
-                        return Ok(());
-                    }
-                }
+            if let Ok(contents) = std::fs::read_to_string(&pid_path)
+                && let Ok(pid) = contents.trim().parse::<u32>()
+                && is_process_alive(pid)
+            {
+                return Ok(());
             }
             // Stale PID file -- remove it so the daemon can recreate it.
             let _removed = std::fs::remove_file(&pid_path);

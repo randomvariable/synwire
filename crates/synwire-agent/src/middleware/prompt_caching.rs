@@ -27,13 +27,12 @@ impl Middleware for PromptCachingMiddleware {
                 .iter_mut()
                 .rev()
                 .find(|m| m.get("role").and_then(|r| r.as_str()) == Some("user"))
+                && let Some(obj) = last.as_object_mut()
             {
-                if let Some(obj) = last.as_object_mut() {
-                    let _ = obj.insert(
-                        "cache_control".to_string(),
-                        serde_json::json!({ "type": "ephemeral" }),
-                    );
-                }
+                let _ = obj.insert(
+                    "cache_control".to_string(),
+                    serde_json::json!({ "type": "ephemeral" }),
+                );
             }
             Ok(MiddlewareResult::Continue(input))
         })

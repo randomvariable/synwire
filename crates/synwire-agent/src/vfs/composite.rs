@@ -161,22 +161,21 @@ impl Vfs for CompositeProvider {
         Box::pin(async move {
             let mut all = Vec::new();
             for mount in &self.mounts {
-                if mount.backend.capabilities().contains(VfsCapabilities::GREP) {
-                    if let Ok(mut matches) = mount.backend.grep(&pattern, opts.clone()).await {
-                        // Prefix match file paths with mount prefix
-                        for m in &mut matches {
-                            if !m.file.starts_with(&mount.prefix) {
-                                let suffix = if m.file.starts_with('/') {
-                                    m.file.clone()
-                                } else {
-                                    format!("/{}", m.file)
-                                };
-                                m.file =
-                                    format!("{}{}", mount.prefix.trim_end_matches('/'), suffix,);
-                            }
+                if mount.backend.capabilities().contains(VfsCapabilities::GREP)
+                    && let Ok(mut matches) = mount.backend.grep(&pattern, opts.clone()).await
+                {
+                    // Prefix match file paths with mount prefix
+                    for m in &mut matches {
+                        if !m.file.starts_with(&mount.prefix) {
+                            let suffix = if m.file.starts_with('/') {
+                                m.file.clone()
+                            } else {
+                                format!("/{}", m.file)
+                            };
+                            m.file = format!("{}{}", mount.prefix.trim_end_matches('/'), suffix,);
                         }
-                        all.append(&mut matches);
                     }
+                    all.append(&mut matches);
                 }
             }
             if all.is_empty()

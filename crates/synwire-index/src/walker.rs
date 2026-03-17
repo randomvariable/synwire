@@ -83,10 +83,10 @@ pub fn walk(root: &Path, opts: &IndexOptions) -> Vec<PathBuf> {
             continue;
         }
         // Size check
-        if let Ok(meta) = std::fs::metadata(path) {
-            if meta.len() > max_size {
-                continue;
-            }
+        if let Ok(meta) = std::fs::metadata(path)
+            && meta.len() > max_size
+        {
+            continue;
         }
 
         files.push(path.to_path_buf());

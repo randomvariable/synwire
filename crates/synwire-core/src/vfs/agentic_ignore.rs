@@ -59,10 +59,10 @@ impl AgenticIgnore {
         while let Some(d) = dir {
             for &filename in AGENTIC_IGNORE_FILES {
                 let ignore_path = d.join(filename);
-                if ignore_path.is_file() {
-                    if let Some(gi) = load_ignore_file(d, &ignore_path) {
-                        matchers.push(gi);
-                    }
+                if ignore_path.is_file()
+                    && let Some(gi) = load_ignore_file(d, &ignore_path)
+                {
+                    matchers.push(gi);
                 }
             }
             dir = d.parent();
@@ -90,7 +90,7 @@ impl AgenticIgnore {
 
     /// Return `true` if no ignore files were discovered.
     #[must_use]
-    pub fn is_empty(&self) -> bool {
+    pub const fn is_empty(&self) -> bool {
         self.matchers.is_empty()
     }
 }

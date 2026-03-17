@@ -123,30 +123,30 @@ impl SemanticIndex {
             .map_err(|e| VfsError::Io(std::io::Error::other(e.to_string())))?;
 
         // Use cached result if fresh and force=false.
-        if !opts.force {
-            if let Some(meta) = cache::read_meta(&cache_dir) {
-                let result = IndexResult {
-                    path: canonical.to_string_lossy().to_string(),
-                    files_indexed: meta.files_indexed,
-                    chunks_produced: meta.chunks_produced,
-                    was_cached: true,
-                };
-                {
-                    let mut jobs = self.jobs.write().await;
-                    if let Some(job) = jobs.get_mut(&index_id) {
-                        job.status = IndexStatus::Ready(result.clone());
-                    }
+        if !opts.force
+            && let Some(meta) = cache::read_meta(&cache_dir)
+        {
+            let result = IndexResult {
+                path: canonical.to_string_lossy().to_string(),
+                files_indexed: meta.files_indexed,
+                chunks_produced: meta.chunks_produced,
+                was_cached: true,
+            };
+            {
+                let mut jobs = self.jobs.write().await;
+                if let Some(job) = jobs.get_mut(&index_id) {
+                    job.status = IndexStatus::Ready(result.clone());
                 }
-                if let Some(tx) = &self.event_tx {
-                    let _ = tx
-                        .send(IndexEvent::Complete {
-                            index_id: index_id.clone(),
-                            result,
-                        })
-                        .await;
-                }
-                return Ok(handle);
             }
+            if let Some(tx) = &self.event_tx {
+                let _ = tx
+                    .send(IndexEvent::Complete {
+                        index_id: index_id.clone(),
+                        result,
+                    })
+                    .await;
+            }
+            return Ok(handle);
         }
 
         // Spawn the background indexing task.

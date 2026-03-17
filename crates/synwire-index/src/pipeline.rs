@@ -55,11 +55,11 @@ pub async fn run(
         let new_hash = hashes::xxh128_hex(content.as_bytes());
 
         // Skip if content hash matches the previously indexed version.
-        if let Some(old_hash) = hash_registry.files.get(&path_str) {
-            if *old_hash == new_hash {
-                debug!("Skipping {} (unchanged, xxh128 match)", file_path.display());
-                continue;
-            }
+        if let Some(old_hash) = hash_registry.files.get(&path_str)
+            && *old_hash == new_hash
+        {
+            debug!("Skipping {} (unchanged, xxh128 match)", file_path.display());
+            continue;
         }
 
         let chunks = chunker.chunk_file(&path_str, &content);

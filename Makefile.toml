@@ -56,7 +56,7 @@ args = ["audit"]
 
 [tasks.msrv-check]
 description = "Check compilation with MSRV (1.85)"
-toolchain = "1.85.0"
+toolchain = "1.88.0"
 command = "cargo"
 args = ["check", "--workspace", "--all-features"]
 
@@ -68,7 +68,7 @@ args = ["build", "docs"]
 [tasks.prop-tests]
 description = "Run property-based tests (extended)"
 command = "cargo"
-args = ["nextest", "run", "--workspace", "--all-features", "-E", "test(::prop_)"]
+args = ["nextest", "run", "--workspace", "--all-features", "-E", "binary(/prop_/)"]
 
 # ---------------------------------------------------------------------------
 # Composite tasks

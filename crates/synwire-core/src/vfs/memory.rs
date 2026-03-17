@@ -367,10 +367,10 @@ impl Vfs for MemoryProvider {
                         after: after_lines,
                     });
 
-                    if let Some(max) = opts.max_matches {
-                        if total >= max {
-                            break 'file_loop;
-                        }
+                    if let Some(max) = opts.max_matches
+                        && total >= max
+                    {
+                        break 'file_loop;
                     }
                 }
 
@@ -893,10 +893,10 @@ impl Vfs for MemoryProvider {
                 }
                 let rel = &k[prefix.len()..];
                 let depth = rel.matches('/').count();
-                if let Some(max) = opts.max_depth {
-                    if depth > max {
-                        continue;
-                    }
+                if let Some(max) = opts.max_depth
+                    && depth > max
+                {
+                    continue;
                 }
                 // Collect intermediate directories.
                 let parts: Vec<&str> = rel.split('/').collect();
@@ -905,20 +905,20 @@ impl Vfs for MemoryProvider {
                     if seen_dirs.insert(dir_path.clone()) {
                         let dir_name = parts[i];
                         let dir_depth = i;
-                        if let Some(max) = opts.max_depth {
-                            if dir_depth > max {
-                                continue;
-                            }
+                        if let Some(max) = opts.max_depth
+                            && dir_depth > max
+                        {
+                            continue;
                         }
-                        if let Some(ref ft) = opts.entry_type {
-                            if *ft != FindType::Directory {
-                                continue;
-                            }
+                        if let Some(ref ft) = opts.entry_type
+                            && *ft != FindType::Directory
+                        {
+                            continue;
                         }
-                        if let Some(ref name) = opts.name {
-                            if !glob_matches(name, dir_name) {
-                                continue;
-                            }
+                        if let Some(ref name) = opts.name
+                            && !glob_matches(name, dir_name)
+                        {
+                            continue;
                         }
                         results.push(FindEntry {
                             path: dir_path,
@@ -931,26 +931,26 @@ impl Vfs for MemoryProvider {
                 }
                 // The file itself.
                 let name = k.rsplit('/').next().unwrap_or("");
-                if let Some(ref ft) = opts.entry_type {
-                    if *ft != FindType::File {
-                        continue;
-                    }
+                if let Some(ref ft) = opts.entry_type
+                    && *ft != FindType::File
+                {
+                    continue;
                 }
-                if let Some(ref pat) = opts.name {
-                    if !glob_matches(pat, name) {
-                        continue;
-                    }
+                if let Some(ref pat) = opts.name
+                    && !glob_matches(pat, name)
+                {
+                    continue;
                 }
                 let size = v.len() as u64;
-                if let Some(min) = opts.min_size {
-                    if size < min {
-                        continue;
-                    }
+                if let Some(min) = opts.min_size
+                    && size < min
+                {
+                    continue;
                 }
-                if let Some(max) = opts.max_size {
-                    if size > max {
-                        continue;
-                    }
+                if let Some(max) = opts.max_size
+                    && size > max
+                {
+                    continue;
                 }
                 results.push(FindEntry {
                     path: k.clone(),

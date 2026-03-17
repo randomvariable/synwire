@@ -218,10 +218,10 @@ pub async fn generate_and_cache(
     sampling: Option<&dyn SamplingProvider>,
 ) -> Result<String, CommunityError> {
     // Return cached non-stale entry immediately.
-    if let Some(entry) = cache.get(community_id)? {
-        if !entry.is_stale {
-            return Ok(entry.summary.clone());
-        }
+    if let Some(entry) = cache.get(community_id)?
+        && !entry.is_stale
+    {
+        return Ok(entry.summary.clone());
     }
 
     let text = generate_summary(members, sampling).await;

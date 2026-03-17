@@ -241,11 +241,10 @@ extism::host_fn!(host_vfs_write(user_data: VfsData; path: String, content: Strin
     match safe_resolve(&root, &path) {
         Err(e) => Ok(format!("ERROR: {e}")),
         Ok(r) => {
-            if let Some(p) = r.parent() {
-                if let Err(e) = std::fs::create_dir_all(p) {
+            if let Some(p) = r.parent()
+                && let Err(e) = std::fs::create_dir_all(p) {
                     return Ok(format!("ERROR: {e}"));
                 }
-            }
             Ok(std::fs::write(&r, content.as_bytes())
                 .map_or_else(|e| format!("ERROR: {e}"), |()| "ok".to_owned()))
         }

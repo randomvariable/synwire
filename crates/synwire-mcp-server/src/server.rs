@@ -152,14 +152,14 @@ impl McpServer {
         let _ = layout.ensure_dir(layout.data_home());
         let _ = layout.ensure_dir(&layout.logs_dir());
 
-        if let Some(ref project) = options.project {
-            if let Ok(wid) = WorktreeId::for_path(project) {
-                info!(
-                    worktree = %wid.display_name,
-                    index_cache = %layout.index_cache(&wid).display(),
-                    "Project configured"
-                );
-            }
+        if let Some(ref project) = options.project
+            && let Ok(wid) = WorktreeId::for_path(project)
+        {
+            info!(
+                worktree = %wid.display_name,
+                index_cache = %layout.index_cache(&wid).display(),
+                "Project configured"
+            );
         }
 
         // Register built-in tools.
@@ -1220,10 +1220,10 @@ fn walk_for_glob(
     };
     for entry in entries.flatten() {
         let path = entry.path();
-        if let Ok(rel) = path.strip_prefix(root) {
-            if set.is_match(rel) {
-                out.push(rel.to_string_lossy().into_owned());
-            }
+        if let Ok(rel) = path.strip_prefix(root)
+            && set.is_match(rel)
+        {
+            out.push(rel.to_string_lossy().into_owned());
         }
         if entry.file_type().is_ok_and(|ft| ft.is_dir()) {
             walk_for_glob(root, &path, set, out);

@@ -152,15 +152,14 @@ impl ToolNode {
                 })?;
 
             // Validate arguments against the tool's JSON Schema (T302).
-            if !tool.schema().parameters.is_null() {
-                if let Ok(validator) = jsonschema::validator_for(&tool.schema().parameters) {
-                    if !validator.is_valid(&arguments) {
-                        return Err(GraphError::ToolInvocation {
-                            tool: name.to_owned(),
-                            message: "arguments failed JSON Schema validation".into(),
-                        });
-                    }
-                }
+            if !tool.schema().parameters.is_null()
+                && let Ok(validator) = jsonschema::validator_for(&tool.schema().parameters)
+                && !validator.is_valid(&arguments)
+            {
+                return Err(GraphError::ToolInvocation {
+                    tool: name.to_owned(),
+                    message: "arguments failed JSON Schema validation".into(),
+                });
             }
 
             // Resolve timeout: per-tool config takes precedence (T300).
@@ -209,14 +208,14 @@ impl ToolNode {
             };
 
             let mut content = output.content;
-            let mut truncated = false;
-
-            if let Some(max_size) = self.max_result_size {
-                if content.len() > max_size {
-                    content.truncate(max_size);
-                    truncated = true;
-                }
-            }
+            let truncated = if let Some(max_size) = self.max_result_size
+                && content.len() > max_size
+            {
+                content.truncate(max_size);
+                true
+            } else {
+                false
+            };
 
             let entry = ToolResultEntry {
                 tool_call_id: call_id.to_owned(),

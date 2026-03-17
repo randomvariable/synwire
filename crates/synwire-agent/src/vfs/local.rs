@@ -641,10 +641,10 @@ fn grep_dir(
                     .map(ToString::to_string)
                     .collect(),
             });
-            if let Some(max) = opts.max_matches {
-                if *total >= max {
-                    return Ok(());
-                }
+            if let Some(max) = opts.max_matches
+                && *total >= max
+            {
+                return Ok(());
             }
         }
         if mode == GrepOutputMode::Count && file_count > 0 {
@@ -700,10 +700,10 @@ fn find_dir(
     results: &mut Vec<FindEntry>,
     agentic_ignore: &AgenticIgnore,
 ) -> Result<(), VfsError> {
-    if let Some(max) = opts.max_depth {
-        if depth > max {
-            return Ok(());
-        }
+    if let Some(max) = opts.max_depth
+        && depth > max
+    {
+        return Ok(());
     }
     let rd = std::fs::read_dir(dir)?;
     for entry in rd {
@@ -746,18 +746,18 @@ fn find_dir(
         }
 
         // Size filters (files only).
-        if let Some(ref m) = meta {
-            if !is_dir {
-                if let Some(min) = opts.min_size {
-                    if m.len() < min {
-                        continue;
-                    }
-                }
-                if let Some(max) = opts.max_size {
-                    if m.len() > max {
-                        continue;
-                    }
-                }
+        if let Some(ref m) = meta
+            && !is_dir
+        {
+            if let Some(min) = opts.min_size
+                && m.len() < min
+            {
+                continue;
+            }
+            if let Some(max) = opts.max_size
+                && m.len() > max
+            {
+                continue;
             }
         }
 
@@ -772,21 +772,21 @@ fn find_dir(
             chrono::DateTime::from_timestamp(i64::try_from(secs).unwrap_or(i64::MAX), 0)
         });
 
-        if let Some(ref newer) = opts.newer_than {
-            if modified_dt.is_none_or(|t| t < *newer) {
-                if is_dir {
-                    find_dir(&path, opts, depth + 1, results, agentic_ignore)?;
-                }
-                continue;
+        if let Some(ref newer) = opts.newer_than
+            && modified_dt.is_none_or(|t| t < *newer)
+        {
+            if is_dir {
+                find_dir(&path, opts, depth + 1, results, agentic_ignore)?;
             }
+            continue;
         }
-        if let Some(ref older) = opts.older_than {
-            if modified_dt.is_none_or(|t| t > *older) {
-                if is_dir {
-                    find_dir(&path, opts, depth + 1, results, agentic_ignore)?;
-                }
-                continue;
+        if let Some(ref older) = opts.older_than
+            && modified_dt.is_none_or(|t| t > *older)
+        {
+            if is_dir {
+                find_dir(&path, opts, depth + 1, results, agentic_ignore)?;
             }
+            continue;
         }
 
         results.push(FindEntry {

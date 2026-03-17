@@ -235,48 +235,46 @@ fn collect_definitions<'a>(
 
         // Check whether this top-level node is a container that should be
         // split into per-method chunks.
-        if let Some((container_kind, method_kind)) = container {
-            if child.kind() == container_kind {
-                let parent_name = extract_container_name(child, source);
-                let mut found_methods = false;
+        if let Some((container_kind, method_kind)) = container
+            && child.kind() == container_kind
+        {
+            let parent_name = extract_container_name(child, source);
+            let mut found_methods = false;
 
-                // Walk the body/children of the container for method nodes.
-                for j in 0..child.child_count() {
-                    let Some(body_or_child) = child.child(j) else {
-                        continue;
-                    };
-                    // Some grammars nest methods inside a `block` or `body`
-                    // child; try both the direct child and one level down.
-                    if body_or_child.kind() == method_kind {
-                        let sym = build_qualified_symbol(
-                            parent_name,
-                            extract_symbol(body_or_child, source),
-                        );
-                        out.push((body_or_child, sym));
-                        found_methods = true;
-                    } else {
-                        for k in 0..body_or_child.child_count() {
-                            let Some(method_node) = body_or_child.child(k) else {
-                                continue;
-                            };
-                            if method_node.kind() == method_kind {
-                                let sym = build_qualified_symbol(
-                                    parent_name,
-                                    extract_symbol(method_node, source),
-                                );
-                                out.push((method_node, sym));
-                                found_methods = true;
-                            }
+            // Walk the body/children of the container for method nodes.
+            for j in 0..child.child_count() {
+                let Some(body_or_child) = child.child(j) else {
+                    continue;
+                };
+                // Some grammars nest methods inside a `block` or `body`
+                // child; try both the direct child and one level down.
+                if body_or_child.kind() == method_kind {
+                    let sym =
+                        build_qualified_symbol(parent_name, extract_symbol(body_or_child, source));
+                    out.push((body_or_child, sym));
+                    found_methods = true;
+                } else {
+                    for k in 0..body_or_child.child_count() {
+                        let Some(method_node) = body_or_child.child(k) else {
+                            continue;
+                        };
+                        if method_node.kind() == method_kind {
+                            let sym = build_qualified_symbol(
+                                parent_name,
+                                extract_symbol(method_node, source),
+                            );
+                            out.push((method_node, sym));
+                            found_methods = true;
                         }
                     }
                 }
+            }
 
-                // If we extracted methods, skip adding the container as a
-                // whole-block chunk.  If the container was empty (no methods
-                // found), fall through and add the container itself.
-                if found_methods {
-                    continue;
-                }
+            // If we extracted methods, skip adding the container as a
+            // whole-block chunk.  If the container was empty (no methods
+            // found), fall through and add the container itself.
+            if found_methods {
+                continue;
             }
         }
 

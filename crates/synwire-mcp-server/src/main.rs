@@ -120,19 +120,19 @@ fn init_logging(level: &str, logs_dir: Option<&std::path::Path>) {
 
     let stderr_layer = tracing_subscriber::fmt::layer().with_writer(std::io::stderr);
 
-    if let Some(dir) = logs_dir {
-        if std::fs::create_dir_all(dir).is_ok() {
-            let file_appender = tracing_appender::rolling::daily(dir, "synwire-mcp-server.log");
-            let file_layer = tracing_subscriber::fmt::layer()
-                .with_writer(file_appender)
-                .with_ansi(false);
-            let _ = tracing_subscriber::registry()
-                .with(filter)
-                .with(stderr_layer)
-                .with(file_layer)
-                .try_init();
-            return;
-        }
+    if let Some(dir) = logs_dir
+        && std::fs::create_dir_all(dir).is_ok()
+    {
+        let file_appender = tracing_appender::rolling::daily(dir, "synwire-mcp-server.log");
+        let file_layer = tracing_subscriber::fmt::layer()
+            .with_writer(file_appender)
+            .with_ansi(false);
+        let _ = tracing_subscriber::registry()
+            .with(filter)
+            .with(stderr_layer)
+            .with(file_layer)
+            .try_init();
+        return;
     }
 
     let _ = tracing_subscriber::registry()

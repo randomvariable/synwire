@@ -104,19 +104,19 @@ impl McpLifecycleManager {
     /// Enable a specific server (connects if not already connected).
     pub async fn enable(&self, name: &str) -> Result<(), AgentError> {
         let guard = self.servers.read().await;
-        if let Some(server) = guard.get(name) {
-            if !server.enabled {
-                drop(guard);
-                let _ = self
-                    .servers
-                    .write()
-                    .await
-                    .get_mut(name)
-                    .map(|s| s.enabled = true);
-                let guard = self.servers.read().await;
-                if let Some(server) = guard.get(name) {
-                    server.transport.connect().await?;
-                }
+        if let Some(server) = guard.get(name)
+            && !server.enabled
+        {
+            drop(guard);
+            let _ = self
+                .servers
+                .write()
+                .await
+                .get_mut(name)
+                .map(|s| s.enabled = true);
+            let guard = self.servers.read().await;
+            if let Some(server) = guard.get(name) {
+                server.transport.connect().await?;
             }
         }
         Ok(())
@@ -240,10 +240,10 @@ impl McpLifecycleManager {
                 if let Some((name, delay)) = disconnected {
                     sleep(delay).await;
                     let guard = self.servers.read().await;
-                    if let Some(server) = guard.get(&name) {
-                        if let Err(e) = server.transport.reconnect().await {
-                            tracing::error!(%name, %e, "MCP reconnect failed");
-                        }
+                    if let Some(server) = guard.get(&name)
+                        && let Err(e) = server.transport.reconnect().await
+                    {
+                        tracing::error!(%name, %e, "MCP reconnect failed");
                     }
                 }
             }

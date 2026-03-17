@@ -306,14 +306,14 @@ fn bind_listener(sock_path: &Path) -> Option<()> {
 
 /// Best-effort removal of the PID file and socket.
 pub fn cleanup(pid_path: &Path, sock_path: &Path) {
-    if let Err(e) = std::fs::remove_file(pid_path) {
-        if e.kind() != std::io::ErrorKind::NotFound {
-            warn!(path = %pid_path.display(), "Failed to remove PID file: {e}");
-        }
+    if let Err(e) = std::fs::remove_file(pid_path)
+        && e.kind() != std::io::ErrorKind::NotFound
+    {
+        warn!(path = %pid_path.display(), "Failed to remove PID file: {e}");
     }
-    if let Err(e) = std::fs::remove_file(sock_path) {
-        if e.kind() != std::io::ErrorKind::NotFound {
-            warn!(path = %sock_path.display(), "Failed to remove socket: {e}");
-        }
+    if let Err(e) = std::fs::remove_file(sock_path)
+        && e.kind() != std::io::ErrorKind::NotFound
+    {
+        warn!(path = %sock_path.display(), "Failed to remove socket: {e}");
     }
 }

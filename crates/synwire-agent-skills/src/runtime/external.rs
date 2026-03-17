@@ -231,10 +231,10 @@ impl ExternalRuntime {
     /// Mark a process as exited in the sandbox registry (sandboxed feature only).
     #[cfg(feature = "sandboxed")]
     fn mark_exited(&self, pid: u32, code: i32) {
-        if let Some(ref registry) = self.registry {
-            if let Ok(mut reg) = registry.try_write() {
-                reg.mark_exited(pid, code);
-            }
+        if let Some(ref registry) = self.registry
+            && let Ok(mut reg) = registry.try_write()
+        {
+            reg.mark_exited(pid, code);
         }
     }
 }
