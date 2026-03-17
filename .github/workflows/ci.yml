@@ -10,7 +10,6 @@ permissions: {}
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-Dwarnings"
-  CARGO_INCREMENTAL: "0"
 
 jobs:
   # Tier 1 — runs on every PR and push

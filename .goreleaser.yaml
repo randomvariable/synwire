@@ -1,0 +1,90 @@
+version: 2
+
+project_name: synwire-mcp-server
+
+builds:
+  - id: synwire-mcp-server
+    builder: rust
+    tool: cargo
+    command: zigbuild
+    binary: synwire-mcp-server
+    targets:
+      - x86_64-unknown-linux-musl
+      - aarch64-unknown-linux-musl
+      - x86_64-apple-darwin
+      - aarch64-apple-darwin
+    flags:
+      - --locked
+      - -p
+      - synwire-mcp-server
+    hooks:
+      post:
+        # Ad-hoc sign macOS binaries so Gatekeeper does not block execution.
+        # rcodesign is used because codesign is not available on Linux runners.
+        - cmd: sh -c 'if [ "{{ .Os }}" = "darwin" ]; then rcodesign sign --ad-hoc "{{ .Path }}"; fi'
+
+archives:
+  - name_template: "synwire-mcp-server_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    formats:
+      - tar.gz
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+changelog:
+  use: github
+  sort: asc
+  abbrev: 7
+  filters:
+    exclude:
+      - '^chore(\(deps\))?:'
+      - '^ci:'
+      - 'Merge pull request'
+      - 'Merge branch'
+  groups:
+    - title: "Breaking Changes"
+      regexp: '^.*?(\w+)(\([[:word:]]+\))?!:.+$'
+      order: 0
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Bug Fixes
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 2
+    - title: Documentation
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 3
+    - title: Other
+      order: 999
+
+# brews generates a Homebrew Formula pushed to randomvariable/homebrew-tap.
+# Requires HOMEBREW_TAP_GITHUB_TOKEN secret (PAT with contents:write on that repo).
+# TODO: migrate to homebrew_casks when brews support is removed in a future GoReleaser release.
+brews:
+  - name: synwire-mcp-server
+    repository:
+      owner: randomvariable
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://randomvariable.github.io/synwire/
+    description: "Synwire MCP server"
+    license: "MIT OR Apache-2.0"
+    install: bin.install "synwire-mcp-server"
+    test: |
+      system "#{bin}/synwire-mcp-server", "--version"
+
+release:
+  footer: |
+    ## Crates
+
+    | Crate | Version |
+    |-------|---------|
+    | [synwire](https://crates.io/crates/synwire) | {{ .Tag }} |
+    | [synwire-core](https://crates.io/crates/synwire-core) | {{ .Tag }} |
+    | [synwire-orchestrator](https://crates.io/crates/synwire-orchestrator) | {{ .Tag }} |
+    | [synwire-derive](https://crates.io/crates/synwire-derive) | {{ .Tag }} |
+    | [synwire-checkpoint](https://crates.io/crates/synwire-checkpoint) | {{ .Tag }} |
+    | [synwire-checkpoint-sqlite](https://crates.io/crates/synwire-checkpoint-sqlite) | {{ .Tag }} |
+    | [synwire-llm-openai](https://crates.io/crates/synwire-llm-openai) | {{ .Tag }} |
+    | [synwire-llm-ollama](https://crates.io/crates/synwire-llm-ollama) | {{ .Tag }} |

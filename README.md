@@ -33,6 +33,25 @@ crates/
 
 See [`.specify/memory/constitution.md`](.specify/memory/constitution.md) for the full project constitution.
 
+## Installing the MCP Server
+
+Pre-built binaries for Linux (amd64/arm64) and macOS (amd64/arm64) are attached to each [GitHub Release](https://github.com/randomvariable/synwire/releases).
+
+**Homebrew (macOS/Linux — recommended)**:
+
+```bash
+brew install randomvariable/tap/synwire-mcp-server
+```
+
+**Direct download (macOS)**:
+
+```bash
+# After downloading and extracting the archive:
+xattr -d com.apple.quarantine ./synwire-mcp-server
+```
+
+> macOS Sequoia 15.1+ sets a quarantine flag on files downloaded via a browser. Run the `xattr` command above to remove it, or install via Homebrew (which re-signs the binary automatically).
+
 ## Prerequisites
 
 - Rust (latest stable, edition 2024)

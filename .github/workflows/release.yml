@@ -4,8 +4,7 @@ on:
   push:
     tags: ["v*"]
 
-permissions:
-  contents: write
+permissions: {}
 
 env:
   CARGO_TERM_COLOR: always
@@ -56,49 +55,42 @@ jobs:
       - name: Publish synwire
         run: cargo publish -p synwire --no-verify
 
-  github-release:
-    name: GitHub Release
+  goreleaser:
+    name: GoReleaser
     needs: publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
         with:
           fetch-depth: 0
 
-      - name: Generate changelog
-        id: changelog
+      - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7  # stable
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
+
+      - name: Install Zig
+        uses: mlugg/setup-zig@v1
+
+      - name: Install cargo-zigbuild
+        run: cargo install --locked cargo-zigbuild
+
+      - name: Install rcodesign
+        run: cargo install --locked apple-codesign
+
+      - name: Add Rust targets
         run: |
-          TAG="${GITHUB_REF#refs/tags/}"
-          PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "^${TAG}$" | tail -1)
-          if [ "$PREV_TAG" = "$TAG" ] || [ -z "$PREV_TAG" ]; then
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" HEAD)
-          else
-            CHANGELOG=$(git log --pretty=format:"- %s (%h)" "${PREV_TAG}..${TAG}")
-          fi
-          {
-            echo "changelog<<EOF"
-            echo "$CHANGELOG"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          rustup target add x86_64-unknown-linux-musl
+          rustup target add aarch64-unknown-linux-musl
+          rustup target add x86_64-apple-darwin
+          rustup target add aarch64-apple-darwin
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe  # v2
+      - uses: goreleaser/goreleaser-action@e435ccd777264be153ace6237001ef4d979d3a7a  # v6
         with:
-          body: |
-            ## What's Changed
-
-            ${{ steps.changelog.outputs.changelog }}
-
-            ## Crates
-
-            | Crate | Version |
-            |-------|---------|
-            | [synwire](https://crates.io/crates/synwire) | ${{ github.ref_name }} |
-            | [synwire-core](https://crates.io/crates/synwire-core) | ${{ github.ref_name }} |
-            | [synwire-orchestrator](https://crates.io/crates/synwire-orchestrator) | ${{ github.ref_name }} |
-            | [synwire-derive](https://crates.io/crates/synwire-derive) | ${{ github.ref_name }} |
-            | [synwire-checkpoint](https://crates.io/crates/synwire-checkpoint) | ${{ github.ref_name }} |
-            | [synwire-checkpoint-sqlite](https://crates.io/crates/synwire-checkpoint-sqlite) | ${{ github.ref_name }} |
-            | [synwire-llm-openai](https://crates.io/crates/synwire-llm-openai) | ${{ github.ref_name }} |
-            | [synwire-llm-ollama](https://crates.io/crates/synwire-llm-ollama) | ${{ github.ref_name }} |
-          generate_release_notes: true
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
