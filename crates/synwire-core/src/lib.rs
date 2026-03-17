@@ -1,7 +1,6 @@
 //! # synwire-core
 //!
-//! Core traits and types for the Synwire AI framework -- a Rust port of
-//! `LangChain`'s core abstractions.
+//! Core traits and types — the foundational trait layer for the Synwire AI framework.
 //!
 //! This crate provides the foundational trait hierarchy for chat models,
 //! embeddings, vector stores, runnables, tools, callbacks, output parsers,
@@ -20,6 +19,11 @@ pub type BoxFuture<'a, T> = Pin<Box<dyn Future<Output = T> + Send + 'a>>;
 /// A boxed stream that is `Send`.
 pub type BoxStream<'a, T> = Pin<Box<dyn futures_core::Stream<Item = T> + Send + 'a>>;
 
+pub use agents::sampling::{
+    NoopSamplingProvider, SamplingError, SamplingProvider, SamplingRequest, SamplingResponse,
+};
+pub use state::State;
+
 pub mod agents;
 pub mod callbacks;
 pub mod credentials;
@@ -28,15 +32,19 @@ pub mod embeddings;
 pub mod error;
 pub mod language_models;
 pub mod loaders;
+pub mod mcp;
 pub mod messages;
 pub mod output_parsers;
 pub mod prompts;
 pub mod rerankers;
 pub mod retrievers;
 pub mod runnables;
+pub mod sandbox;
 pub mod security;
+pub mod state;
 pub mod tools;
 pub mod vectorstores;
+pub mod vfs;
 
 pub mod observability;
 

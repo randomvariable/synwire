@@ -63,15 +63,15 @@ impl EventFilter {
 
     /// Returns `true` if the given event matches this filter.
     pub fn matches(&self, event: &EventBusEvent) -> bool {
-        if let Some(kind) = self.kind {
-            if event.kind != kind {
-                return false;
-            }
+        if let Some(kind) = self.kind
+            && event.kind != kind
+        {
+            return false;
         }
-        if let Some(span_kind) = self.span_kind {
-            if event.span_kind != span_kind {
-                return false;
-            }
+        if let Some(span_kind) = self.span_kind
+            && event.span_kind != span_kind
+        {
+            return false;
         }
         true
     }

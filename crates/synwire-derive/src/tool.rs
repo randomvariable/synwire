@@ -3,10 +3,147 @@
 //! Transforms an async function into a [`StructuredTool`] factory by generating
 //! a companion `{name}_tool()` function that returns a fully configured
 //! `StructuredTool`.
+//!
+//! # Attribute syntax
+//!
+//! ```ignore
+//! #[tool]
+//! #[tool(kind = "edit")]
+//! #[tool(category = "mcp")]
+//! #[tool(kind = "read", category = "builtin")]
+//! ```
 
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use syn::{FnArg, ItemFn, Pat, Type};
+use syn::{FnArg, ItemFn, Lit, Meta, Pat, Type};
+
+// ---------------------------------------------------------------------------
+// Attribute parsing (T306)
+// ---------------------------------------------------------------------------
+
+/// Parsed options from the `#[tool(...)]` attribute.
+#[derive(Default)]
+struct ToolAttrs {
+    /// `kind = "read"` → `ToolKind::Read`, etc.
+    kind: Option<String>,
+    /// `category = "mcp"` → `ToolCategory::Mcp`, etc.
+    category: Option<String>,
+}
+
+impl ToolAttrs {
+    /// Parse a `#[tool(...)]` attribute token stream.
+    ///
+    /// The attr token stream contains the raw comma-separated key = value pairs
+    /// that appear inside `#[tool(...)]`. Emits a compile error token stream if
+    /// an unknown key or invalid value is encountered.
+    fn parse(attr: TokenStream) -> Result<Self, TokenStream> {
+        let mut out = Self::default();
+        if attr.is_empty() {
+            return Ok(out);
+        }
+        // Parse directly as Punctuated<Meta, ,> — attr does NOT wrap in a List.
+        let nested: syn::punctuated::Punctuated<Meta, syn::Token![,]> =
+            match syn::parse::Parser::parse2(
+                syn::punctuated::Punctuated::<Meta, syn::Token![,]>::parse_terminated,
+                attr,
+            ) {
+                Ok(n) => n,
+                Err(e) => return Err(e.to_compile_error()),
+            };
+        for item in nested {
+            let Meta::NameValue(nv) = item else {
+                return Err(
+                    syn::Error::new_spanned(item, "#[tool] expects key = \"value\" pairs")
+                        .to_compile_error(),
+                );
+            };
+            let key = nv
+                .path
+                .get_ident()
+                .map(std::string::ToString::to_string)
+                .unwrap_or_default();
+            let syn::Expr::Lit(expr_lit) = &nv.value else {
+                return Err(syn::Error::new_spanned(
+                    &nv.value,
+                    "attribute value must be a string literal",
+                )
+                .to_compile_error());
+            };
+            let Lit::Str(s) = &expr_lit.lit else {
+                return Err(syn::Error::new_spanned(
+                    &expr_lit.lit,
+                    "attribute value must be a string literal",
+                )
+                .to_compile_error());
+            };
+            let value = s.value();
+            match key.as_str() {
+                "kind" => {
+                    if !matches!(
+                        value.as_str(),
+                        "read" | "edit" | "search" | "execute" | "other"
+                    ) {
+                        return Err(syn::Error::new_spanned(
+                            s,
+                            format!(
+                                "unknown kind \"{value}\"; expected one of: read, edit, search, execute, other"
+                            ),
+                        )
+                        .to_compile_error());
+                    }
+                    out.kind = Some(value);
+                }
+                "category" => {
+                    if !matches!(
+                        value.as_str(),
+                        "builtin" | "custom" | "mcp" | "remote" | "workflow_as_tool"
+                    ) {
+                        return Err(syn::Error::new_spanned(
+                            s,
+                            format!(
+                                "unknown category \"{value}\"; expected one of: builtin, custom, mcp, remote, workflow_as_tool"
+                            ),
+                        )
+                        .to_compile_error());
+                    }
+                    out.category = Some(value);
+                }
+                _ => {
+                    return Err(syn::Error::new_spanned(
+                        nv.path,
+                        format!("unknown #[tool] attribute key \"{key}\""),
+                    )
+                    .to_compile_error());
+                }
+            }
+        }
+        Ok(out)
+    }
+
+    /// Returns the `ToolKind` token corresponding to the parsed kind string.
+    fn kind_token(&self) -> TokenStream {
+        let variant = match self.kind.as_deref() {
+            Some("read") => quote! { Read },
+            Some("edit") => quote! { Edit },
+            Some("search") => quote! { Search },
+            Some("execute") => quote! { Execute },
+            _ => quote! { Other },
+        };
+        quote! { ::synwire_core::tools::ToolKind::#variant }
+    }
+
+    /// Returns the `ToolCategory` token corresponding to the parsed category string.
+    fn category_token(&self) -> TokenStream {
+        let variant = match self.category.as_deref() {
+            Some("builtin") => quote! { Builtin },
+            Some("mcp") => quote! { Mcp },
+            Some("remote") => quote! { Remote },
+            Some("workflow_as_tool") => quote! { WorkflowAsTool },
+            _ => quote! { Custom },
+        };
+        quote! { ::synwire_core::tools::ToolCategory::#variant }
+    }
+}
 
 /// Extracts documentation comments from the function's attributes.
 fn extract_doc_comment(attrs: &[syn::Attribute]) -> String {
@@ -138,15 +275,35 @@ fn generate_param_extractions(params: &[ToolParam]) -> Vec<TokenStream> {
 }
 
 /// Core implementation of the `#[tool]` attribute macro.
-pub fn tool_impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn tool_impl(attr: TokenStream, item: TokenStream) -> TokenStream {
+    // Parse optional kind/category attributes (T306).
+    let tool_attrs = match ToolAttrs::parse(attr) {
+        Ok(a) => a,
+        Err(e) => return e,
+    };
+
     let input: ItemFn = match syn::parse2(item) {
         Ok(f) => f,
         Err(e) => return e.to_compile_error(),
     };
 
+    // T307: Compile-time validation — at least one non-self parameter.
+    let params = extract_params(&input.sig.inputs);
+    if params.is_empty() {
+        return syn::Error::new_spanned(
+            &input.sig.ident,
+            "#[tool] requires at least one non-self parameter",
+        )
+        .to_compile_error();
+    }
+
     let fn_name = &input.sig.ident;
     let tool_fn_name = format_ident!("{fn_name}_tool");
     let fn_name_str = fn_name.to_string();
+    let kind_ident = format_ident!("{}_TOOL_KIND", fn_name_str.to_uppercase());
+    let category_ident = format_ident!("{}_TOOL_CATEGORY", fn_name_str.to_uppercase());
+    let kind_token = tool_attrs.kind_token();
+    let category_token = tool_attrs.category_token();
 
     let description = extract_doc_comment(&input.attrs);
     let description = if description.is_empty() {
@@ -155,7 +312,6 @@ pub fn tool_impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
         description
     };
 
-    let params = extract_params(&input.sig.inputs);
     let (property_entries, required_entries) = generate_schema_tokens(&params);
     let param_extractions = generate_param_extractions(&params);
 
@@ -164,6 +320,11 @@ pub fn tool_impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     quote! {
         #input
+
+        /// [`ToolKind`](::synwire_core::tools::ToolKind) for this tool.
+        pub const #kind_ident: ::synwire_core::tools::ToolKind = #kind_token;
+        /// [`ToolCategory`](::synwire_core::tools::ToolCategory) for this tool.
+        pub const #category_ident: ::synwire_core::tools::ToolCategory = #category_token;
 
         /// Creates a [`synwire_core::tools::StructuredTool`] wrapping
         #[doc = concat!("[`", stringify!(#fn_name), "`].")]
@@ -192,6 +353,7 @@ pub fn tool_impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
                                 ::std::result::Result::Ok(::synwire_core::tools::ToolOutput {
                                     content,
                                     artifact: ::std::option::Option::None,
+                                    ..::std::default::Default::default()
                                 })
                             }
                             ::std::result::Result::Err(e) => ::std::result::Result::Err(e),
@@ -204,7 +366,7 @@ pub fn tool_impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[cfg(test)]
-#[allow(clippy::panic)]
+#[allow(clippy::panic, clippy::expect_used, clippy::unwrap_used)]
 mod tests {
     use super::*;
 
@@ -283,5 +445,107 @@ mod tests {
         let output = tool_impl(TokenStream::new(), input);
         let output_str = output.to_string();
         assert!(output_str.contains("\"bare_fn\""));
+    }
+
+    // T306: kind/category attribute tests
+    #[test]
+    fn kind_attribute_generates_constant() {
+        let attr = quote! { kind = "edit" };
+        let input = quote! {
+            async fn write_file(path: String) -> Result<String, synwire_core::error::SynwireError> {
+                Ok(path)
+            }
+        };
+        let output = tool_impl(attr, input);
+        let s = output.to_string();
+        assert!(s.contains("ToolKind"), "expected ToolKind in output: {s}");
+        assert!(s.contains("Edit"), "expected Edit variant: {s}");
+        assert!(
+            s.contains("WRITE_FILE_TOOL_KIND"),
+            "expected WRITE_FILE_TOOL_KIND const: {s}"
+        );
+    }
+
+    #[test]
+    fn category_attribute_generates_constant() {
+        let attr = quote! { category = "mcp" };
+        let input = quote! {
+            async fn fetch_data(url: String) -> Result<String, synwire_core::error::SynwireError> {
+                Ok(url)
+            }
+        };
+        let output = tool_impl(attr, input);
+        let s = output.to_string();
+        assert!(
+            s.contains("ToolCategory"),
+            "expected ToolCategory in output: {s}"
+        );
+        assert!(s.contains("Mcp"), "expected Mcp variant: {s}");
+        assert!(
+            s.contains("FETCH_DATA_TOOL_CATEGORY"),
+            "expected FETCH_DATA_TOOL_CATEGORY const: {s}"
+        );
+    }
+
+    #[test]
+    fn both_attributes_together() {
+        let attr = quote! { kind = "read", category = "builtin" };
+        let input = quote! {
+            async fn list_files(dir: String) -> Result<String, synwire_core::error::SynwireError> {
+                Ok(dir)
+            }
+        };
+        let output = tool_impl(attr, input);
+        let s = output.to_string();
+        assert!(s.contains("Read"), "expected Read kind: {s}");
+        assert!(s.contains("Builtin"), "expected Builtin category: {s}");
+    }
+
+    #[test]
+    fn unknown_kind_is_error() {
+        let attrs = ToolAttrs::parse(quote! { kind = "unknown_kind" });
+        assert!(attrs.is_err(), "expected error for unknown kind");
+    }
+
+    #[test]
+    fn unknown_category_is_error() {
+        let attrs = ToolAttrs::parse(quote! { category = "invalid" });
+        assert!(attrs.is_err(), "expected error for unknown category");
+    }
+
+    // T307: compile-time validation test
+    #[test]
+    fn no_params_produces_error() {
+        let input = quote! {
+            async fn no_args() -> Result<String, synwire_core::error::SynwireError> {
+                Ok("".into())
+            }
+        };
+        let output = tool_impl(TokenStream::new(), input);
+        let s = output.to_string();
+        assert!(
+            s.contains("compile_error") || s.contains("at least one"),
+            "expected compile error for no params: {s}"
+        );
+    }
+
+    #[test]
+    fn default_kind_is_other() {
+        let attrs = ToolAttrs::parse(TokenStream::new()).unwrap();
+        let token_str = attrs.kind_token().to_string();
+        assert!(
+            token_str.contains("Other"),
+            "expected Other as default kind: {token_str}"
+        );
+    }
+
+    #[test]
+    fn default_category_is_custom() {
+        let attrs = ToolAttrs::parse(TokenStream::new()).unwrap();
+        let token_str = attrs.category_token().to_string();
+        assert!(
+            token_str.contains("Custom"),
+            "expected Custom as default category: {token_str}"
+        );
     }
 }

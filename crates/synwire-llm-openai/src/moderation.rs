@@ -133,10 +133,10 @@ fn extract_text(input: &serde_json::Value) -> Result<String, SynwireError> {
     if let Some(s) = input.as_str() {
         return Ok(s.to_owned());
     }
-    if let Some(obj) = input.as_object() {
-        if let Some(text) = obj.get("text").and_then(serde_json::Value::as_str) {
-            return Ok(text.to_owned());
-        }
+    if let Some(obj) = input.as_object()
+        && let Some(text) = obj.get("text").and_then(serde_json::Value::as_str)
+    {
+        return Ok(text.to_owned());
     }
     Err(SynwireError::Prompt {
         message: "moderation input must be a string or object with a \"text\" field".into(),

@@ -6,6 +6,11 @@
 
 use std::collections::HashMap;
 use std::fmt;
+use std::sync::Arc;
+
+use synwire_core::BoxFuture;
+use synwire_core::error::SynwireError;
+use synwire_core::tools::{Tool, ToolOutput, ToolSchema};
 
 use crate::constants::{DEFAULT_RECURSION_LIMIT, END};
 use crate::error::GraphError;
@@ -133,6 +138,53 @@ impl<S: State> CompiledGraph<S> {
         Ok(state)
     }
 
+    /// Exposes this compiled graph as a Synwire [`Tool`] (T310, FR-308–309).
+    ///
+    /// The generated tool:
+    /// - Deserializes the JSON input into `S`.
+    /// - Runs the graph to completion.
+    /// - Serializes the final state as pretty-printed JSON in `ToolOutput.content`.
+    ///
+    /// Errors from graph execution are surfaced as [`SynwireError`].
+    ///
+    /// # Errors
+    ///
+    /// Returns [`SynwireError::Tool`] if the
+    /// provided `name` fails [`validate_tool_name`](synwire_core::tools::validate_tool_name).
+    pub fn as_tool(
+        self,
+        name: impl Into<String>,
+        description: impl Into<String>,
+        schema: ToolSchema,
+    ) -> Result<Box<dyn Tool>, SynwireError> {
+        let name_str = name.into();
+        let desc_str = description.into();
+        synwire_core::tools::validate_tool_name(&name_str)?;
+        let graph = Arc::new(self);
+        Ok(Box::new(CompiledGraphTool {
+            name: name_str,
+            description: desc_str,
+            schema,
+            graph,
+        }))
+    }
+
+    /// Wraps this compiled graph as a [`NodeFn<S>`](crate::graph::state::NodeFn)
+    /// suitable for embedding inside a parent graph (graph-as-node, T311).
+    ///
+    /// The inner graph is invoked with the current state and its output
+    /// replaces the state for the outer graph's next step.
+    pub fn into_node_fn(self) -> NodeFn<S>
+    where
+        S: 'static,
+    {
+        let graph = Arc::new(self);
+        Box::new(move |state: S| {
+            let graph = Arc::clone(&graph);
+            Box::pin(async move { graph.invoke(state).await })
+        })
+    }
+
     /// Generates a Mermaid diagram of the graph topology.
     ///
     /// Produces a `graph TD` (top-down) Mermaid diagram showing nodes
@@ -170,6 +222,66 @@ impl<S: State> CompiledGraph<S> {
         }
 
         lines.join("\n")
+    }
+}
+
+// ---------------------------------------------------------------------------
+// CompiledGraphTool — a Tool wrapping a CompiledGraph<S> (T310)
+// ---------------------------------------------------------------------------
+
+/// A [`Tool`] implementation that runs a [`CompiledGraph`] (T310, FR-308).
+///
+/// Created by [`CompiledGraph::as_tool`].
+struct CompiledGraphTool<S: State> {
+    name: String,
+    description: String,
+    schema: ToolSchema,
+    graph: Arc<CompiledGraph<S>>,
+}
+
+impl<S: State> fmt::Debug for CompiledGraphTool<S> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("CompiledGraphTool")
+            .field("name", &self.name)
+            .finish_non_exhaustive()
+    }
+}
+
+impl<S: State> Tool for CompiledGraphTool<S> {
+    fn name(&self) -> &str {
+        &self.name
+    }
+
+    fn description(&self) -> &str {
+        &self.description
+    }
+
+    fn schema(&self) -> &ToolSchema {
+        &self.schema
+    }
+
+    fn invoke(&self, input: serde_json::Value) -> BoxFuture<'_, Result<ToolOutput, SynwireError>> {
+        Box::pin(async move {
+            let state: S = serde_json::from_value(input).map_err(|e| {
+                SynwireError::Tool(synwire_core::error::ToolError::InvocationFailed {
+                    message: format!("failed to deserialise graph input: {e}"),
+                })
+            })?;
+            let result = self.graph.invoke(state).await.map_err(|e| {
+                SynwireError::Tool(synwire_core::error::ToolError::InvocationFailed {
+                    message: format!("graph execution failed: {e}"),
+                })
+            })?;
+            let content = serde_json::to_string_pretty(&result).map_err(|e| {
+                SynwireError::Tool(synwire_core::error::ToolError::InvocationFailed {
+                    message: format!("failed to serialise graph output: {e}"),
+                })
+            })?;
+            Ok(ToolOutput {
+                content,
+                ..ToolOutput::default()
+            })
+        })
     }
 }
 
@@ -367,6 +479,136 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(result.0["visited"], "c");
+    }
+
+    // T310–T313: as_tool() and into_node_fn() tests
+
+    /// T310: `CompiledGraph::as_tool()` invokes graph and returns JSON output.
+    #[tokio::test]
+    async fn t310_compiled_graph_as_tool_executes_graph() {
+        use synwire_core::tools::ToolSchema;
+
+        let mut graph = StateGraph::<ValueState>::new();
+        graph
+            .add_node(
+                "add",
+                Box::new(|mut s: ValueState| {
+                    Box::pin(async move {
+                        let x =
+                            s.0.get("x")
+                                .and_then(serde_json::Value::as_i64)
+                                .unwrap_or(0);
+                        s.0["result"] = json!(x + 10);
+                        Ok(s)
+                    })
+                }),
+            )
+            .unwrap();
+        graph.set_entry_point("add");
+        graph.set_finish_point("add");
+
+        let compiled = graph.compile().unwrap();
+        let tool = compiled
+            .as_tool(
+                "add-ten",
+                "Adds ten to the input x value",
+                ToolSchema {
+                    name: "add-ten".into(),
+                    description: "Adds ten to the input x value".into(),
+                    parameters: json!({
+                        "type": "object",
+                        "properties": { "x": { "type": "integer" } },
+                        "required": ["x"]
+                    }),
+                },
+            )
+            .unwrap();
+
+        assert_eq!(tool.name(), "add-ten");
+        let output = tool.invoke(json!({"x": 5})).await.unwrap();
+        assert!(
+            output.content.contains("15"),
+            "expected result 15: {}",
+            output.content
+        );
+    }
+
+    /// T310: `as_tool()` returns error for invalid tool name.
+    #[test]
+    fn t310_as_tool_rejects_invalid_name() {
+        let mut graph = StateGraph::<ValueState>::new();
+        graph
+            .add_node("n", Box::new(|s| Box::pin(async move { Ok(s) })))
+            .unwrap();
+        graph.set_entry_point("n");
+        graph.set_finish_point("n");
+        let compiled = graph.compile().unwrap();
+        let result = compiled.as_tool(
+            "bad name!",
+            "desc",
+            synwire_core::tools::ToolSchema {
+                name: "bad name!".into(),
+                description: "desc".into(),
+                parameters: json!({"type": "object"}),
+            },
+        );
+        assert!(result.is_err());
+    }
+
+    /// T311: `CompiledGraph::into_node_fn()` wraps graph as a parent-graph node.
+    #[tokio::test]
+    async fn t311_graph_as_node_in_parent_graph() {
+        // Inner graph: multiplies "val" by 2
+        let mut inner = StateGraph::<ValueState>::new();
+        inner
+            .add_node(
+                "double",
+                Box::new(|mut s: ValueState| {
+                    Box::pin(async move {
+                        let v =
+                            s.0.get("val")
+                                .and_then(serde_json::Value::as_i64)
+                                .unwrap_or(0);
+                        s.0["val"] = json!(v * 2);
+                        Ok(s)
+                    })
+                }),
+            )
+            .unwrap();
+        inner.set_entry_point("double");
+        inner.set_finish_point("double");
+        let inner_node_fn = inner.compile().unwrap().into_node_fn();
+
+        // Outer graph: adds 1 then delegates to inner graph node
+        let mut outer = StateGraph::<ValueState>::new();
+        outer
+            .add_node(
+                "add-one",
+                Box::new(|mut s: ValueState| {
+                    Box::pin(async move {
+                        let v =
+                            s.0.get("val")
+                                .and_then(serde_json::Value::as_i64)
+                                .unwrap_or(0);
+                        s.0["val"] = json!(v + 1);
+                        Ok(s)
+                    })
+                }),
+            )
+            .unwrap();
+        outer.add_node("inner", inner_node_fn).unwrap();
+        outer.set_entry_point("add-one");
+        outer.add_edge("add-one", "inner");
+        outer.set_finish_point("inner");
+
+        let result = outer
+            .compile()
+            .unwrap()
+            .invoke(ValueState(json!({"val": 3})))
+            .await
+            .unwrap();
+        // (3 + 1) * 2 = 8
+        assert_eq!(result.0["val"], 8);
     }
 
     /// T038: looping graph with condition terminates after correct iterations.

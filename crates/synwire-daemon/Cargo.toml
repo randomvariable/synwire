@@ -1,0 +1,39 @@
+[package]
+name = "synwire-daemon"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "Singleton background daemon for Synwire — manages embeddings, indexing, and multi-repo state"
+
+[lints]
+workspace = true
+
+[lib]
+name = "synwire_daemon"
+path = "src/lib.rs"
+
+[[bin]]
+name = "synwire-daemon"
+path = "src/main.rs"
+
+[dependencies]
+synwire-storage = { workspace = true }
+synwire-index = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+nix = { workspace = true }

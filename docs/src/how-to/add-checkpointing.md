@@ -57,3 +57,9 @@ use synwire_checkpoint_conformance::run_conformance_tests;
 // In a test:
 run_conformance_tests(|| your_saver_factory()).await;
 ```
+
+## See also
+
+- [Checkpointing Tutorial](../tutorials/06-checkpointing.md) — hands-on: in-memory → SQLite → fork
+- [Checkpointing Explanation](../explanation/synwire-checkpoint.md) — `BaseStore`, serde protocol, and trade-offs
+- [Pregel Execution Model](../explanation/pregel.md) — how checkpoints relate to supersteps

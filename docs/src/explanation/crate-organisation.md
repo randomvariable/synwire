@@ -6,16 +6,26 @@ Synwire is organised as a Cargo workspace with focused, single-responsibility cr
 
 ```text
 crates/
-  synwire-core/            Core traits and types (zero Synwire deps)
-  synwire-orchestrator/    Graph execution engine (depends on core)
-  synwire-checkpoint/      Checkpoint traits + in-memory impl
+  synwire-core/              Core traits and types (zero Synwire deps)
+  synwire-orchestrator/      Graph execution engine (depends on core)
+  synwire-checkpoint/        Checkpoint traits + in-memory impl
   synwire-checkpoint-sqlite/ SQLite checkpoint backend
-  synwire-llm-openai/      OpenAI provider
-  synwire-llm-ollama/      Ollama provider
-  synwire-derive/          Proc macros (#[tool], #[derive(State)])
-  synwire-test-utils/      Fake models, proptest strategies, fixtures
-  synwire/                 Re-exports, caches, text splitters, prompts
-  synwire-checkpoint-conformance/ Conformance test suite
+  synwire-llm-openai/        OpenAI provider
+  synwire-llm-ollama/        Ollama provider
+  synwire-derive/            Proc macros (#[tool], #[derive(State)])
+  synwire-test-utils/        Fake models, proptest strategies, fixtures
+  synwire/                   Re-exports, caches, text splitters, prompts
+  synwire-agent/             Agent runtime (VFS, middleware, strategies, MCP, sessions)
+  synwire-chunker/           Tree-sitter AST-aware code chunking (14 languages)
+  synwire-embeddings-local/  Local embedding + reranking via fastembed-rs
+  synwire-vectorstore-lancedb/ LanceDB vector store
+  synwire-index/             Semantic indexing pipeline (walk→chunk→embed→store)
+  synwire-storage/           StorageLayout, RepoId/WorktreeId
+  synwire-agent-skills/      Agent skills (agentskills.io spec, Lua/Rhai/WASM)
+  synwire-lsp/               LSP client (language server integration)
+  synwire-dap/               DAP client (debug adapter integration)
+  synwire-sandbox/           Process sandboxing
+  synwire-mcp-server/        Standalone MCP server binary (stdio transport)
 ```
 
 ## Design rationale
@@ -40,7 +50,17 @@ graph TD
     derive[synwire-derive]
     test[synwire-test-utils]
     umbrella[synwire]
-    conf[synwire-checkpoint-conformance]
+    agent[synwire-agent]
+    chunker[synwire-chunker]
+    emb[synwire-embeddings-local]
+    lance[synwire-vectorstore-lancedb]
+    idx[synwire-index]
+    storage[synwire-storage]
+    skills[synwire-agent-skills]
+    lsp[synwire-lsp]
+    dap[synwire-dap]
+    sandbox[synwire-sandbox]
+    mcp[synwire-mcp-server]
 
     core --> orch
     core --> ckpt
@@ -52,7 +72,22 @@ graph TD
     core --> test
     ckpt --> test
     orch --> test
-    ckpt --> conf
+    core --> agent
+    core --> chunker
+    core --> emb
+    core --> lance
+    chunker --> idx
+    emb --> idx
+    lance --> idx
+    storage --> idx
+    storage --> agent
+    storage --> mcp
+    agent --> mcp
+    idx --> mcp
+    skills --> mcp
+    lsp --> mcp
+    dap --> mcp
+    sandbox --> agent
 ```
 
 ### synwire-core
@@ -86,3 +121,52 @@ Shared test infrastructure: `FakeChatModel` (also in core for convenience), `Fak
 ### synwire (umbrella)
 
 Convenience crate that re-exports core and optionally includes provider crates via feature flags (`openai`, `ollama`). Also provides higher-level utilities: embedding cache, chat history, few-shot prompts, text splitters.
+
+## Choosing which crates to depend on
+
+For most applications, depend on the umbrella `synwire` crate with the required feature flags:
+
+```toml
+[dependencies]
+synwire = { version = "0.1", features = ["openai"] }
+tokio = { version = "1", features = ["full"] }
+```
+
+This gives you a single import path covering the most commonly needed types:
+
+```rust,no_run
+use synwire::agent::prelude::*;
+use synwire_llm_openai::ChatOpenAI;
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    let model = ChatOpenAI::builder()
+        .model("gpt-4o")
+        .api_key_env("OPENAI_API_KEY")
+        .build()?;
+
+    // Runner, AgentNode, Directive, AgentError etc. come from synwire::agent::prelude
+    Ok(())
+}
+```
+
+For **publishable extension crates** (custom backends, providers, or strategies), depend on `synwire-core` only. This avoids pulling in concrete implementations your users may not need:
+
+```toml
+[dependencies]
+# Publishable extension crate: traits only, no implementations
+synwire-core = "0.1"
+```
+
+```rust,no_run
+use synwire_core::language_models::chat::BaseChatModel;
+
+// A custom provider that implements BaseChatModel from synwire-core.
+// Downstream applications can mix it with any backend or strategy
+// from synwire-agent without a version coupling.
+pub struct MyCustomChatModel {
+    // model configuration
+}
+```
+
+The rule of thumb: **applications use `synwire`; libraries use `synwire-core`**.

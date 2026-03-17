@@ -7,10 +7,13 @@
 
 #![deny(unsafe_code)]
 
+pub mod conformance;
+pub mod executors;
 pub mod fixtures;
 pub mod strategies;
 
 // Re-export commonly used items for convenience in test code.
+pub use strategies::agents;
 pub use strategies::channels;
 pub use strategies::checkpoints;
 pub use strategies::documents;

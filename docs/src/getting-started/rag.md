@@ -115,3 +115,10 @@ let retriever = VectorStoreRetriever::new(store, embeddings, SearchType::Similar
 
 - [Tools and Agents](./tools-agent.md) -- add tool-using agents
 - [Graph Agents](./graph-agent.md) -- build stateful agent graphs
+
+## See also
+
+- [Local Inference with Ollama](./ollama.md) — use `OllamaEmbeddings` for local, private RAG with no API costs
+- [LLM Providers Explanation](../explanation/synwire-llm-providers.md) — swapping embedding providers
+
+> **Background**: [Retrieval Augmented Generation](https://www.promptingguide.ai/techniques/rag) — the pattern behind grounding LLM responses in external knowledge.

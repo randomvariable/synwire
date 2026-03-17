@@ -140,3 +140,12 @@ graph.add_node("llm_node", Box::new(move |state| {
 - [Derive Macros](./derive-macros.md) -- `#[derive(State)]` for typed graph state
 - [Add Checkpointing](../how-to/add-checkpointing.md) -- persist graph state
 - [Graph Interrupts](../how-to/graph-interrupts.md) -- pause and resume graphs
+
+## See also
+
+- [StateGraph vs FsmStrategy](../explanation/graph-vs-agent.md) — when to use a graph pipeline vs a single-agent FSM
+- [Pregel Execution Model](../explanation/pregel.md) — how supersteps work under the hood
+- [synwire-orchestrator Explanation](../explanation/synwire-orchestrator.md) — channels and conditional routing
+
+> **Background**: [AI Workflows vs AI Agents](https://www.promptingguide.ai/agents/ai-workflows-vs-ai-agents) — the spectrum from deterministic pipelines to autonomous agents.
+> **Background**: [Introduction to Agents](https://www.promptingguide.ai/agents/introduction) — agent architecture fundamentals.

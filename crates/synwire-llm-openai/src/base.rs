@@ -61,7 +61,14 @@ impl std::fmt::Debug for BaseChatOpenAIBuilder {
         f.debug_struct("BaseChatOpenAIBuilder")
             .field("model", &self.model)
             .field("api_base", &self.api_base)
-            .field("api_key", &self.api_key.as_ref().map(|_| "***"))
+            .field(
+                "api_key",
+                if self.api_key.is_some() {
+                    &"[redacted]"
+                } else {
+                    &"<not set>"
+                },
+            )
             .field("api_key_env", &self.api_key_env)
             .finish_non_exhaustive()
     }
@@ -253,23 +260,23 @@ impl BaseChatOpenAI {
         if let Some(ref stop) = self.stop {
             let _ = obj.insert("stop".into(), serde_json::json!(stop));
         }
-        if let Some(tools) = tools {
-            if !tools.is_empty() {
-                let tool_defs: Vec<Value> = tools
-                    .iter()
-                    .map(|t| {
-                        serde_json::json!({
-                            "type": "function",
-                            "function": {
-                                "name": t.name,
-                                "description": t.description,
-                                "parameters": t.parameters,
-                            }
-                        })
+        if let Some(tools) = tools
+            && !tools.is_empty()
+        {
+            let tool_defs: Vec<Value> = tools
+                .iter()
+                .map(|t| {
+                    serde_json::json!({
+                        "type": "function",
+                        "function": {
+                            "name": t.name,
+                            "description": t.description,
+                            "parameters": t.parameters,
+                        }
                     })
-                    .collect();
-                let _ = obj.insert("tools".into(), serde_json::json!(tool_defs));
-            }
+                })
+                .collect();
+            let _ = obj.insert("tools".into(), serde_json::json!(tool_defs));
         }
 
         // Merge additional kwargs
@@ -302,25 +309,25 @@ impl BaseChatOpenAI {
                 }
 
                 // Add tool_calls for AI messages
-                if let synwire_core::messages::Message::AI { tool_calls, .. } = msg {
-                    if !tool_calls.is_empty() {
-                        let tc: Vec<Value> = tool_calls
-                            .iter()
-                            .map(|tc| {
-                                let args_json =
-                                    serde_json::to_string(&tc.arguments).unwrap_or_default();
-                                serde_json::json!({
-                                    "id": tc.id,
-                                    "type": "function",
-                                    "function": {
-                                        "name": tc.name,
-                                        "arguments": args_json,
-                                    }
-                                })
+                if let synwire_core::messages::Message::AI { tool_calls, .. } = msg
+                    && !tool_calls.is_empty()
+                {
+                    let tc: Vec<Value> = tool_calls
+                        .iter()
+                        .map(|tc| {
+                            let args_json =
+                                serde_json::to_string(&tc.arguments).unwrap_or_default();
+                            serde_json::json!({
+                                "id": tc.id,
+                                "type": "function",
+                                "function": {
+                                    "name": tc.name,
+                                    "arguments": args_json,
+                                }
                             })
-                            .collect();
-                        let _ = map.insert("tool_calls".into(), serde_json::json!(tc));
-                    }
+                        })
+                        .collect();
+                    let _ = map.insert("tool_calls".into(), serde_json::json!(tc));
                 }
 
                 Value::Object(map)
@@ -384,34 +391,34 @@ impl BaseChatOpenAI {
         let error_text = response.text().await.unwrap_or_default();
 
         // On 401/403 with a credential provider, refresh and retry once.
-        if Self::is_auth_failure(status_code) {
-            if let Some(ref provider) = self.credential_provider {
-                let refreshed = provider.refresh_credential().await?;
-                let retry_headers = Self::headers_with_key(refreshed.expose());
-                let retry_response = self
-                    .client
-                    .post(url)
-                    .headers(retry_headers)
-                    .json(body)
-                    .send()
-                    .await
-                    .map_err(|e| OpenAIError::Http {
-                        status: e.status().map(|s| s.as_u16()),
-                        message: e.to_string(),
-                    })?;
+        if Self::is_auth_failure(status_code)
+            && let Some(ref provider) = self.credential_provider
+        {
+            let refreshed = provider.refresh_credential().await?;
+            let retry_headers = Self::headers_with_key(refreshed.expose());
+            let retry_response = self
+                .client
+                .post(url)
+                .headers(retry_headers)
+                .json(body)
+                .send()
+                .await
+                .map_err(|e| OpenAIError::Http {
+                    status: e.status().map(|s| s.as_u16()),
+                    message: e.to_string(),
+                })?;
 
-                let retry_status = retry_response.status();
-                if retry_status.is_success() {
-                    return Ok(retry_response);
-                }
-
-                let retry_error = retry_response.text().await.unwrap_or_default();
-                return Err(OpenAIError::Http {
-                    status: Some(retry_status.as_u16()),
-                    message: retry_error,
-                }
-                .into());
+            let retry_status = retry_response.status();
+            if retry_status.is_success() {
+                return Ok(retry_response);
             }
+
+            let retry_error = retry_response.text().await.unwrap_or_default();
+            return Err(OpenAIError::Http {
+                status: Some(retry_status.as_u16()),
+                message: retry_error,
+            }
+            .into());
         }
 
         Err(OpenAIError::Http {

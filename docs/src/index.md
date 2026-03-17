@@ -1,6 +1,6 @@
 # Synwire
 
-Synwire is a Rust framework for building applications powered by large language models. It is an idiomatic Rust port of LangChain Python's core abstractions, designed around trait-based composition, async-first I/O, and zero `unsafe` code.
+Synwire is an async-first Rust framework for building LLM-powered applications, designed around trait-based composition and zero `unsafe` code.
 
 ## Key features
 

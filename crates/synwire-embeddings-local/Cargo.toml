@@ -1,0 +1,26 @@
+[package]
+name = "synwire-embeddings-local"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+categories.workspace = true
+readme = "README.md"
+description = "Local embedding and reranking for Synwire using fastembed"
+
+[lints]
+workspace = true
+
+[dependencies]
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
+fastembed = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["full"] }

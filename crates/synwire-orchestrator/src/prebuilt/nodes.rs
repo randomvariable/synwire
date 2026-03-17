@@ -332,12 +332,12 @@ impl ValidationNode {
                         message: format!("key '{key}' is null"),
                     });
                 }
-                if let Some(s) = val.as_str() {
-                    if s.is_empty() {
-                        return Err(GraphError::Validation {
-                            message: format!("key '{key}' is an empty string"),
-                        });
-                    }
+                if let Some(s) = val.as_str()
+                    && s.is_empty()
+                {
+                    return Err(GraphError::Validation {
+                        message: format!("key '{key}' is an empty string"),
+                    });
                 }
             }
         }
@@ -1333,11 +1333,9 @@ mod tests {
                 if let Some(n) =
                     s.0.get("__current_item")
                         .and_then(serde_json::Value::as_i64)
+                    && let Some(obj) = s.0.as_object_mut()
                 {
-                    if let Some(obj) = s.0.as_object_mut() {
-                        let _prev =
-                            obj.insert("__current_item".to_owned(), serde_json::json!(n * 2));
-                    }
+                    let _prev = obj.insert("__current_item".to_owned(), serde_json::json!(n * 2));
                 }
                 Ok(s)
             }),

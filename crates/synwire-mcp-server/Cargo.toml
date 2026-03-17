@@ -1,0 +1,56 @@
+[package]
+name = "synwire-mcp-server"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+keywords.workspace = true
+categories.workspace = true
+description = "Standalone MCP server binary exposing Synwire tools via stdio transport"
+
+[lints]
+workspace = true
+
+[[bin]]
+name = "synwire-mcp-server"
+path = "src/main.rs"
+
+[features]
+default = []
+## Enable LSP tool dispatch (requires a language server binary on `$PATH`).
+lsp = ["dep:synwire-lsp", "dep:lsp-types"]
+## Enable DAP tool dispatch (requires a debug adapter binary on `$PATH`).
+dap = ["dep:synwire-dap"]
+
+[dependencies]
+synwire-core = { path = "../synwire-core", features = ["agentic-ignore"] }
+synwire-agent = { path = "../synwire-agent" }
+synwire-agent-skills = { workspace = true }
+synwire-storage = { workspace = true }
+synwire-lsp = { path = "../synwire-lsp", optional = true }
+synwire-dap = { path = "../synwire-dap", optional = true }
+lsp-types = { workspace = true, optional = true }
+synwire-index = { path = "../synwire-index" }
+synwire-mcp-adapters = { path = "../synwire-mcp-adapters" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+tracing-appender = { workspace = true }
+clap = { workspace = true }
+toml = { workspace = true }
+chrono = { workspace = true }
+globset = { workspace = true }
+regex = { workspace = true }
+
+[target.'cfg(unix)'.dependencies]
+nix = { workspace = true }
+
+[dev-dependencies]
+tempfile = { workspace = true }
+tokio = { workspace = true, features = ["macros", "rt-multi-thread"] }

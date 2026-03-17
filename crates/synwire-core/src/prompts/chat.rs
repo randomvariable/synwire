@@ -63,6 +63,37 @@ fn extract_variables(template: &str) -> Vec<String> {
     vars
 }
 
+/// Expands a placeholder value into one or more messages.
+///
+/// If the value is a valid JSON array of objects with `role` and `content`
+/// fields, each element is converted to the corresponding [`Message`] variant.
+/// Recognised roles are `"system"`, `"human"` / `"user"`, and `"ai"` /
+/// `"assistant"`; unrecognised roles are silently skipped.
+///
+/// If the value is not a valid JSON array, it is treated as a single human
+/// message whose content is the raw string.
+fn expand_placeholder(value: &str, out: &mut Vec<Message>) {
+    if let Ok(serde_json::Value::Array(arr)) = serde_json::from_str::<serde_json::Value>(value) {
+        for item in &arr {
+            let Some(role) = item.get("role").and_then(serde_json::Value::as_str) else {
+                continue;
+            };
+            let Some(content) = item.get("content").and_then(serde_json::Value::as_str) else {
+                continue;
+            };
+            let msg = match role {
+                "system" => Message::system(content),
+                "human" | "user" => Message::human(content),
+                "ai" | "assistant" => Message::ai(content),
+                _ => continue,
+            };
+            out.push(msg);
+        }
+    } else {
+        out.push(Message::human(value));
+    }
+}
+
 /// Performs `{variable}` substitution on a template string.
 fn substitute(template: &str, variables: &HashMap<String, String>) -> Result<String, SynwireError> {
     let mut result = template.to_owned();
@@ -108,7 +139,10 @@ impl ChatPromptTemplate {
 
     /// Formats all message templates into concrete [`Message`] values.
     ///
-    /// `Placeholder` templates are skipped in the current implementation.
+    /// `Placeholder` templates are expanded by looking up their variable name
+    /// in the provided map. If the value is a JSON array of `{role, content}`
+    /// objects the corresponding messages are injected; otherwise the value is
+    /// treated as a single human message. Missing placeholders are skipped.
     ///
     /// # Errors
     ///
@@ -132,8 +166,10 @@ impl ChatPromptTemplate {
                     let text = substitute(tpl, variables)?;
                     result.push(Message::ai(text));
                 }
-                MessageTemplate::Placeholder(_) => {
-                    // Placeholder expansion is not yet implemented; skip.
+                MessageTemplate::Placeholder(name) => {
+                    if let Some(value) = variables.get(name.as_str()) {
+                        expand_placeholder(value, &mut result);
+                    }
                 }
             }
         }
@@ -227,7 +263,7 @@ mod tests {
     }
 
     #[test]
-    fn test_placeholder_skipped() {
+    fn test_placeholder_missing_variable_skipped() {
         let tpl = ChatPromptTemplate::from_messages(vec![
             MessageTemplate::System("Hello".into()),
             MessageTemplate::Placeholder("history".into()),
@@ -236,7 +272,79 @@ mod tests {
         let mut vars = HashMap::new();
         let _ = vars.insert("question".into(), "Hi".into());
         let messages = tpl.format_messages(&vars).unwrap();
-        // Placeholder is skipped, so only System + Human
+        // Placeholder variable not provided, so only System + Human
         assert_eq!(messages.len(), 2);
+    }
+
+    #[test]
+    fn test_placeholder_json_array_expansion() {
+        let tpl = ChatPromptTemplate::from_messages(vec![
+            MessageTemplate::System("You are helpful.".into()),
+            MessageTemplate::Placeholder("history".into()),
+            MessageTemplate::Human("{question}".into()),
+        ]);
+        let history = serde_json::json!([
+            {"role": "human", "content": "What is 2+2?"},
+            {"role": "ai", "content": "4"},
+        ]);
+        let mut vars = HashMap::new();
+        let _ = vars.insert("history".into(), history.to_string());
+        let _ = vars.insert("question".into(), "And 3+3?".into());
+        let messages = tpl.format_messages(&vars).unwrap();
+        assert_eq!(messages.len(), 4);
+        assert_eq!(messages[0].message_type(), "system");
+        assert_eq!(messages[1].message_type(), "human");
+        assert_eq!(messages[1].content().as_text(), "What is 2+2?");
+        assert_eq!(messages[2].message_type(), "ai");
+        assert_eq!(messages[2].content().as_text(), "4");
+        assert_eq!(messages[3].message_type(), "human");
+        assert_eq!(messages[3].content().as_text(), "And 3+3?");
+    }
+
+    #[test]
+    fn test_placeholder_plain_string_becomes_human_message() {
+        let tpl =
+            ChatPromptTemplate::from_messages(vec![MessageTemplate::Placeholder("input".into())]);
+        let mut vars = HashMap::new();
+        let _ = vars.insert("input".into(), "Tell me a joke".into());
+        let messages = tpl.format_messages(&vars).unwrap();
+        assert_eq!(messages.len(), 1);
+        assert_eq!(messages[0].message_type(), "human");
+        assert_eq!(messages[0].content().as_text(), "Tell me a joke");
+    }
+
+    #[test]
+    fn test_placeholder_recognises_user_and_assistant_roles() {
+        let tpl =
+            ChatPromptTemplate::from_messages(vec![MessageTemplate::Placeholder("history".into())]);
+        let history = serde_json::json!([
+            {"role": "user", "content": "Hello"},
+            {"role": "assistant", "content": "Hi there"},
+            {"role": "system", "content": "Be concise"},
+        ]);
+        let mut vars = HashMap::new();
+        let _ = vars.insert("history".into(), history.to_string());
+        let messages = tpl.format_messages(&vars).unwrap();
+        assert_eq!(messages.len(), 3);
+        assert_eq!(messages[0].message_type(), "human");
+        assert_eq!(messages[1].message_type(), "ai");
+        assert_eq!(messages[2].message_type(), "system");
+    }
+
+    #[test]
+    fn test_placeholder_skips_items_with_unknown_role() {
+        let tpl =
+            ChatPromptTemplate::from_messages(vec![MessageTemplate::Placeholder("history".into())]);
+        let history = serde_json::json!([
+            {"role": "human", "content": "Hi"},
+            {"role": "tool", "content": "result"},
+            {"role": "ai", "content": "Done"},
+        ]);
+        let mut vars = HashMap::new();
+        let _ = vars.insert("history".into(), history.to_string());
+        let messages = tpl.format_messages(&vars).unwrap();
+        assert_eq!(messages.len(), 2);
+        assert_eq!(messages[0].message_type(), "human");
+        assert_eq!(messages[1].message_type(), "ai");
     }
 }

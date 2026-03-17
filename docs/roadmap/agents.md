@@ -6,18 +6,18 @@ The agent framework is a Milestone 2 feature spanning three crates: `synwire-age
 
 ## Backend Protocol
 
-The `BackendProtocol` trait (FR-070) defines a pluggable interface for file operations (`ls_info`, `read`, `write`, `edit`, `grep_raw`, `glob_info`, `upload_files`, `download_files`) with both sync and async variants. `SandboxBackendProtocol` (FR-071) extends this with shell execution (`execute`/`aexecute`) and a unique `id` property.
+The `Vfs` trait (FR-070) defines a pluggable interface for file operations (`ls_info`, `read`, `write`, `edit`, `grep_raw`, `glob_info`, `upload_files`, `download_files`) with both sync and async variants. `SandboxVfs` (FR-071) extends this with shell execution (`execute`/`aexecute`) and a unique `id` property.
 
 Backend response types (FR-072) include `WriteResult`, `EditResult`, `ExecuteResponse`, `FileInfo`, `GrepMatch`, `FileDownloadResponse`, and `FileUploadResponse`. A standardised `FileOperationError` (FR-073) provides consistent error codes: `file_not_found`, `permission_denied`, `is_directory`, and `invalid_path`. `BackendFactory` (FR-074) is a type alias enabling late-binding construction at graph compile time. Path traversal protection (FR-350) is applied consistently across all backend types.
 
 ## Backend Implementations
 
-- **StateBackend** (FR-075): Ephemeral, per-conversation file storage in agent state with `files_update` dicts for checkpointing.
-- **StoreBackend** (FR-076): Persistent cross-conversation storage via `BaseStore` with configurable namespace isolation.
-- **FilesystemBackend** (FR-077): Virtual mode with path traversal protection; real mode in `synwire-sandbox-local`. Includes symlink traversal protection.
-- **LocalShellBackend** (FR-078): Extends `FilesystemBackend` with unrestricted shell execution, environment variable control, output truncation, and timeout.
-- **CompositeBackend** (FR-079): Routes file operations to sub-backends by path prefix using longest-match-first semantics, with aggregated listings and cross-backend search.
-- **BaseSandbox** (FR-080): Abstract type implementing all `BackendProtocol` operations by delegating to `execute()`. Subclasses implement only `execute()`, `upload_files()`, `download_files()`, and `id`.
+- **MemoryProvider** (FR-075): Ephemeral, per-conversation file storage in agent state with `files_update` dicts for checkpointing.
+- **StoreProvider** (FR-076): Persistent cross-conversation storage via `BaseStore` with configurable namespace isolation.
+- **LocalProvider** (FR-077): Virtual mode with path traversal protection; real mode in `synwire-sandbox-local`. Includes symlink traversal protection.
+- **Shell** (FR-078): Extends `LocalProvider` with unrestricted shell execution, environment variable control, output truncation, and timeout.
+- **CompositeProvider** (FR-079): Routes file operations to sub-backends by path prefix using longest-match-first semantics, with aggregated listings and cross-backend search.
+- **BaseSandbox** (FR-080): Abstract type implementing all `Vfs` operations by delegating to `execute()`. Subclasses implement only `execute()`, `upload_files()`, `download_files()`, and `id`.
 
 ## Middleware Stack
 
@@ -118,11 +118,11 @@ Prebuilt control-flow nodes (FR-304) include `IfElseNode`, `LoopNode`, and `Iter
 
 The `synwire-cli` binary (FR-095) uses `create_cli_agent()` which wraps `create_agent()` with CLI-specific middleware and HITL approval gates. It supports agent listing, reset/clone, and dynamic system prompt generation (FR-096).
 
-HITL approval gates (FR-097) require confirmation for destructive operations (shell execution, writes, web requests, delegation) while auto-approving read-only operations. The CLI uses `CompositeBackend` (FR-098) to route large results and conversation history to temporary directories.
+HITL approval gates (FR-097) require confirmation for destructive operations (shell execution, writes, web requests, delegation) while auto-approving read-only operations. The CLI uses `CompositeProvider` (FR-098) to route large results and conversation history to temporary directories.
 
 ## Partner Sandboxes
 
-`KagentSandbox` (FR-109) implements `SandboxBackendProtocol` via `BaseSandbox` with a 30-minute default timeout, unique ID, async interface, and kagent API file transfer (FR-110). Partner sandbox crates (FR-111) depend only on `synwire-sandbox` and the provider SDK, not the full agents SDK.
+`KagentSandbox` (FR-109) implements `SandboxVfs` via `BaseSandbox` with a 30-minute default timeout, unique ID, async interface, and kagent API file transfer (FR-110). Partner sandbox crates (FR-111) depend only on `synwire-sandbox` and the provider SDK, not the full agents SDK.
 
 ## Handoff and Multi-Agent
 
@@ -130,7 +130,7 @@ HITL approval gates (FR-097) require confirmation for destructive operations (sh
 
 ## Success Criteria
 
-- **SC-013**: All backends pass `BackendProtocol` conformance tests.
+- **SC-013**: All backends pass `Vfs` conformance tests.
 - **SC-014**: Middleware stack assembles and invokes without conflicts.
 - **SC-015**: CLI agent provides interactive HITL approval for shell execution and auto-approves reads.
 - **SC-018**: `synwire-agents` tests pass with at least 80% line coverage.

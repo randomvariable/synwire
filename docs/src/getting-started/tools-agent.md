@@ -129,3 +129,6 @@ assert!(validate_tool_name("my tool").is_err()); // spaces not allowed
 
 - [Graph Agents](./graph-agent.md) -- build custom graph-based agents
 - [Derive Macros](./derive-macros.md) -- use `#[tool]` for ergonomic tool definitions
+
+> **Background**: [Function Calling](https://www.promptingguide.ai/agents/function-calling) — how LLMs invoke structured tools.
+> **Background**: [ReAct](https://www.promptingguide.ai/techniques/react) — the Reason + Act pattern that most tool-using agents follow.

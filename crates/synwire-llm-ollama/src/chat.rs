@@ -200,34 +200,34 @@ impl ChatOllama {
         let error_text = response.text().await.unwrap_or_default();
 
         // On 401/403 with a credential provider, refresh and retry once.
-        if Self::is_auth_failure(status_code) {
-            if let Some(ref provider) = self.credential_provider {
-                let refreshed = provider.refresh_credential().await?;
-                let retry_headers = Self::headers_with_key(refreshed.expose());
-                let retry_response = self
-                    .client
-                    .post(url)
-                    .headers(retry_headers)
-                    .json(body)
-                    .send()
-                    .await
-                    .map_err(|e| OllamaError::Http {
-                        status: e.status().map(|s| s.as_u16()),
-                        message: e.to_string(),
-                    })?;
+        if Self::is_auth_failure(status_code)
+            && let Some(ref provider) = self.credential_provider
+        {
+            let refreshed = provider.refresh_credential().await?;
+            let retry_headers = Self::headers_with_key(refreshed.expose());
+            let retry_response = self
+                .client
+                .post(url)
+                .headers(retry_headers)
+                .json(body)
+                .send()
+                .await
+                .map_err(|e| OllamaError::Http {
+                    status: e.status().map(|s| s.as_u16()),
+                    message: e.to_string(),
+                })?;
 
-                let retry_status = retry_response.status();
-                if retry_status.is_success() {
-                    return Ok(retry_response);
-                }
-
-                let retry_error = retry_response.text().await.unwrap_or_default();
-                return Err(OllamaError::Http {
-                    status: Some(retry_status.as_u16()),
-                    message: retry_error,
-                }
-                .into());
+            let retry_status = retry_response.status();
+            if retry_status.is_success() {
+                return Ok(retry_response);
             }
+
+            let retry_error = retry_response.text().await.unwrap_or_default();
+            return Err(OllamaError::Http {
+                status: Some(retry_status.as_u16()),
+                message: retry_error,
+            }
+            .into());
         }
 
         Err(OllamaError::Http {

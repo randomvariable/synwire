@@ -1,7 +1,6 @@
 //! # synwire-orchestrator
 //!
-//! Graph-based orchestration engine for Synwire -- a Rust port of
-//! `LangGraph`'s core abstractions.
+//! Synwire's graph-based orchestration engine.
 //!
 //! Provides [`StateGraph`](graph::StateGraph) for building state machines
 //! with nodes and edges, compiled into

@@ -8,6 +8,7 @@ repository.workspace = true
 homepage.workspace = true
 keywords.workspace = true
 categories.workspace = true
+readme = "README.md"
 description = "Core traits and types for the Synwire AI framework"
 
 [lints]
@@ -23,6 +24,12 @@ serde_json = { workspace = true }
 uuid = { workspace = true }
 chrono = { workspace = true }
 secrecy = { workspace = true }
+bitflags = { workspace = true }
+typetag = { workspace = true }
+humantime-serde = { workspace = true }
+dyn-clone = { workspace = true }
+regex = { workspace = true }
+sha2 = { workspace = true }
 
 # Optional observability
 tracing = { workspace = true, optional = true }
@@ -30,11 +37,17 @@ tracing-opentelemetry = { workspace = true, optional = true }
 opentelemetry = { workspace = true, optional = true }
 opentelemetry_sdk = { workspace = true, optional = true }
 
+# Optional TOON output
+toon = { workspace = true, optional = true }
+
 # Optional retry
 backoff = { workspace = true, optional = true }
 
 # Optional HTTP
 reqwest = { workspace = true, optional = true }
+
+# Optional agentic ignore file discovery
+ignore = { workspace = true, optional = true }
 
 # Optional event bus
 tokio = { workspace = true, optional = true }
@@ -47,15 +60,18 @@ tokio-test = { workspace = true }
 serde_json = { workspace = true }
 criterion = { workspace = true }
 synwire-test-utils = { path = "../synwire-test-utils", version = "0.1.0" }
+tempfile = "3"
 
 [[bench]]
 name = "span_overhead"
 harness = false
 
 [features]
-default = ["retry", "http"]
+default = ["retry", "http", "tracing", "toon", "agentic-ignore"]
+toon = ["dep:toon"]
 retry = ["dep:backoff", "dep:tokio"]
 http = ["dep:reqwest"]
 tracing = ["dep:tracing", "dep:tracing-opentelemetry", "dep:opentelemetry", "dep:opentelemetry_sdk"]
 event-bus = ["dep:tokio"]
 batch-api = []
+agentic-ignore = ["dep:ignore"]

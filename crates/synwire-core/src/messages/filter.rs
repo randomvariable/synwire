@@ -97,15 +97,15 @@ impl MessageFilter {
         let msg_name = msg.name();
         let msg_id = msg.id();
 
-        if let Some(ref include) = self.include_types {
-            if !include.iter().any(|t| t == msg_type) {
-                return false;
-            }
+        if let Some(ref include) = self.include_types
+            && !include.iter().any(|t| t == msg_type)
+        {
+            return false;
         }
-        if let Some(ref exclude) = self.exclude_types {
-            if exclude.iter().any(|t| t == msg_type) {
-                return false;
-            }
+        if let Some(ref exclude) = self.exclude_types
+            && exclude.iter().any(|t| t == msg_type)
+        {
+            return false;
         }
 
         if let Some(ref include) = self.include_names {
@@ -118,12 +118,11 @@ impl MessageFilter {
                 None => return false,
             }
         }
-        if let Some(ref exclude) = self.exclude_names {
-            if let Some(name) = msg_name {
-                if exclude.iter().any(|n| n == name) {
-                    return false;
-                }
-            }
+        if let Some(ref exclude) = self.exclude_names
+            && let Some(name) = msg_name
+            && exclude.iter().any(|n| n == name)
+        {
+            return false;
         }
 
         if let Some(ref include) = self.include_ids {
@@ -136,12 +135,11 @@ impl MessageFilter {
                 None => return false,
             }
         }
-        if let Some(ref exclude) = self.exclude_ids {
-            if let Some(id) = msg_id {
-                if exclude.iter().any(|i| i == id) {
-                    return false;
-                }
-            }
+        if let Some(ref exclude) = self.exclude_ids
+            && let Some(id) = msg_id
+            && exclude.iter().any(|i| i == id)
+        {
+            return false;
         }
 
         true

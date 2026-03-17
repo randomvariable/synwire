@@ -5,7 +5,7 @@ Crates: synwire-evals (implementations), synwire-core (core types). Covers the H
 
 ## Harbor Sandbox (FR-104-108)
 Async-only sandbox backend for evaluation environments:
-- `HarborSandbox` implementing SandboxBackendProtocol for Docker/kagent/E2B environments (FR-105)
+- `HarborSandbox` implementing SandboxVfs for Docker/kagent/E2B environments (FR-105)
 - `HarborRuntime` trait: exec, upload, download, id
 - `EvaluationRunner` orchestrating agent evaluation runs with CLI mode (auto-approve) and SDK mode (FR-106)
 - `EvaluationConfig`: instruction, cwd, backend, model, auto_approve
