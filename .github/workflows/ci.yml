@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, "001-*", "004-*"]
+    branches: [main]
 
 permissions: {}
 
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-        steps:
+    steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-        steps:
+    steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-        steps:
+    steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
@@ -126,7 +126,7 @@ jobs:
     if: github.event_name == 'push'
     permissions:
       contents: read
-        steps:
+    steps:
       - name: Install protoc
         run: sudo apt-get update -q && sudo apt-get install -y protobuf-compiler
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6
@@ -144,7 +144,7 @@ jobs:
     if: github.event_name == 'push'
     permissions:
       contents: read
-        strategy:
+    strategy:
       matrix:
         partition: [1, 2]
     steps:
