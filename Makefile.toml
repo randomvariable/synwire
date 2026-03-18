@@ -192,7 +192,7 @@ updatecli pipeline apply --config updatecli/updatecli.d --experimental
 
 [tasks.publish]
 clear = true
-description = "Publish all crates to crates.io in dependency order. Set ALLOW_DIRTY=1 to pass --allow-dirty."
+description = "Publish all crates to crates.io in dependency order. Env: ALLOW_DIRTY=1, PUBLISH_DELAY=<seconds> (default 10)."
 script = """
 set -e
 
@@ -224,6 +224,11 @@ publish_crate() {
     cargo publish -p "$crate" --no-verify --allow-dirty
   else
     cargo publish -p "$crate" --no-verify
+  fi
+  local delay="${PUBLISH_DELAY:-10}"
+  if [ "$delay" -gt 0 ]; then
+    echo "    waiting ${delay}s (set PUBLISH_DELAY=0 to skip)"
+    sleep "$delay"
   fi
 }
 
