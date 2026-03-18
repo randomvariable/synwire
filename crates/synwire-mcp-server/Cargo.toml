@@ -26,15 +26,15 @@ lsp = ["dep:synwire-lsp", "dep:lsp-types"]
 dap = ["dep:synwire-dap"]
 
 [dependencies]
-synwire-core = { path = "../synwire-core", features = ["agentic-ignore"] }
-synwire-agent = { path = "../synwire-agent" }
+synwire-core = { path = "../synwire-core", version = "0.1.0", features = ["agentic-ignore"] }
+synwire-agent = { path = "../synwire-agent", version = "0.1.0" }
 synwire-agent-skills = { workspace = true }
 synwire-storage = { workspace = true }
-synwire-lsp = { path = "../synwire-lsp", optional = true }
-synwire-dap = { path = "../synwire-dap", optional = true }
+synwire-lsp = { path = "../synwire-lsp", version = "0.1.0", optional = true }
+synwire-dap = { path = "../synwire-dap", version = "0.1.0", optional = true }
 lsp-types = { workspace = true, optional = true }
-synwire-index = { path = "../synwire-index" }
-synwire-mcp-adapters = { path = "../synwire-mcp-adapters" }
+synwire-index = { path = "../synwire-index", version = "0.1.0" }
+synwire-mcp-adapters = { path = "../synwire-mcp-adapters", version = "0.1.0" }
 tokio = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }

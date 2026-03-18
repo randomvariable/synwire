@@ -10,8 +10,8 @@ description = "Semantic index pipeline for Synwire VFS providers"
 workspace = true
 
 [dependencies]
-synwire-core = { path = "../synwire-core", features = ["agentic-ignore"] }
-synwire-chunker = { path = "../synwire-chunker" }
+synwire-core = { path = "../synwire-core", version = "0.1.0", features = ["agentic-ignore"] }
+synwire-chunker = { path = "../synwire-chunker", version = "0.1.0" }
 tokio = { workspace = true }
 tokio-util = { workspace = true }
 serde = { workspace = true }

@@ -10,7 +10,7 @@ description = "Tree-sitter AST-aware code chunking for Synwire semantic search"
 workspace = true
 
 [dependencies]
-synwire-core = { path = "../synwire-core" }
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
 serde_json = { workspace = true }
 tracing = { workspace = true }
 tree-sitter = { workspace = true }

@@ -28,7 +28,7 @@ thiserror = { workspace = true }
 tracing = { workspace = true }
 tokio = { workspace = true }
 synwire-storage = { workspace = true }
-synwire-core = { path = "../synwire-core" }
+synwire-core = { path = "../synwire-core", version = "0.1.0" }
 regex = { workspace = true }
 walkdir = { workspace = true }
 globset = { workspace = true }
