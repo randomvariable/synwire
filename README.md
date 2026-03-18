@@ -12,15 +12,28 @@ Synwire provides idiomatic Rust implementations of core LLM abstractions — lan
 
 ```text
 crates/
-├── synwire-core/               # Foundational traits (BaseChatModel, Embeddings, VectorStore, Tool, RunnableCore)
-├── synwire-orchestrator/       # Graph execution: StateGraph<S>, CompiledGraph<S>, channels, Pregel engine
-├── synwire-checkpoint/         # Checkpoint persistence (in-memory, SQLite)
-├── synwire-checkpoint-sqlite/  # SQLite checkpoint backend
-├── synwire-llm-openai/         # OpenAI provider (ChatOpenAI, OpenAIEmbeddings)
-├── synwire-llm-ollama/         # Ollama provider (ChatOllama, OllamaEmbeddings)
-├── synwire-derive/             # Proc macros: #[tool], #[derive(State)]
-├── synwire-test-utils/         # Proptest strategies and test fixtures
-└── synwire/                    # Convenience re-exports and reference implementations
+├── synwire-core/                  # Foundational traits: Vfs, Tool, agents, embeddings, vector stores, MCP
+├── synwire-orchestrator/          # Graph execution: StateGraph<S>, CompiledGraph<S>
+├── synwire-checkpoint/            # Checkpoint persistence traits + in-memory impl
+├── synwire-checkpoint-sqlite/     # SQLite checkpoint backend (WAL mode)
+├── synwire-llm-openai/            # OpenAI provider
+├── synwire-llm-ollama/            # Ollama provider
+├── synwire-derive/                # Proc macros: #[tool], #[derive(State)]
+├── synwire-agent/                 # Agent runtime: VFS providers, middleware, strategies, MCP, sessions
+├── synwire-mcp-adapters/          # MCP client: multi-server, stdio/HTTP/WebSocket transports
+├── synwire-chunker/               # Tree-sitter AST-aware code chunking (14 languages)
+├── synwire-embeddings-local/      # Local embedding + reranking via fastembed-rs
+├── synwire-vectorstore-lancedb/   # LanceDB vector store
+├── synwire-index/                 # Semantic indexing pipeline: walk → chunk → embed → store
+├── synwire-lsp/                   # LSP client (12 tools)
+├── synwire-dap/                   # DAP debug client (sessions, breakpoints, evaluate)
+├── synwire-sandbox/               # Process sandboxing: isolation, approval gates
+├── synwire-storage/               # StorageLayout, RepoId/WorktreeId
+├── synwire-agent-skills/          # Agent skills (agentskills.io spec, Lua/Rhai/WASM)
+├── synwire-daemon/                # Singleton background process per product
+├── synwire-mcp-server/            # MCP server binary — stdio proxy to daemon
+├── synwire-test-utils/            # Proptest strategies and test fixtures (not published)
+└── synwire/                       # Convenience re-exports
 ```
 
 ### Design Principles
@@ -32,6 +45,25 @@ crates/
 - **BDD test-first**: All features developed with test-first workflow using proptest for property-based testing
 
 See [`.specify/memory/constitution.md`](.specify/memory/constitution.md) for the full project constitution.
+
+## Installing the MCP Server
+
+Pre-built binaries for Linux (amd64/arm64) and macOS (amd64/arm64) are attached to each [GitHub Release](https://github.com/randomvariable/synwire/releases).
+
+**Homebrew (macOS/Linux — recommended)**:
+
+```bash
+brew install randomvariable/tap/synwire-mcp-server
+```
+
+**Direct download (macOS)**:
+
+```bash
+# After downloading and extracting the archive:
+xattr -d com.apple.quarantine ./synwire-mcp-server
+```
+
+> macOS Sequoia 15.1+ sets a quarantine flag on files downloaded via a browser. Run the `xattr` command above to remove it, or install via Homebrew (which re-signs the binary automatically).
 
 ## Prerequisites
 

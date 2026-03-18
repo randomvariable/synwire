@@ -71,11 +71,49 @@ Supplementary reference:
 
 ---
 
+## Installing the MCP Server
+
+Pre-built binaries for Linux (amd64/arm64) and macOS (amd64/arm64) are attached to each [GitHub Release](https://github.com/randomvariable/synwire/releases).
+
+**Homebrew (macOS/Linux — recommended)**:
+
+```bash
+brew install randomvariable/tap/synwire-mcp-server
+```
+
+**Direct download (macOS)**:
+
+```bash
+# After downloading and extracting the archive:
+xattr -d com.apple.quarantine ./synwire-mcp-server
+```
+
+> macOS Sequoia 15.1+ sets a quarantine flag on files downloaded via a browser. Run the `xattr` command above to remove it, or install via Homebrew (which re-signs the binary automatically).
+
+---
+
 ## Crate Map
 
 | Crate | Contents |
 |---|---|
-| `synwire-core` | All public traits (`AgentNode`, `ExecutionStrategy`, `Vfs`, `Middleware`, `Plugin`, `SessionManager`, `McpTransport`, `DirectiveExecutor`, `DirectiveFilter`, `SignalRouter`) |
-| `synwire-agent` | Concrete implementations (`FsmStrategy`, `DirectStrategy`, `LocalProvider`, all middleware, `InMemorySessionManager`, MCP transports) |
-| `synwire` | Re-exports: `use synwire::agent::prelude::*` for convenience |
-| `synwire-test-utils` | Test helpers: `RecordingExecutor`, proptest strategies, VFS conformance suite |
+| `synwire-core` | Foundational traits: `Vfs`, `Tool`, agent types, embeddings, vector stores, MCP transport, sampling |
+| `synwire-orchestrator` | Graph execution engine: `StateGraph<S>`, `CompiledGraph<S>` |
+| `synwire-derive` | Proc macros: `#[tool]`, `#[derive(State)]` |
+| `synwire-checkpoint` | Checkpoint persistence traits + in-memory implementation |
+| `synwire-checkpoint-sqlite` | SQLite checkpoint backend (WAL mode, 0600 permissions) |
+| `synwire-llm-openai` | OpenAI LLM provider |
+| `synwire-llm-ollama` | Ollama LLM provider |
+| `synwire-agent` | Agent runtime: VFS providers, middleware, strategies, MCP, sessions |
+| `synwire-mcp-adapters` | MCP client adapters: multi-server aggregation, stdio/HTTP/WebSocket transports, tool conversion |
+| `synwire-chunker` | Tree-sitter AST-aware code chunking (14 languages) |
+| `synwire-embeddings-local` | Local embedding and reranking via fastembed-rs |
+| `synwire-vectorstore-lancedb` | LanceDB vector store implementation |
+| `synwire-index` | Semantic indexing pipeline: walk → chunk → embed → store; BM25 hybrid search, code graphs |
+| `synwire-lsp` | LSP client (12 tools, capability-conditional) |
+| `synwire-dap` | DAP debug client (sessions, breakpoints, evaluate) |
+| `synwire-sandbox` | Process sandboxing: registry, isolation, output capture, approval gates |
+| `synwire-storage` | `StorageLayout`, `RepoId`/`WorktreeId`, migrations |
+| `synwire-agent-skills` | Agent skills (agentskills.io spec, Lua/Rhai/WASM runtimes) |
+| `synwire-daemon` | Singleton background process per product |
+| `synwire-mcp-server` | MCP server binary — stdio proxy to daemon |
+| `synwire` | Convenience re-exports |
