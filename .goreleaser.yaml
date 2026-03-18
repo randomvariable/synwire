@@ -58,10 +58,9 @@ changelog:
     - title: Other
       order: 999
 
-# brews generates a Homebrew Formula pushed to randomvariable/homebrew-tap.
+# homebrew_casks pushes a Homebrew Cask to randomvariable/homebrew-tap.
 # Requires HOMEBREW_TAP_GITHUB_TOKEN secret (PAT with contents:write on that repo).
-# TODO: migrate to homebrew_casks when brews support is removed in a future GoReleaser release.
-brews:
+homebrew_casks:
   - name: synwire-mcp-server
     repository:
       owner: randomvariable
@@ -70,9 +69,7 @@ brews:
     homepage: https://randomvariable.github.io/synwire/
     description: "Synwire MCP server"
     license: "MIT OR Apache-2.0"
-    install: bin.install "synwire-mcp-server"
-    test: |
-      system "#{bin}/synwire-mcp-server", "--version"
+    binary: synwire-mcp-server
 
 release:
   footer: |
