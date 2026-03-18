@@ -171,11 +171,11 @@ tower = "0.5"
 lsp-types = "0.95"
 dapts = "0.0.6"
 bytes = "1"
-synwire-storage = { path = "crates/synwire-storage" }
-synwire-index = { path = "crates/synwire-index" }
-synwire-daemon = { path = "crates/synwire-daemon" }
-synwire-mcp-server = { path = "crates/synwire-mcp-server" }
-synwire-agent-skills = { path = "crates/synwire-agent-skills" }
+synwire-storage = { path = "crates/synwire-storage", version = "0.1.0" }
+synwire-index = { path = "crates/synwire-index", version = "0.1.0" }
+synwire-daemon = { path = "crates/synwire-daemon", version = "0.1.0" }
+synwire-mcp-server = { path = "crates/synwire-mcp-server", version = "0.1.0" }
+synwire-agent-skills = { path = "crates/synwire-agent-skills", version = "0.1.0" }
 serde_yaml = "0.9"
 rhai = { version = "1", features = [
   "serde",
@@ -203,8 +203,8 @@ tokio-tungstenite = { version = "0.24", features = [
 ] }
 jsonschema = "0.28"
 futures = "0.3"
-synwire-sandbox = { path = "crates/synwire-sandbox" }
-synwire-mcp-adapters = { path = "crates/synwire-mcp-adapters" }
+synwire-sandbox = { path = "crates/synwire-sandbox", version = "0.1.0" }
+synwire-mcp-adapters = { path = "crates/synwire-mcp-adapters", version = "0.1.0" }
 
 [workspace.lints.clippy]
 unwrap_used             = "deny"
