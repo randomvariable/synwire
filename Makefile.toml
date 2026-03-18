@@ -219,17 +219,62 @@ publish_crate() {
     echo "--- skip $crate (already published) ---"
     return 0
   fi
-  echo "--- publishing $crate ---"
-  if [ "${ALLOW_DIRTY:-0}" = "1" ]; then
-    cargo publish -p "$crate" --no-verify --allow-dirty
-  else
-    cargo publish -p "$crate" --no-verify
-  fi
-  local delay="${PUBLISH_DELAY:-10}"
-  if [ "$delay" -gt 0 ]; then
-    echo "    waiting ${delay}s (set PUBLISH_DELAY=0 to skip)"
-    sleep "$delay"
-  fi
+
+  local max_retries=5
+  local attempt=0
+  local tmp
+  tmp=$(mktemp)
+
+  while true; do
+    attempt=$((attempt + 1))
+    if [ $attempt -gt 1 ]; then
+      echo "--- publishing $crate (retry $((attempt-1))/$((max_retries-1))) ---"
+    else
+      echo "--- publishing $crate ---"
+    fi
+
+    local exit_code=0
+    if [ "${ALLOW_DIRTY:-0}" = "1" ]; then
+      cargo publish -p "$crate" --no-verify --allow-dirty >"$tmp" 2>&1 && exit_code=0 || exit_code=$?
+    else
+      cargo publish -p "$crate" --no-verify >"$tmp" 2>&1 && exit_code=0 || exit_code=$?
+    fi
+    cat "$tmp"
+
+    if [ $exit_code -eq 0 ]; then
+      rm -f "$tmp"
+      local delay="${PUBLISH_DELAY:-10}"
+      if [ "$delay" -gt 0 ]; then
+        echo "    waiting ${delay}s between publishes"
+        sleep "$delay"
+      fi
+      return 0
+    fi
+
+    if grep -q "429\|Too Many Requests" "$tmp" && [ $attempt -lt $max_retries ]; then
+      local retry_after retry_epoch now_epoch wait_secs
+      retry_after=$(grep -o 'after [A-Za-z0-9, :]*GMT' "$tmp" | sed 's/after //')
+      if [ -n "$retry_after" ]; then
+        retry_epoch=$(date -d "$retry_after" +%s 2>/dev/null || echo 0)
+        now_epoch=$(date +%s)
+        wait_secs=$((retry_epoch - now_epoch + 5))
+        if [ "$wait_secs" -gt 0 ]; then
+          echo "    rate limited — sleeping ${wait_secs}s until $retry_after"
+          sleep "$wait_secs"
+        fi
+      else
+        echo "    rate limited (no retry-after) — sleeping 60s"
+        sleep 60
+      fi
+      continue
+    fi
+
+    rm -f "$tmp"
+    return $exit_code
+  done
+  rm -f "$tmp"
+  echo "ERROR: $crate failed after $max_retries attempts"
+  return 1
 }
 
 # Poll crates.io until a crate version is visible, then move on.
