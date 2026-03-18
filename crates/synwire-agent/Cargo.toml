@@ -28,9 +28,9 @@ tar = { workspace = true }
 flate2 = { workspace = true }
 bzip2 = { workspace = true }
 zip = { workspace = true }
-synwire-index = { path = "../synwire-index", optional = true }
-synwire-embeddings-local = { path = "../synwire-embeddings-local", optional = true }
-synwire-vectorstore-lancedb = { path = "../synwire-vectorstore-lancedb", optional = true }
+synwire-index = { path = "../synwire-index", version = "0.1.0", optional = true }
+synwire-embeddings-local = { path = "../synwire-embeddings-local", version = "0.1.0", optional = true }
+synwire-vectorstore-lancedb = { path = "../synwire-vectorstore-lancedb", version = "0.1.0", optional = true }
 once_cell = { version = "1", optional = true }
 
 [features]
@@ -47,7 +47,7 @@ semantic-search = [
 
 [dev-dependencies]
 proptest = { workspace = true }
-synwire-test-utils = { path = "../synwire-test-utils", version = "0.1.0" }
+synwire-test-utils = { path = "../synwire-test-utils" }
 tempfile = { workspace = true }
 
 [lints]

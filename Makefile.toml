@@ -190,6 +190,108 @@ export GITHUB_TOKEN
 updatecli pipeline apply --config updatecli/updatecli.d --experimental
 """
 
+[tasks.publish]
+clear = true
+description = "Publish all crates to crates.io in dependency order. Set ALLOW_DIRTY=1 to pass --allow-dirty."
+script = """
+set -e
+
+# --- helpers -----------------------------------------------------------------
+
+get_version() {
+  cargo pkgid -p "$1" | sed 's/.*[#@]//'
+}
+
+is_published() {
+  local crate="$1"
+  local version
+  version=$(get_version "$crate")
+  local status
+  status=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "User-Agent: synwire-release-script/1.0" \
+    "https://crates.io/api/v1/crates/$crate/$version")
+  [ "$status" = "200" ]
+}
+
+publish_crate() {
+  local crate="$1"
+  if is_published "$crate"; then
+    echo "--- skip $crate (already published) ---"
+    return 0
+  fi
+  echo "--- publishing $crate ---"
+  if [ "${ALLOW_DIRTY:-0}" = "1" ]; then
+    cargo publish -p "$crate" --no-verify --allow-dirty
+  else
+    cargo publish -p "$crate" --no-verify
+  fi
+}
+
+# Poll crates.io until a crate version is visible, then move on.
+# Times out after ~5 minutes (30 attempts × 10s).
+wait_for_crate() {
+  local crate="$1"
+  local version
+  version=$(get_version "$crate")
+  local attempt=0
+  local max=30
+  echo "--- waiting for $crate@$version ---"
+  while [ $attempt -lt $max ]; do
+    local status
+    status=$(curl -s -o /dev/null -w "%{http_code}" \
+      -H "User-Agent: synwire-release-script/1.0" \
+      "https://crates.io/api/v1/crates/$crate/$version")
+    if [ "$status" = "200" ]; then
+      echo "    available"
+      return 0
+    fi
+    attempt=$((attempt + 1))
+    echo "    [$attempt/$max] not yet visible, retrying in 10s..."
+    sleep 10
+  done
+  echo "ERROR: $crate@$version not visible after $((max * 10))s"
+  return 1
+}
+
+# Publish every crate in a layer, then wait for each to appear in the index.
+publish_layer() {
+  for crate in "$@"; do
+    publish_crate "$crate"
+  done
+  for crate in "$@"; do
+    wait_for_crate "$crate"
+  done
+}
+
+# --- layers ------------------------------------------------------------------
+
+# Layer 0 — no intra-workspace dependencies
+publish_layer synwire-core synwire-storage
+
+# Layer 1 — depend only on synwire-core / synwire-storage
+publish_layer \
+  synwire-derive synwire-checkpoint synwire-sandbox synwire-chunker \
+  synwire-embeddings-local synwire-vectorstore-lancedb \
+  synwire-lsp synwire-dap synwire-llm-openai synwire-llm-ollama
+
+# Layer 2 — depend on layer 1
+publish_layer \
+  synwire-checkpoint-sqlite synwire-orchestrator \
+  synwire-agent-skills synwire-index
+
+# Layer 3 — depend on layer 2
+publish_layer synwire-agent synwire-daemon
+
+# Layer 4 — depends on synwire-agent
+publish_layer synwire-mcp-adapters
+
+# Layer 5 — depends on layers 1-4
+publish_layer synwire-mcp-server
+
+# Layer 6 — convenience re-exports, depends on everything
+publish_layer synwire
+"""
+
 # ---------------------------------------------------------------------------
 # Composite tasks
 # ---------------------------------------------------------------------------

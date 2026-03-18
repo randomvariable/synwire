@@ -21,81 +21,11 @@ jobs:
 
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32  # v2
 
-      # Publish in dependency order, with delays for crates.io index propagation
+      - name: Install cargo-make
+        run: cargo install --locked cargo-make
 
-      # Layer 0 — no intra-workspace dependencies
-      - name: Publish synwire-core
-        run: cargo publish -p synwire-core --no-verify
-      - name: Publish synwire-storage
-        run: cargo publish -p synwire-storage --no-verify
-
-      - name: Wait for index
-        run: sleep 30
-
-      # Layer 1 — depend only on synwire-core / synwire-storage
-      - name: Publish synwire-derive
-        run: cargo publish -p synwire-derive --no-verify
-      - name: Publish synwire-checkpoint
-        run: cargo publish -p synwire-checkpoint --no-verify
-      - name: Publish synwire-sandbox
-        run: cargo publish -p synwire-sandbox --no-verify
-      - name: Publish synwire-chunker
-        run: cargo publish -p synwire-chunker --no-verify
-      - name: Publish synwire-embeddings-local
-        run: cargo publish -p synwire-embeddings-local --no-verify
-      - name: Publish synwire-vectorstore-lancedb
-        run: cargo publish -p synwire-vectorstore-lancedb --no-verify
-      - name: Publish synwire-lsp
-        run: cargo publish -p synwire-lsp --no-verify
-      - name: Publish synwire-dap
-        run: cargo publish -p synwire-dap --no-verify
-      - name: Publish synwire-llm-openai
-        run: cargo publish -p synwire-llm-openai --no-verify
-      - name: Publish synwire-llm-ollama
-        run: cargo publish -p synwire-llm-ollama --no-verify
-
-      - name: Wait for index
-        run: sleep 30
-
-      # Layer 2 — depend on layer 1
-      - name: Publish synwire-checkpoint-sqlite
-        run: cargo publish -p synwire-checkpoint-sqlite --no-verify
-      - name: Publish synwire-orchestrator
-        run: cargo publish -p synwire-orchestrator --no-verify
-      - name: Publish synwire-agent-skills
-        run: cargo publish -p synwire-agent-skills --no-verify
-      - name: Publish synwire-index
-        run: cargo publish -p synwire-index --no-verify
-
-      - name: Wait for index
-        run: sleep 30
-
-      # Layer 3 — depend on layer 2
-      - name: Publish synwire-agent
-        run: cargo publish -p synwire-agent --no-verify
-      - name: Publish synwire-daemon
-        run: cargo publish -p synwire-daemon --no-verify
-
-      - name: Wait for index
-        run: sleep 30
-
-      # Layer 4 — depends on synwire-agent
-      - name: Publish synwire-mcp-adapters
-        run: cargo publish -p synwire-mcp-adapters --no-verify
-
-      - name: Wait for index
-        run: sleep 30
-
-      # Layer 5 — depends on layers 1–4
-      - name: Publish synwire-mcp-server
-        run: cargo publish -p synwire-mcp-server --no-verify
-
-      - name: Wait for index
-        run: sleep 30
-
-      # Layer 6 — convenience re-exports, depends on everything
-      - name: Publish synwire
-        run: cargo publish -p synwire --no-verify
+      - name: Publish crates
+        run: cargo make publish
 
   goreleaser:
     name: GoReleaser

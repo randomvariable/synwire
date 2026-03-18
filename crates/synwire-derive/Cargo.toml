@@ -24,8 +24,8 @@ proc-macro2 = { workspace = true }
 schemars = { workspace = true }
 
 [dev-dependencies]
-synwire-core = { path = "../synwire-core", version = "0.1.0" }
-synwire-orchestrator = { path = "../synwire-orchestrator", version = "0.1.0" }
+synwire-core = { path = "../synwire-core" }
+synwire-orchestrator = { path = "../synwire-orchestrator" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["full"] }

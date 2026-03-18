@@ -25,4 +25,4 @@ thiserror = { workspace = true }
 [dev-dependencies]
 tokio = { workspace = true, features = ["full"] }
 proptest = { workspace = true }
-synwire-test-utils = { path = "../synwire-test-utils", version = "0.1.0" }
+synwire-test-utils = { path = "../synwire-test-utils" }
