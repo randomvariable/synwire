@@ -190,6 +190,18 @@ export GITHUB_TOKEN
 updatecli pipeline apply --config updatecli/updatecli.d --experimental
 """
 
+[tasks.goreleaser]
+description = "Run GoReleaser release on the current tag (requires GITHUB_TOKEN and HOMEBREW_TAP_GITHUB_TOKEN)"
+script = """
+set -e
+GITHUB_TOKEN="${GITHUB_TOKEN:-$(gh auth token 2>/dev/null || true)}"
+export GITHUB_TOKEN
+if [ -z "$HOMEBREW_TAP_GITHUB_TOKEN" ]; then
+  echo "HOMEBREW_TAP_GITHUB_TOKEN is not set; Homebrew tap push will fail"
+fi
+goreleaser release --clean
+"""
+
 [tasks.publish]
 clear = true
 description = "Publish all crates to crates.io in dependency order. Env: ALLOW_DIRTY=1, PUBLISH_DELAY=<seconds> (default 10)."
